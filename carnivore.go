@@ -19,6 +19,9 @@ type Carnivore struct {
 
 func (c *Carnivore) init(g *Game, name string) {
 	c.gameP = g
+	game := *c.gameP
+	game.carnivores[c] = struct{}{}
+
 	cColor := color.NRGBA{
 		R: 235,
 		G: 30,
@@ -36,6 +39,8 @@ func (c *Carnivore) init(g *Game, name string) {
 	)
 	c.energy = rand.Intn(startingCarnivoresEnergy)
 
+	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
+	game.carnivoresPos[y][x][c] = struct{}{}
 }
 
 func (c *Carnivore) move() {
@@ -94,7 +99,7 @@ func (c *Carnivore) drawMe(screen *ebiten.Image) {
 	)
 }
 
-func (c *Carnivore) eat() {
+func (c *Carnivore) kill() {
 	game := *c.gameP
 
 	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
@@ -102,11 +107,11 @@ func (c *Carnivore) eat() {
 		return
 	}
 
-	animalPToEat := c.pickHerbivoreToEat(x, y)
-	animalPToEat.getEaten()
+	animalPToEat := c.pickHerbivoreToKill(x, y)
+	animalPToEat.die()
 }
 
-func (c *Carnivore) pickHerbivoreToEat(x, y float64) *Herbivore {
+func (c *Carnivore) pickHerbivoreToKill(x, y float64) *Herbivore {
 	game := *c.gameP
 	k := rand.Intn(len(game.herbivoresPos[y][x]))
 	i := 0
@@ -117,6 +122,18 @@ func (c *Carnivore) pickHerbivoreToEat(x, y float64) *Herbivore {
 		i++
 	}
 	return nil
+}
+
+func (c *Carnivore) eat() {
+	game := *c.gameP
+
+	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
+	if len(game.herbivoresPos[y][x]) == 0 {
+		return
+	}
+
+	animalPToEat := c.pickHerbivoreToKill(x, y)
+	animalPToEat.die()
 }
 
 func doCarnivoreActions(g *Game) {

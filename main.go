@@ -62,3 +62,6 @@ func run(stdout io.Writer) error {
 // po cos chciales dodac sety, ale nie pamietam po co
 // https://gist.github.com/bgadrian/cb8b9344d9c66571ef331a14eb7a2e80
 // chyba zeby zrobic operacje Has
+
+// dodaj plamę krwi w miejscu zjedzenia  -- a moze ogolnie w miejscu smierci? czyli po prostu meat mialby taka grafike
+// dodaj aureolę naokoło świeżo urodzonych entities

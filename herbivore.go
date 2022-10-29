@@ -19,6 +19,9 @@ type Herbivore struct {
 
 func (h *Herbivore) init(g *Game, name string) {
 	h.gameP = g
+	game := *h.gameP
+	game.herbivores[h] = struct{}{}
+
 	hColor := color.NRGBA{
 		R: 30,
 		G: 235,
@@ -36,6 +39,8 @@ func (h *Herbivore) init(g *Game, name string) {
 	)
 	h.energy = rand.Intn(startingHerbivoresEnergy)
 
+	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
+	game.herbivoresPos[y][x][h] = struct{}{}
 }
 
 func (h *Herbivore) move() {
@@ -94,7 +99,32 @@ func (h *Herbivore) drawMe(screen *ebiten.Image) {
 	)
 }
 
-func (h *Herbivore) getEaten() {
+func (h *Herbivore) eat() {
+	game := *h.gameP
+
+	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
+	if len(game.vegetablesPos[y][x]) == 0 {
+		return
+	}
+
+	foodPToEat := h.pickFoodToEat(x, y)
+	foodPToEat.getEaten()
+}
+
+func (h *Herbivore) pickFoodToEat(x, y float64) *Food {
+	game := *h.gameP
+	k := rand.Intn(len(game.vegetablesPos[y][x]))
+	i := 0
+	for food := range game.vegetablesPos[y][x] {
+		if i == k {
+			return food
+		}
+		i++
+	}
+	return nil
+}
+
+func (h *Herbivore) die() {
 	game := *h.gameP
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	//spawnFood(x, y, h.energy)

@@ -4,6 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"image/color"
+	"math/rand"
 	"strconv"
 )
 
@@ -13,7 +14,10 @@ type Game struct {
 	foods         map[*Food]struct{}
 	herbivoresPos map[float64]map[float64]map[*Herbivore]struct{} // Those must be float64 to be compatible with vectors.
 	carnivoresPos map[float64]map[float64]map[*Carnivore]struct{}
-	foodsPos      map[float64]map[float64]map[*Food]struct{}
+
+	meatPos       map[float64]map[float64]map[*Food]struct{}
+	rottenMeatPos map[float64]map[float64]map[*Food]struct{}
+	vegetablesPos map[float64]map[float64]map[*Food]struct{}
 
 	counter  int
 	tilesPos []float64
@@ -30,22 +34,24 @@ func newGame() *Game {
 	g.herbivores = make(map[*Herbivore]struct{})
 	for i := 0; i < startingHerbivoresNr; i++ {
 		newHerbiP := &Herbivore{}
-		g.herbivores[newHerbiP] = struct{}{}
 		newHerbiP.init(g, "A herbivore")
 	}
 	g.carnivores = make(map[*Carnivore]struct{})
 	for i := 0; i < startingCarnivoresNr; i++ {
 		newCarniP := &Carnivore{}
-		g.carnivores[newCarniP] = struct{}{}
 		newCarniP.init(g, "A carnivore")
 	}
 	g.foods = make(map[*Food]struct{})
 	for i := 0; i < startingFoodsNr; i++ {
 		newFoodP := &Food{}
-		g.foods[newFoodP] = struct{}{}
-		newFoodP.init(g, "meat")
-	}
 
+		foodTypes := map[int]string{
+			0: "meat",
+			1: "rottenMeat",
+			2: "vegetable",
+		}
+		newFoodP.init(g, foodTypes[rand.Intn(len(foodTypes))])
+	}
 	return g
 }
 
@@ -79,7 +85,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				float64(y+boardStartY),
 				tileSize,
 				tileSize,
-				color.Gray{Y: 90},
+				color.Gray{Y: 120},
 			)
 			x += tileSize + boardTilesGapWidth
 		}
@@ -109,15 +115,18 @@ func (g *Game) Layout(_, _ int) (int, int) {
 func (g *Game) initPos() {
 	g.herbivoresPos = make(map[float64]map[float64]map[*Herbivore]struct{})
 	g.carnivoresPos = make(map[float64]map[float64]map[*Carnivore]struct{})
+	g.meatPos = make(map[float64]map[float64]map[*Food]struct{})
+	g.rottenMeatPos = make(map[float64]map[float64]map[*Food]struct{})
+	g.vegetablesPos = make(map[float64]map[float64]map[*Food]struct{})
 	g.tilesPos = make([]float64, 0)
 
+	// Herbivores.
 	y := 0
 	for i := 0; i < boardWidthTiles; i++ {
 		x := 0
 		for j := 0; j < boardWidthTiles; j++ {
 			if g.herbivoresPos[float64(y)] == nil {
 				g.herbivoresPos[float64(y)] = make(map[float64]map[*Herbivore]struct{})
-
 			}
 			g.herbivoresPos[float64(y)][float64(x)] = make(map[*Herbivore]struct{})
 			x += tileSize + boardTilesGapWidth
@@ -125,13 +134,13 @@ func (g *Game) initPos() {
 		y += tileSize + boardTilesGapWidth
 	}
 
+	// Carnivores.
 	y = 0
 	for i := 0; i < boardWidthTiles; i++ {
 		x := 0
 		for j := 0; j < boardWidthTiles; j++ {
 			if g.carnivoresPos[float64(y)] == nil {
 				g.carnivoresPos[float64(y)] = make(map[float64]map[*Carnivore]struct{})
-
 			}
 			g.carnivoresPos[float64(y)][float64(x)] = make(map[*Carnivore]struct{}, 0)
 			x += tileSize + boardTilesGapWidth
@@ -139,9 +148,53 @@ func (g *Game) initPos() {
 		y += tileSize + boardTilesGapWidth
 	}
 
+	// Meat.
+	y = 0
+	for i := 0; i < boardWidthTiles; i++ {
+		x := 0
+		for j := 0; j < boardWidthTiles; j++ {
+			if g.meatPos[float64(y)] == nil {
+				g.meatPos[float64(y)] = make(map[float64]map[*Food]struct{})
+			}
+			g.meatPos[float64(y)][float64(x)] = make(map[*Food]struct{}, 0)
+			x += tileSize + boardTilesGapWidth
+		}
+		y += tileSize + boardTilesGapWidth
+	}
+
+	// Rotten meat.
+	y = 0
+	for i := 0; i < boardWidthTiles; i++ {
+		x := 0
+		for j := 0; j < boardWidthTiles; j++ {
+			if g.rottenMeatPos[float64(y)] == nil {
+				g.rottenMeatPos[float64(y)] = make(map[float64]map[*Food]struct{})
+			}
+			g.rottenMeatPos[float64(y)][float64(x)] = make(map[*Food]struct{}, 0)
+			x += tileSize + boardTilesGapWidth
+		}
+		y += tileSize + boardTilesGapWidth
+	}
+
+	// Vegetables.
+	y = 0
+	for i := 0; i < boardWidthTiles; i++ {
+		x := 0
+		for j := 0; j < boardWidthTiles; j++ {
+			if g.vegetablesPos[float64(y)] == nil {
+				g.vegetablesPos[float64(y)] = make(map[float64]map[*Food]struct{})
+			}
+			g.vegetablesPos[float64(y)][float64(x)] = make(map[*Food]struct{}, 0)
+			x += tileSize + boardTilesGapWidth
+		}
+		y += tileSize + boardTilesGapWidth
+	}
+
+	// g.tilesPos is not really needed AFAIK, just used for printing positions. Maybe just create it if debugging?
 	y = 0
 	for i := 0; i < boardWidthTiles; i++ {
 		g.tilesPos = append(g.tilesPos, float64(y))
 		y += tileSize + boardTilesGapWidth
 	}
+
 }
