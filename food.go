@@ -19,7 +19,6 @@ type Food struct {
 
 func (f *Food) init(g *Game, foodType string) {
 	f.gameP = g
-
 	f.color = color.NRGBA{
 		R: 10,
 		G: 140,
@@ -63,12 +62,11 @@ func (f *Food) drawMe(screen *ebiten.Image) {
 func (f *Food) getEaten() {
 	game := *f.gameP
 	x, y := f.pos.AtVec(0), f.pos.AtVec(1)
-
 	delete(game.foodsPos[y][x], f)
 	delete(game.foods, f)
 }
 
-//func spawnAHerb(x, y float64, energy int) {
+//func spawnFood(x, y float64, energy int) {
 //	foods := *f.foodsP
 //	foodsPos := *f.foodsPosP
 //

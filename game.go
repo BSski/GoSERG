@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"image/color"
 	"strconv"
 )
@@ -13,8 +12,8 @@ type Game struct {
 	carnivores    map[*Carnivore]struct{}
 	foods         map[*Food]struct{}
 	herbivoresPos map[float64]map[float64]map[*Herbivore]struct{} // Those must be float64 to be compatible with vectors.
-	carnivoresPos map[float64]map[float64]map[*Carnivore]struct{} // Those must be float64 to be compatible with vectors.
-	foodsPos      map[float64]map[float64]map[*Food]struct{}      // Those must be float64 to be compatible with vectors.
+	carnivoresPos map[float64]map[float64]map[*Carnivore]struct{}
+	foodsPos      map[float64]map[float64]map[*Food]struct{}
 
 	counter  int
 	tilesPos []float64
@@ -51,37 +50,17 @@ func newGame() *Game {
 }
 
 func (g *Game) Update() error {
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		if g.paused == false {
-			g.paused = true
-		} else {
-			g.paused = false
-		}
-	}
+	checkKeybinds(g)
 
-	if g.counter%90 == 0 {
+	if g.counter%10 == 0 {
 		if g.paused {
 			g.counter += 1
 			return nil
 		}
-
-		for i := range g.herbivores {
-			i.move()
-		}
-		//fmt.Println("\n\n\n\n")
-		//for _, z1 := range g.tilesPos {
-		//	fmt.Printf("MAJOR %v:\n", z1)
-		//	for _, z2 := range g.tilesPos {
-		//		fmt.Printf("    minor %v: %v \n", z2, g.herbivoresPos[z1][z2])
-		//	}
-		//}
-
-		for i := range g.carnivores {
-			i.move()
-			i.eat()
-		}
+		doHerbivoreActions(g)
+		doCarnivoreActions(g)
+		printHerbivores(g)
 	}
-
 	g.counter += 1
 	return nil
 }
@@ -107,15 +86,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		y += tileSize + boardTilesGapWidth
 	}
 
-	for i := range g.herbivores {
+	for i := range g.foods {
 		i.drawMe(screen)
 	}
 	for i := range g.carnivores {
 		i.drawMe(screen)
 	}
-	for i := range g.foods {
+	for i := range g.herbivores {
 		i.drawMe(screen)
 	}
+
+	// UI entities counters
 	drawText(screen, "H: "+strconv.Itoa(len(g.herbivores)), 10, 25)
 	drawText(screen, "C: "+strconv.Itoa(len(g.carnivores)), 10, 45)
 	drawText(screen, "F: "+strconv.Itoa(len(g.foods)), 10, 65)

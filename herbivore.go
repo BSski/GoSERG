@@ -19,7 +19,6 @@ type Herbivore struct {
 
 func (h *Herbivore) init(g *Game, name string) {
 	h.gameP = g
-
 	hColor := color.NRGBA{
 		R: 30,
 		G: 235,
@@ -45,6 +44,7 @@ func (h *Herbivore) move() {
 
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	delete(animalsPos[y][x], h)
+
 	direction := mat.NewVecDense(
 		2,
 		[]float64{
@@ -52,7 +52,6 @@ func (h *Herbivore) move() {
 			float64((rand.Intn(3) - 1) * (tileSize + boardTilesGapWidth)),
 		},
 	)
-
 	h.pos.AddVec(h.pos, direction)
 	h.pos = h.teleportAtBoundary(h.pos)
 
@@ -60,15 +59,13 @@ func (h *Herbivore) move() {
 	animalsPos[y][x][h] = struct{}{}
 }
 
+// If an animal crosses the board boundary, teleport it to the other side.
 func (h *Herbivore) teleportAtBoundary(pos *mat.VecDense) *mat.VecDense {
-	// teleport at X boundaries
 	if pos.AtVec(0) > lastTilePx {
 		pos.SetVec(0, 0)
 	} else if pos.AtVec(0) < 0 {
 		pos.SetVec(0, lastTilePx)
 	}
-
-	// teleport at Y boundaries
 	if pos.AtVec(1) > lastTilePx {
 		pos.SetVec(1, 0)
 	} else if pos.AtVec(1) < 0 {
@@ -98,11 +95,17 @@ func (h *Herbivore) drawMe(screen *ebiten.Image) {
 }
 
 func (h *Herbivore) getEaten() {
-	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	game := *h.gameP
-
-	// at my coordinates spawn a herb
-	//spawnAHerb(x, y, h.energy)
+	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
+	//spawnFood(x, y, h.energy)
 	delete(game.herbivoresPos[y][x], h)
 	delete(game.herbivores, h)
+}
+
+func doHerbivoreActions(g *Game) {
+	for i := range g.herbivores {
+		// i.eat()
+		// i.reproduce()
+		i.move()
+	}
 }

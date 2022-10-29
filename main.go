@@ -11,28 +11,26 @@ import (
 )
 
 const (
-	startingHerbivoresNr     = 2
-	startingCarnivoresNr     = 2
-	startingFoodsNr          = 3
+	startingHerbivoresNr     = 10
+	startingCarnivoresNr     = 10
+	startingFoodsNr          = 10
 	startingHerbivoresEnergy = 50
 	startingCarnivoresEnergy = 50
 	startingFoodEnergy       = 20
 
-	tileSize           = 16 // only evens, please
+	tileSize           = 14 // only evens, please
 	boardStartX        = 200
 	boardStartY        = 18
 	boardBorderWidth   = 3
 	boardTilesGapWidth = 2
-	boardWidthTiles    = 5
+	boardWidthTiles    = 10
 	boardWidthPx       = 2*boardBorderWidth + boardWidthTiles*tileSize + (boardWidthTiles-1)*boardTilesGapWidth
 	lastTilePx         = (boardWidthTiles-1)*tileSize + (boardWidthTiles-1)*boardTilesGapWidth
 	screenWidth        = boardWidthPx + boardStartX + boardStartY
 	screenHeight       = boardWidthPx + 2*boardStartY
 	tileMiddlePx       = tileSize/2 + tileSize%2
 
-	// exitFail is the exit code if the program
-	// fails.
-	exitFail = 1
+	exitFail = 1 // exitFail is the exit code if the program fails.
 )
 
 func main() {
@@ -53,19 +51,14 @@ func run(stdout io.Writer) error {
 	return nil
 }
 
-// TODO: carnivores eating herbivores.
-//   TODO: add printing for carnivores.
-//   TODO: why printing shows wrong positions?
 // TOREMEMBER: everything should be fine if the first thing that an animal does in the Update() is move.
-
-// dzieki temu ze tam jest map, to usuwajac nie musze iterowac po wszystkich, tylko starczy dostep O(1) od delete
-// a przy iterowaniu po keysach chyba kazdy bedzie printniety tylko raz
+// to chyba bylo przez to, ze w pierwszym ruchu ziomki nie sa dodawane do carnivoresPos?
 
 // przebieg rundy:
 //   eat
 //   move
 //   atak
 
-// wszedzie gdzie przekazujesz w argumentach jakies tam dziwne dlugie listy, po prostu bierz wartosc z gameState
-
-// moze potrzebuje interfejsu Herbivore i Carnivore?
+// po cos chciales dodac sety, ale nie pamietam po co
+// https://gist.github.com/bgadrian/cb8b9344d9c66571ef331a14eb7a2e80
+// chyba zeby zrobic operacje Has

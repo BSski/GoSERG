@@ -6,15 +6,15 @@ import (
 )
 
 func checkKeybinds(g *Game) {
-	g.paused = pauseAction(g)
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		g.paused = checkPauseAction(g)
+	}
 }
 
-func pauseAction(g *Game) bool {
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		if g.paused == false {
-			return true
-		}
+func checkPauseAction(g *Game) bool {
+	if g.paused == false {
+		return true
+	} else {
 		return false
 	}
-	return g.paused
 }

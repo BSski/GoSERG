@@ -19,7 +19,6 @@ type Carnivore struct {
 
 func (c *Carnivore) init(g *Game, name string) {
 	c.gameP = g
-
 	cColor := color.NRGBA{
 		R: 235,
 		G: 30,
@@ -45,6 +44,7 @@ func (c *Carnivore) move() {
 
 	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
 	delete(animalsPos[y][x], c)
+
 	direction := mat.NewVecDense(
 		2,
 		[]float64{
@@ -52,7 +52,6 @@ func (c *Carnivore) move() {
 			float64((rand.Intn(3) - 1) * (tileSize + boardTilesGapWidth)),
 		},
 	)
-
 	c.pos.AddVec(c.pos, direction)
 	c.pos = c.teleportAtBoundary(c.pos)
 
@@ -60,15 +59,13 @@ func (c *Carnivore) move() {
 	animalsPos[y][x][c] = struct{}{}
 }
 
+// If an animal crosses the board boundary, teleport it to the other side.
 func (c *Carnivore) teleportAtBoundary(pos *mat.VecDense) *mat.VecDense {
-	// teleport at X boundaries
 	if pos.AtVec(0) > lastTilePx {
 		pos.SetVec(0, 0)
 	} else if pos.AtVec(0) < 0 {
 		pos.SetVec(0, lastTilePx)
 	}
-
-	// teleport at Y boundaries
 	if pos.AtVec(1) > lastTilePx {
 		pos.SetVec(1, 0)
 	} else if pos.AtVec(1) < 0 {
@@ -99,6 +96,7 @@ func (c *Carnivore) drawMe(screen *ebiten.Image) {
 
 func (c *Carnivore) eat() {
 	game := *c.gameP
+
 	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
 	if len(game.herbivoresPos[y][x]) == 0 {
 		return
@@ -110,9 +108,7 @@ func (c *Carnivore) eat() {
 
 func (c *Carnivore) pickHerbivoreToEat(x, y float64) *Herbivore {
 	game := *c.gameP
-	herbivoresAtThatSpot := game.herbivoresPos[y][x]
-
-	k := rand.Intn(len(herbivoresAtThatSpot))
+	k := rand.Intn(len(game.herbivoresPos[y][x]))
 	i := 0
 	for herbi := range game.herbivoresPos[y][x] {
 		if i == k {
@@ -121,4 +117,13 @@ func (c *Carnivore) pickHerbivoreToEat(x, y float64) *Herbivore {
 		i++
 	}
 	return nil
+}
+
+func doCarnivoreActions(g *Game) {
+	for i := range g.carnivores {
+		i.eat()
+		// i.reproduce()
+		i.move()
+		// i.attack()
+	}
 }
