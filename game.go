@@ -15,9 +15,13 @@ type Game struct {
 	herbivoresPos map[float64]map[float64]map[*Herbivore]struct{} // Those must be float64 to be compatible with vectors.
 	carnivoresPos map[float64]map[float64]map[*Carnivore]struct{}
 
-	meatPos       map[float64]map[float64]map[*Food]struct{}
-	rottenMeatPos map[float64]map[float64]map[*Food]struct{}
-	vegetablesPos map[float64]map[float64]map[*Food]struct{}
+	meatPos        map[float64]map[float64]map[*Food]struct{}
+	rottenMeatPos  map[float64]map[float64]map[*Food]struct{}
+	vegetablesPos  map[float64]map[float64]map[*Food]struct{}
+	meatCntP       *int
+	rottenMeatCntP *int
+	vegetableCntP  *int
+	// FIXME: nie dzialaja te countery
 
 	counter  int
 	tilesPos []float64
@@ -30,19 +34,23 @@ func newGame() *Game {
 
 	// TODO: Invoke a Reset function which empties everything and does everything from zero
 
+	g.meatCntP = new(int)
+	g.rottenMeatCntP = new(int)
+	g.vegetableCntP = new(int)
+
 	g.initPos()
 	g.herbivores = make(map[*Herbivore]struct{})
-	for i := 0; i < startingHerbivoresNr; i++ {
+	for i := 0; i < startingHerbivoresCnt; i++ {
 		newHerbiP := &Herbivore{}
 		newHerbiP.init(g, "A herbivore")
 	}
 	g.carnivores = make(map[*Carnivore]struct{})
-	for i := 0; i < startingCarnivoresNr; i++ {
+	for i := 0; i < startingCarnivoresCnt; i++ {
 		newCarniP := &Carnivore{}
 		newCarniP.init(g, "A carnivore")
 	}
 	g.foods = make(map[*Food]struct{})
-	for i := 0; i < startingFoodsNr; i++ {
+	for i := 0; i < startingFoodsCnt; i++ {
 		newFoodP := &Food{}
 
 		foodTypes := map[int]string{
@@ -50,7 +58,39 @@ func newGame() *Game {
 			1: "rottenMeat",
 			2: "vegetable",
 		}
-		newFoodP.init(g, foodTypes[rand.Intn(len(foodTypes))])
+		newFoodP.init(
+			g,
+			foodTypes[rand.Intn(len(foodTypes))],
+			[]any{nil, nil},
+			nil,
+		)
+	}
+	for i := 0; i < startingAdditionalMeatCnt; i++ {
+		newFoodP := &Food{}
+		newFoodP.init(
+			g,
+			"meat",
+			[]any{nil, nil},
+			nil,
+		)
+	}
+	for i := 0; i < startingAdditionalRottenMeatCnt; i++ {
+		newFoodP := &Food{}
+		newFoodP.init(
+			g,
+			"rottenMeat",
+			[]any{nil, nil},
+			nil,
+		)
+	}
+	for i := 0; i < startingAdditionalVegetablesCnt; i++ {
+		newFoodP := &Food{}
+		newFoodP.init(
+			g,
+			"vegetable",
+			[]any{nil, nil},
+			nil,
+		)
 	}
 	return g
 }
@@ -58,14 +98,16 @@ func newGame() *Game {
 func (g *Game) Update() error {
 	checkKeybinds(g)
 
-	if g.counter%10 == 0 {
+	if g.counter%15 == 0 {
 		if g.paused {
 			g.counter += 1
 			return nil
 		}
 		doHerbivoreActions(g)
 		doCarnivoreActions(g)
-		printHerbivores(g)
+		//doFoodActions(g)
+		//printHerbivores(g)
+		//printMeat(g)
 	}
 	g.counter += 1
 	return nil
@@ -105,7 +147,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// UI entities counters
 	drawText(screen, "H: "+strconv.Itoa(len(g.herbivores)), 10, 25)
 	drawText(screen, "C: "+strconv.Itoa(len(g.carnivores)), 10, 45)
-	drawText(screen, "F: "+strconv.Itoa(len(g.foods)), 10, 65)
+	drawText(screen, "meat: "+strconv.Itoa(*g.meatCntP), 10, 65)
+	drawText(screen, "rottenMeat: "+strconv.Itoa(*g.rottenMeatCntP), 10, 85)
+	drawText(screen, "vegetable: "+strconv.Itoa(*g.vegetableCntP), 10, 105)
 }
 
 func (g *Game) Layout(_, _ int) (int, int) {
@@ -191,6 +235,7 @@ func (g *Game) initPos() {
 	}
 
 	// g.tilesPos is not really needed AFAIK, just used for printing positions. Maybe just create it if debugging?
+	// No need to use append also, since the length is known before. Just do tilesPos[i] = ... .
 	y = 0
 	for i := 0; i < boardWidthTiles; i++ {
 		g.tilesPos = append(g.tilesPos, float64(y))

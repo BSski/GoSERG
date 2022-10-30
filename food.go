@@ -18,23 +18,38 @@ type Food struct {
 	currentTypePos map[float64]map[float64]map[*Food]struct{}
 }
 
-func (f *Food) init(g *Game, foodType string) {
+func (f *Food) init(g *Game, foodType string, pos []any, energy any) {
 	f.gameP = g
 	game := *f.gameP
 	game.foods[f] = struct{}{}
 
-	f.pos = mat.NewVecDense(
-		2,
-		[]float64{
-			float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
-			float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
-		},
-	)
-	f.energy = rand.Intn(startingFoodEnergy)
-	f.foodType = foodType
+	if pos[0] == nil && pos[1] == nil {
+		f.pos = mat.NewVecDense(
+			2,
+			[]float64{
+				float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
+				float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
+			},
+		)
+	} else {
+		x, _ := pos[0].(int)
+		newX := float64(x)
+		y, _ := pos[1].(int)
+		newY := float64(y)
+		f.pos = mat.NewVecDense(2, []float64{newX, newY})
+	}
 
+	if energy == nil {
+		f.energy = rand.Intn(startingFoodEnergy)
+	} else {
+		newEnergy, _ := energy.(int)
+		f.energy = newEnergy
+	}
+
+	f.foodType = foodType
 	switch foodType {
 	case "meat":
+		*game.meatCntP += 1
 		f.currentTypePos = game.meatPos
 		f.color = color.NRGBA{
 			R: 95,
@@ -43,6 +58,7 @@ func (f *Food) init(g *Game, foodType string) {
 			A: 230,
 		}
 	case "rottenMeat":
+		*game.rottenMeatCntP += 1
 		f.currentTypePos = game.rottenMeatPos
 		f.color = color.NRGBA{
 			R: 70,
@@ -51,6 +67,7 @@ func (f *Food) init(g *Game, foodType string) {
 			A: 230,
 		}
 	case "vegetable":
+		*game.vegetableCntP += 1
 		f.currentTypePos = game.vegetablesPos
 		f.color = color.NRGBA{
 			R: 10,
@@ -64,8 +81,6 @@ func (f *Food) init(g *Game, foodType string) {
 }
 
 func (f *Food) drawMe(screen *ebiten.Image) {
-	// zrob tu kolor zalezny od typu
-	// moze zrob kompozycje i w Food zagniezdzaj meatFood, vegeFood, i tam przechowuj kolor?
 	var x float64
 	switch {
 	case f.energy > 30:
@@ -76,7 +91,6 @@ func (f *Food) drawMe(screen *ebiten.Image) {
 		x = 0.6
 	}
 	size := tileSize / 2 * x
-
 	ebitenutil.DrawCircle(
 		screen,
 		boardStartX+boardBorderWidth+tileMiddlePx+f.pos.AtVec(0),
@@ -86,19 +100,31 @@ func (f *Food) drawMe(screen *ebiten.Image) {
 	)
 }
 
-func (f *Food) getEaten() {
-	game := *f.gameP
-	x, y := f.pos.AtVec(0), f.pos.AtVec(1)
-	delete(f.currentTypePos[y][x], f)
-	delete(game.foods, f)
+// FIXME: is this even needed? we can check this every round, but i think that's exhausting.
+// Instead, we could just invoke this func when food's energy changes, so when it gets bitten.
+func (f *Food) getBitten(biteSize int) {
+	f.energy -= biteSize
+	if f.energy <= 0 {
+		game := *f.gameP
+		x, y := f.pos.AtVec(0), f.pos.AtVec(1)
+		delete(game.foods, f)
+		delete(f.currentTypePos[y][x], f)
+
+		switch f.foodType {
+		case "meat":
+			*game.meatCntP -= 1
+		case "rottenMeat":
+			*game.rottenMeatCntP -= 1
+		case "vegetable":
+			*game.vegetableCntP -= 1
+		}
+	}
 }
 
-//func spawnFood(x, y float64, energy int) {
-//	foods := *f.foodsP
-//	foodsPos := *f.foodsPosP
-//
-//	foodsPos[y][x][]
-//}
+func spawnFood(g *Game, x, y float64, energy int, foodType string) {
+	newFoodP := &Food{}
+	newFoodP.init(g, foodType, []any{x, y}, energy)
+}
 
 //func doFoodActions(g *Game) {
 //	for i := range g.foods {

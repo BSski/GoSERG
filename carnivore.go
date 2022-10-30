@@ -45,10 +45,9 @@ func (c *Carnivore) init(g *Game, name string) {
 
 func (c *Carnivore) move() {
 	game := *c.gameP
-	animalsPos := game.carnivoresPos
 
 	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
-	delete(animalsPos[y][x], c)
+	delete(game.carnivoresPos[y][x], c)
 
 	direction := mat.NewVecDense(
 		2,
@@ -61,7 +60,7 @@ func (c *Carnivore) move() {
 	c.pos = c.teleportAtBoundary(c.pos)
 
 	x, y = c.pos.AtVec(0), c.pos.AtVec(1)
-	animalsPos[y][x][c] = struct{}{}
+	game.carnivoresPos[y][x][c] = struct{}{}
 }
 
 // If an animal crosses the board boundary, teleport it to the other side.
@@ -99,7 +98,7 @@ func (c *Carnivore) drawMe(screen *ebiten.Image) {
 	)
 }
 
-func (c *Carnivore) kill() {
+func (c *Carnivore) hunt() {
 	game := *c.gameP
 
 	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
@@ -108,7 +107,7 @@ func (c *Carnivore) kill() {
 	}
 
 	animalPToEat := c.pickHerbivoreToKill(x, y)
-	animalPToEat.die()
+	animalPToEat.died(animalPToEat.energy)
 }
 
 func (c *Carnivore) pickHerbivoreToKill(x, y float64) *Herbivore {
@@ -124,23 +123,75 @@ func (c *Carnivore) pickHerbivoreToKill(x, y float64) *Herbivore {
 	return nil
 }
 
-func (c *Carnivore) eat() {
+func (c *Carnivore) eat() bool {
 	game := *c.gameP
 
 	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
-	if len(game.herbivoresPos[y][x]) == 0 {
-		return
+	if len(game.meatPos[y][x])+len(game.rottenMeatPos[y][x]) == 0 {
+		return false
 	}
 
-	animalPToEat := c.pickHerbivoreToKill(x, y)
-	animalPToEat.die()
+	foodP := c.pickFoodToEat(x, y)
+	if c.energy+foodP.energy < carnivoresMaxEnergy {
+		c.energy += foodP.energy
+		foodP.getBitten(foodP.energy)
+	} else {
+		foodP.getBitten(carnivoresMaxEnergy - c.energy)
+		c.energy = carnivoresMaxEnergy
+	}
+
+	if c.energy > carnivoresMaxEnergy {
+		panic("c.energy > carnivoresMaxEnergy")
+	}
+	return true
+}
+
+func (c *Carnivore) pickFoodToEat(x, y float64) *Food {
+	game := *c.gameP
+	if len(game.meatPos[y][x]) > 0 {
+		k := rand.Intn(len(game.meatPos[y][x]))
+		i := 0
+		for food := range game.meatPos[y][x] {
+			if i == k {
+				return food
+			}
+			i++
+		}
+		return nil
+	} else {
+		k := rand.Intn(len(game.rottenMeatPos[y][x]))
+		i := 0
+		for food := range game.rottenMeatPos[y][x] {
+			if i == k {
+				return food
+			}
+			i++
+		}
+		return nil
+	}
+}
+
+func (c *Carnivore) died(energy int) {
+	game := *c.gameP
+	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
+	spawnFood(c.gameP, x, y, energy, "meat")
+	delete(game.carnivoresPos[y][x], c)
+	delete(game.carnivores, c)
 }
 
 func doCarnivoreActions(g *Game) {
 	for i := range g.carnivores {
-		i.eat()
-		// i.reproduce()
+		if i.energy -= carnivoresMoveCost; i.energy <= 0 {
+			i.died(startingCarnivoresEnergy * 0.3)
+			continue
+		}
+		if ate := i.eat(); ate {
+			continue
+		}
+		//if reproduced := i.reproduce(); reproduced {
+		//	continue
+		//}
 		i.move()
-		// i.attack()
+		i.hunt()
 	}
 }

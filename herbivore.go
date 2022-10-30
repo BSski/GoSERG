@@ -45,10 +45,9 @@ func (h *Herbivore) init(g *Game, name string) {
 
 func (h *Herbivore) move() {
 	game := *h.gameP
-	animalsPos := game.herbivoresPos
 
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
-	delete(animalsPos[y][x], h)
+	delete(game.herbivoresPos[y][x], h)
 
 	direction := mat.NewVecDense(
 		2,
@@ -61,7 +60,7 @@ func (h *Herbivore) move() {
 	h.pos = h.teleportAtBoundary(h.pos)
 
 	x, y = h.pos.AtVec(0), h.pos.AtVec(1)
-	animalsPos[y][x][h] = struct{}{}
+	game.herbivoresPos[y][x][h] = struct{}{}
 }
 
 // If an animal crosses the board boundary, teleport it to the other side.
@@ -99,16 +98,27 @@ func (h *Herbivore) drawMe(screen *ebiten.Image) {
 	)
 }
 
-func (h *Herbivore) eat() {
+func (h *Herbivore) eat() bool {
 	game := *h.gameP
 
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	if len(game.vegetablesPos[y][x]) == 0 {
-		return
+		return false
 	}
 
-	foodPToEat := h.pickFoodToEat(x, y)
-	foodPToEat.getEaten()
+	foodP := h.pickFoodToEat(x, y)
+	if h.energy+foodP.energy < herbivoresMaxEnergy {
+		h.energy += foodP.energy
+		foodP.getBitten(foodP.energy)
+	} else {
+		foodP.getBitten(herbivoresMaxEnergy - h.energy)
+		h.energy = herbivoresMaxEnergy
+	}
+
+	if h.energy > herbivoresMaxEnergy {
+		panic("h.energy > herbivoresMaxEnergy")
+	}
+	return true
 }
 
 func (h *Herbivore) pickFoodToEat(x, y float64) *Food {
@@ -124,17 +134,26 @@ func (h *Herbivore) pickFoodToEat(x, y float64) *Food {
 	return nil
 }
 
-func (h *Herbivore) die() {
+// FIXME: look below
+func (h *Herbivore) died(energy int) {
 	game := *h.gameP
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
-	//spawnFood(x, y, h.energy)
+	spawnFood(h.gameP, x, y, energy, "meat")
 	delete(game.herbivoresPos[y][x], h)
 	delete(game.herbivores, h)
 }
 
+// FIXME: do not delete herbivore while iterating over herbivores list.
+// Add to list to deletion. Apply the same to all other entities.
 func doHerbivoreActions(g *Game) {
 	for i := range g.herbivores {
-		// i.eat()
+		if i.energy -= herbivoresMoveCost; i.energy <= 0 {
+			i.died(startingHerbivoresEnergy * 0.3)
+			continue
+		}
+		if ate := i.eat(); ate {
+			continue
+		}
 		// i.reproduce()
 		i.move()
 	}
