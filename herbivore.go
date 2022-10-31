@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"gonum.org/v1/gonum/mat"
@@ -17,7 +18,7 @@ type Herbivore struct {
 	color  color.NRGBA
 }
 
-func (h *Herbivore) init(g *Game, name string) {
+func (h *Herbivore) init(g *Game, name string, energy any, pos [2]any) {
 	h.gameP = g
 	game := *h.gameP
 	game.herbivores[h] = struct{}{}
@@ -30,14 +31,27 @@ func (h *Herbivore) init(g *Game, name string) {
 	}
 	h.name = name
 	h.color = hColor
-	h.pos = mat.NewVecDense(
-		2,
-		[]float64{
-			float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
-			float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
-		},
-	)
-	h.energy = rand.Intn(startingHerbivoresEnergy)
+
+	if pos[0] == nil && pos[1] == nil {
+		h.pos = mat.NewVecDense(
+			2,
+			[]float64{
+				float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
+				float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
+			},
+		)
+	} else {
+		x, _ := pos[0].(float64)
+		y, _ := pos[1].(float64)
+		h.pos = mat.NewVecDense(2, []float64{x, y})
+	}
+
+	if energy == nil {
+		h.energy = startingHerbivoresEnergy/2 + rand.Intn(startingHerbivoresEnergy)
+	} else {
+		energyInt, _ := energy.(int)
+		h.energy = energyInt
+	}
 
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	game.herbivoresPos[y][x][h] = struct{}{}
@@ -100,7 +114,7 @@ func (h *Herbivore) drawMe(screen *ebiten.Image) {
 
 func (h *Herbivore) eat() bool {
 	game := *h.gameP
-
+	fmt.Println(h.energy)
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	if len(game.vegetablesPos[y][x]) == 0 {
 		return false
@@ -123,6 +137,8 @@ func (h *Herbivore) eat() bool {
 
 func (h *Herbivore) pickFoodToEat(x, y float64) *Food {
 	game := *h.gameP
+	// Picking random one could be done just by picking first one, because
+	// iterating over a map results in semi-random order. It's better to do it explicitly.
 	k := rand.Intn(len(game.vegetablesPos[y][x]))
 	i := 0
 	for food := range game.vegetablesPos[y][x] {
@@ -132,6 +148,45 @@ func (h *Herbivore) pickFoodToEat(x, y float64) *Food {
 		i++
 	}
 	return nil
+}
+
+func (h *Herbivore) breed() bool {
+	if h.energy < herbivoresBreedThreshold {
+		return false
+	}
+
+	game := *h.gameP
+	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
+	if len(game.herbivoresPos[y][x]) == 0 {
+		return false
+	}
+
+	partnerP := h.pickPartnerToBreed(x, y)
+	if partnerP == nil {
+		return false
+	}
+
+	childEnergy := (h.energy + partnerP.energy) / 4
+	childP := &Herbivore{}
+	childP.init(h.gameP, "A herbivore", childEnergy, [2]any{x, y})
+	h.energy /= 2
+	partnerP.energy /= 2
+	return true
+}
+
+func (h *Herbivore) pickPartnerToBreed(x, y float64) *Herbivore {
+	game := *h.gameP
+	var potentialPartners []*Herbivore
+	for herbi := range game.herbivoresPos[y][x] {
+		if herbi.energy >= herbivoresBreedThreshold {
+			potentialPartners = append(potentialPartners, herbi)
+		}
+	}
+	if len(potentialPartners) == 0 {
+		return nil
+	}
+	k := rand.Intn(len(potentialPartners))
+	return potentialPartners[k]
 }
 
 // FIXME: look below
@@ -149,6 +204,9 @@ func doHerbivoreActions(g *Game) {
 	for i := range g.herbivores {
 		if i.energy -= herbivoresMoveCost; i.energy <= 0 {
 			i.died(startingHerbivoresEnergy * 0.3)
+			continue
+		}
+		if bred := i.breed(); bred {
 			continue
 		}
 		if ate := i.eat(); ate {

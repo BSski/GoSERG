@@ -12,24 +12,24 @@ func debugSetting(g *Game) {
 	meatExampleP.init(
 		g,
 		"meat",
-		[]any{144, 144},
 		nil,
+		[2]any{144, 144},
 	)
 
 	rottenMeatExampleP := &Food{}
 	rottenMeatExampleP.init(
 		g,
 		"rottenMeat",
-		[]any{144, 144},
 		nil,
+		[2]any{144, 144},
 	)
 
 	vegetableExampleP := &Food{}
 	vegetableExampleP.init(
 		g,
 		"vegetable",
-		[]any{144, 144},
 		nil,
+		[2]any{144, 144},
 	)
 
 }

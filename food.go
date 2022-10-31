@@ -18,10 +18,9 @@ type Food struct {
 	currentTypePos map[float64]map[float64]map[*Food]struct{}
 }
 
-func (f *Food) init(g *Game, foodType string, pos []any, energy any) {
+func (f *Food) init(g *Game, foodType string, energy any, pos [2]any) {
 	f.gameP = g
 	game := *f.gameP
-	game.foods[f] = struct{}{}
 
 	if pos[0] == nil && pos[1] == nil {
 		f.pos = mat.NewVecDense(
@@ -32,23 +31,23 @@ func (f *Food) init(g *Game, foodType string, pos []any, energy any) {
 			},
 		)
 	} else {
-		x, _ := pos[0].(int)
-		newX := float64(x)
-		y, _ := pos[1].(int)
-		newY := float64(y)
-		f.pos = mat.NewVecDense(2, []float64{newX, newY})
+		x, _ := pos[0].(float64)
+		y, _ := pos[1].(float64)
+		f.pos = mat.NewVecDense(2, []float64{x, y})
 	}
 
 	if energy == nil {
-		f.energy = rand.Intn(startingFoodEnergy)
+		f.energy = startingFoodEnergy/2 + rand.Intn(startingFoodEnergy)
 	} else {
 		newEnergy, _ := energy.(int)
 		f.energy = newEnergy
 	}
 
+	game.foods[f] = struct{}{}
 	f.foodType = foodType
 	switch foodType {
 	case "meat":
+		game.meats[f] = struct{}{}
 		*game.meatCntP += 1
 		f.currentTypePos = game.meatPos
 		f.color = color.NRGBA{
@@ -58,6 +57,7 @@ func (f *Food) init(g *Game, foodType string, pos []any, energy any) {
 			A: 230,
 		}
 	case "rottenMeat":
+		game.rottenMeats[f] = struct{}{}
 		*game.rottenMeatCntP += 1
 		f.currentTypePos = game.rottenMeatPos
 		f.color = color.NRGBA{
@@ -67,6 +67,7 @@ func (f *Food) init(g *Game, foodType string, pos []any, energy any) {
 			A: 230,
 		}
 	case "vegetable":
+		game.vegetables[f] = struct{}{}
 		*game.vegetableCntP += 1
 		f.currentTypePos = game.vegetablesPos
 		f.color = color.NRGBA{
@@ -100,8 +101,6 @@ func (f *Food) drawMe(screen *ebiten.Image) {
 	)
 }
 
-// FIXME: is this even needed? we can check this every round, but i think that's exhausting.
-// Instead, we could just invoke this func when food's energy changes, so when it gets bitten.
 func (f *Food) getBitten(biteSize int) {
 	f.energy -= biteSize
 	if f.energy <= 0 {
@@ -112,10 +111,13 @@ func (f *Food) getBitten(biteSize int) {
 
 		switch f.foodType {
 		case "meat":
+			delete(game.meats, f)
 			*game.meatCntP -= 1
 		case "rottenMeat":
+			delete(game.rottenMeats, f)
 			*game.rottenMeatCntP -= 1
 		case "vegetable":
+			delete(game.vegetables, f)
 			*game.vegetableCntP -= 1
 		}
 	}
@@ -123,7 +125,7 @@ func (f *Food) getBitten(biteSize int) {
 
 func spawnFood(g *Game, x, y float64, energy int, foodType string) {
 	newFoodP := &Food{}
-	newFoodP.init(g, foodType, []any{x, y}, energy)
+	newFoodP.init(g, foodType, energy, [2]any{x, y})
 }
 
 //func doFoodActions(g *Game) {

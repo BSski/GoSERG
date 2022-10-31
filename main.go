@@ -11,26 +11,29 @@ import (
 )
 
 const (
-	debugMode = 0
+	debugMode      = 0
+	updateInterval = 15
 
 	// Herbivores.
-	startingHerbivoresCnt    = 5
-	startingHerbivoresEnergy = 50
-	herbivoresMoveCost       = 2
+	startingHerbivoresCnt    = 50
+	startingHerbivoresEnergy = 30 // only evens, please
+	herbivoresMoveCost       = 0
 	herbivoresMaxEnergy      = 150
+	herbivoresBreedThreshold = 80
 
 	// Carnivores.
-	startingCarnivoresCnt    = 5
-	startingCarnivoresEnergy = 50
+	startingCarnivoresCnt    = 0
+	startingCarnivoresEnergy = 30 // only evens, please
 	carnivoresMoveCost       = 2
 	carnivoresMaxEnergy      = 150
+	carnivoresBreedThreshold = 80
 
 	// Food.
-	startingFoodsCnt                = 10
-	startingFoodEnergy              = 20
-	startingAdditionalMeatCnt       = 0
-	startingAdditionalRottenMeatCnt = 0
-	startingAdditionalVegetablesCnt = 0
+	startingRandomFoodsCnt = 50
+	startingFoodEnergy     = 20
+	startingMeatCnt        = 0
+	startingRottenMeatCnt  = 0
+	startingVegetablesCnt  = 50
 
 	// Board settings.
 	tileSize           = 14 // only evens, please
@@ -80,36 +83,30 @@ func run(stdout io.Writer) error {
 //   move
 //   atak
 
-// po cos chciales dodac sety, ale nie pamietam po co
-// https://gist.github.com/bgadrian/cb8b9344d9c66571ef331a14eb7a2e80
-// chyba zeby zrobic operacje Has
-
-// dodaj plamę krwi w miejscu zjedzenia  -- a moze ogolnie w miejscu smierci? czyli po prostu meat mialby taka grafike
-// dodaj aureolę naokoło świeżo urodzonych entities
-
 // Features:
 // chodzenie
 // zjadanie miesozerca -> roslinozerca
 // teleportacja on the edges
 // 3 typy food
-//
+// dostawanie energii z jedzenia
+// jesli zje w tej turze, to sie w niej nie rusza
+// jak umrze to zmienia sie w food (meat)
+// jesli poziom energii < 0 => dead
+// koszt ruchu
+// jeśli food ma więcej energii, niż limit energii zwierzęcia, to zjada ono tylko do syta
+// rozmnażanie
 
 // TODO:
-// dostawanie energii, gdy sie zje
-// atakowanie przez carnivores zescheduluj
-// zmienianie sie w warzywo jak sie umrze
-// sprawdzanie czy poziom energii jest mniejszy niz 0, jesli tak to ded
-// koszt ruchu
+// randomowo syp vegetables per round, albo obmysl lepiej mechanizm
+// add RESET button.
+// dodaj plamę krwi w miejscu smierci,
 // plama krwi po zjedzeniu kogos na pare rund, byc moze niezalezna od foodu
 // nowe ziomki maja żółty border
+// entities become old and die (track age)
 // sugarcoat the entire thing
 // efficient UI
 // zielone food się rozrasta na boki losowo i wgl rośnie wraz z turą
-// jeśli food ma więcej energii, niż limit energii zwierzęcia, to zjada ono tylko do syta
-
-// porownaj sobie funkcje carnivore i herbi czy sa takie same,
-// czy moze gdzies zapomnialem zmienic w jednym strukcie
-
-// FIXME: gdy na jednym tile jest vegetable i meat, to mrugają, bo kolejnosc iterowania po mapie
-// g.foods jest zmienna. dlatego raz jeden, raz drugi są rysowane jako ostatni, przez co mruga
-// albo uzyj OrderedMap, albo rozdziel g.foods na 3 listy
+// zrob wyswietlanie ze jak jest wiecej niz 1 food na tile, to wyswietlaja sie obok siebie zeby bylo widac
+// architecture: moze zrob jeszcze jedna liste, na ktorej trzymalbys wszystkie food per tile, hm /\
+// maybe instead of [2]any{x, y} I could just pass math.Vec?
+// entities are browseable and one can see their children or even family tree

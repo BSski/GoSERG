@@ -17,7 +17,7 @@ type Carnivore struct {
 	color  color.NRGBA
 }
 
-func (c *Carnivore) init(g *Game, name string) {
+func (c *Carnivore) init(g *Game, name string, energy any, pos [2]any) {
 	c.gameP = g
 	game := *c.gameP
 	game.carnivores[c] = struct{}{}
@@ -30,14 +30,27 @@ func (c *Carnivore) init(g *Game, name string) {
 	}
 	c.name = name
 	c.color = cColor
-	c.pos = mat.NewVecDense(
-		2,
-		[]float64{
-			float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
-			float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
-		},
-	)
-	c.energy = rand.Intn(startingCarnivoresEnergy)
+
+	if pos[0] == nil && pos[1] == nil {
+		c.pos = mat.NewVecDense(
+			2,
+			[]float64{
+				float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
+				float64(rand.Intn(boardWidthTiles) * (tileSize + boardTilesGapWidth)),
+			},
+		)
+	} else {
+		x, _ := pos[0].(float64)
+		y, _ := pos[1].(float64)
+		c.pos = mat.NewVecDense(2, []float64{x, y})
+	}
+
+	if energy == nil {
+		c.energy = startingCarnivoresEnergy/2 + rand.Intn(startingCarnivoresEnergy)
+	} else {
+		energyInt, _ := energy.(int)
+		c.energy = energyInt
+	}
 
 	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
 	game.carnivoresPos[y][x][c] = struct{}{}
@@ -112,6 +125,8 @@ func (c *Carnivore) hunt() {
 
 func (c *Carnivore) pickHerbivoreToKill(x, y float64) *Herbivore {
 	game := *c.gameP
+	// Picking random one could be done just by picking first one, because
+	// iterating over a map results in semi-random order. It's better to do it explicitly.
 	k := rand.Intn(len(game.herbivoresPos[y][x]))
 	i := 0
 	for herbi := range game.herbivoresPos[y][x] {
@@ -148,6 +163,8 @@ func (c *Carnivore) eat() bool {
 
 func (c *Carnivore) pickFoodToEat(x, y float64) *Food {
 	game := *c.gameP
+	// Picking random one could be done just by picking first one, because
+	// iterating over a map results in semi-random order. It's better to do it explicitly.
 	if len(game.meatPos[y][x]) > 0 {
 		k := rand.Intn(len(game.meatPos[y][x]))
 		i := 0
@@ -167,8 +184,52 @@ func (c *Carnivore) pickFoodToEat(x, y float64) *Food {
 			}
 			i++
 		}
+
+		getSickChance := rand.Intn(100)
+		if getSickChance > 85 {
+			c.energy /= 2
+		}
 		return nil
 	}
+}
+
+func (c *Carnivore) breed() bool {
+	if c.energy < carnivoresBreedThreshold {
+		return false
+	}
+
+	game := *c.gameP
+	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
+	if len(game.carnivoresPos[y][x]) == 0 {
+		return false
+	}
+
+	partnerP := c.pickPartnerToBreed(x, y)
+	if partnerP == nil {
+		return false
+	}
+
+	childEnergy := (c.energy + partnerP.energy) / 4
+	childP := &Carnivore{}
+	childP.init(c.gameP, "A carnivore", childEnergy, [2]any{x, y})
+	c.energy /= 2
+	partnerP.energy /= 2
+	return true
+}
+
+func (c *Carnivore) pickPartnerToBreed(x, y float64) *Carnivore {
+	game := *c.gameP
+	var potentialPartners []*Carnivore
+	for carni := range game.carnivoresPos[y][x] {
+		if carni.energy >= carnivoresBreedThreshold {
+			potentialPartners = append(potentialPartners, carni)
+		}
+	}
+	if len(potentialPartners) == 0 {
+		return nil
+	}
+	k := rand.Intn(len(potentialPartners))
+	return potentialPartners[k]
 }
 
 func (c *Carnivore) died(energy int) {
@@ -183,6 +244,9 @@ func doCarnivoreActions(g *Game) {
 	for i := range g.carnivores {
 		if i.energy -= carnivoresMoveCost; i.energy <= 0 {
 			i.died(startingCarnivoresEnergy * 0.3)
+			continue
+		}
+		if bred := i.breed(); bred {
 			continue
 		}
 		if ate := i.eat(); ate {

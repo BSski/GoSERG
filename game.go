@@ -9,9 +9,13 @@ import (
 )
 
 type Game struct {
-	herbivores    map[*Herbivore]struct{}
-	carnivores    map[*Carnivore]struct{}
-	foods         map[*Food]struct{}
+	herbivores  map[*Herbivore]struct{}
+	carnivores  map[*Carnivore]struct{}
+	foods       map[*Food]struct{}
+	meats       map[*Food]struct{}
+	rottenMeats map[*Food]struct{}
+	vegetables  map[*Food]struct{}
+
 	herbivoresPos map[float64]map[float64]map[*Herbivore]struct{} // Those must be float64 to be compatible with vectors.
 	carnivoresPos map[float64]map[float64]map[*Carnivore]struct{}
 
@@ -21,7 +25,6 @@ type Game struct {
 	meatCntP       *int
 	rottenMeatCntP *int
 	vegetableCntP  *int
-	// FIXME: nie dzialaja te countery
 
 	counter  int
 	tilesPos []float64
@@ -42,15 +45,18 @@ func newGame() *Game {
 	g.herbivores = make(map[*Herbivore]struct{})
 	for i := 0; i < startingHerbivoresCnt; i++ {
 		newHerbiP := &Herbivore{}
-		newHerbiP.init(g, "A herbivore")
+		newHerbiP.init(g, "A herbivore", nil, [2]any{nil, nil})
 	}
 	g.carnivores = make(map[*Carnivore]struct{})
 	for i := 0; i < startingCarnivoresCnt; i++ {
 		newCarniP := &Carnivore{}
-		newCarniP.init(g, "A carnivore")
+		newCarniP.init(g, "A carnivore", nil, [2]any{nil, nil})
 	}
+	g.meats = make(map[*Food]struct{})
+	g.rottenMeats = make(map[*Food]struct{})
+	g.vegetables = make(map[*Food]struct{})
 	g.foods = make(map[*Food]struct{})
-	for i := 0; i < startingFoodsCnt; i++ {
+	for i := 0; i < startingRandomFoodsCnt; i++ {
 		newFoodP := &Food{}
 
 		foodTypes := map[int]string{
@@ -61,35 +67,35 @@ func newGame() *Game {
 		newFoodP.init(
 			g,
 			foodTypes[rand.Intn(len(foodTypes))],
-			[]any{nil, nil},
 			nil,
+			[2]any{nil, nil},
 		)
 	}
-	for i := 0; i < startingAdditionalMeatCnt; i++ {
+	for i := 0; i < startingMeatCnt; i++ {
 		newFoodP := &Food{}
 		newFoodP.init(
 			g,
 			"meat",
-			[]any{nil, nil},
 			nil,
+			[2]any{nil, nil},
 		)
 	}
-	for i := 0; i < startingAdditionalRottenMeatCnt; i++ {
+	for i := 0; i < startingRottenMeatCnt; i++ {
 		newFoodP := &Food{}
 		newFoodP.init(
 			g,
 			"rottenMeat",
-			[]any{nil, nil},
 			nil,
+			[2]any{nil, nil},
 		)
 	}
-	for i := 0; i < startingAdditionalVegetablesCnt; i++ {
+	for i := 0; i < startingVegetablesCnt; i++ {
 		newFoodP := &Food{}
 		newFoodP.init(
 			g,
 			"vegetable",
-			[]any{nil, nil},
 			nil,
+			[2]any{nil, nil},
 		)
 	}
 	return g
@@ -98,7 +104,7 @@ func newGame() *Game {
 func (g *Game) Update() error {
 	checkKeybinds(g)
 
-	if g.counter%15 == 0 {
+	if g.counter%updateInterval == 0 {
 		if g.paused {
 			g.counter += 1
 			return nil
@@ -134,7 +140,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		y += tileSize + boardTilesGapWidth
 	}
 
-	for i := range g.foods {
+	for i := range g.vegetables {
+		i.drawMe(screen)
+	}
+	for i := range g.meats {
+		i.drawMe(screen)
+	}
+	for i := range g.rottenMeats {
 		i.drawMe(screen)
 	}
 	for i := range g.carnivores {
