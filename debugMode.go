@@ -5,8 +5,6 @@ func debugNewGame() *Game {
 	debugSetting(g)
 	return g
 }
-
-// FIXME: why do they appear at 0
 func debugSetting(g *Game) {
 	meatExampleP := &Food{}
 	meatExampleP.init(

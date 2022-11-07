@@ -9,6 +9,9 @@ func checkKeybinds(g *Game) {
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		g.paused = checkPauseAction(g)
 	}
+	if inpututil.IsKeyJustPressed(ebiten.KeyR) {
+		reset(g)
+	}
 }
 
 func checkPauseAction(g *Game) bool {

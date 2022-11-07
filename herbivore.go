@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"gonum.org/v1/gonum/mat"
@@ -117,7 +116,6 @@ func (h *Herbivore) drawMe(screen *ebiten.Image) {
 
 func (h *Herbivore) eat() bool {
 	game := *h.gameP
-	fmt.Println(h.energy)
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	if len(game.vegetablesPos[y][x]) == 0 {
 		return false

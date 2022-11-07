@@ -15,28 +15,28 @@ const (
 	updateInterval = 15
 
 	// Herbivores.
-	startingHerbivoresCnt    = 0
+	startingHerbivoresCnt    = 25
 	startingHerbivoresEnergy = 30 // Only evens, please.
 	herbivoresMoveCost       = 0
 	herbivoresMaxEnergy      = 150
 	herbivoresBreedThreshold = 70
 
 	// Carnivores.
-	startingCarnivoresCnt    = 0
+	startingCarnivoresCnt    = 5
 	startingCarnivoresEnergy = 30 // Only evens, please.
-	carnivoresMoveCost       = 4
+	carnivoresMoveCost       = 6
 	carnivoresMaxEnergy      = 150
 	carnivoresBreedThreshold = 80
 
 	// Food.
-	startingRandomFoodsCnt = 0
+	startingRandomFoodsCnt = 5
 	startingFoodEnergy     = 50 // Can't be 0.
 	startingMeatCnt        = 0
 	startingRottenMeatCnt  = 0
 	startingVegetablesCnt  = 50
 
 	// Environment.
-	foodPerInterval = 5
+	foodPerInterval = 2
 
 	// Board settings.
 	tileSize           = 14 // only evens, please
@@ -78,14 +78,6 @@ func run(stdout io.Writer) error {
 	return nil
 }
 
-// TOREMEMBER: everything should be fine if the first thing that an animal does in the Update() is move.
-// to chyba bylo przez to, ze w pierwszym ruchu ziomki nie sa dodawane do carnivoresPos?
-
-// przebieg rundy:
-//   eat
-//   move
-//   atak
-
 // Features:
 // chodzenie
 // zjadanie miesozerca -> roslinozerca
@@ -98,25 +90,27 @@ func run(stdout io.Writer) error {
 // koszt ruchu
 // jeśli food ma więcej energii, niż limit energii zwierzęcia, to zjada ono tylko do syta
 // rozmnażanie
-// randomowo syp vegetables per round
+// random vegetables per round growth
+// add RESET button
 
 // TODO:
-// add RESET button.
 // dodaj plamę krwi w miejscu smierci,
 // plama krwi po zjedzeniu kogos na pare rund, byc moze niezalezna od foodu
+// zrob wyswietlanie ze jak jest wiecej niz 1 food na tile, to wyswietlaja sie obok siebie zeby bylo widac
+//     moze zrob po prostu random offset, ale tak zeby nie wystawaly poza tile?
 // nowe ziomki maja żółty border
 // entities become old and die (track age)
 // sugarcoat the entire thing
-// efficient UI
+// UI -> efficient UI
 // zielone food się rozrasta na boki losowo i wgl rośnie wraz z turą
-// zrob wyswietlanie ze jak jest wiecej niz 1 food na tile, to wyswietlaja sie obok siebie zeby bylo widac
 // architecture: moze zrob jeszcze jedna liste, na ktorej trzymalbys wszystkie food per tile, hm /\
 // maybe instead of [2]any{x, y} I could just pass math.Vec?
 // entities are browseable and one can see their children or even family tree
 // counter mechanizm i chodzenie co ileś kroków; szybkość
 // geny, cechy
 // dodaj animacje umierania/zjadania (krew, czaszka) ktorej animacja trwa niezaleznie od ustawien szybkosci gry i fpsów UI
-//   i powyzej jakiejs predkosci po prostu przestaje sie wyswietlac
+//     i powyzej jakiejs predkosci po prostu przestaje sie wyswietlac
+// przyrost vegetables per round zrob wedlug funkcji tej samej co w discordBocie uzyles, zeby bylo raczej 2-3, ale czasami 5
 
 // when introducing new pair/group behavior inside herbi or carbi
 // group (not between groups): make sure to check if animal status is alive
