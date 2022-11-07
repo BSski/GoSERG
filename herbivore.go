@@ -12,17 +12,15 @@ import (
 type Herbivore struct {
 	gameP *Game
 
-	name   string
-	energy int
-	pos    *mat.VecDense
-	color  color.NRGBA
+	toRemove bool
+	name     string
+	energy   int
+	pos      *mat.VecDense
+	color    color.NRGBA
 }
 
 func (h *Herbivore) init(g *Game, name string, energy any, pos [2]any) {
-	h.gameP = g
-	game := *h.gameP
-	game.herbivores[h] = struct{}{}
-
+	h.toRemove = true
 	hColor := color.NRGBA{
 		R: 30,
 		G: 235,
@@ -32,6 +30,7 @@ func (h *Herbivore) init(g *Game, name string, energy any, pos [2]any) {
 	h.name = name
 	h.color = hColor
 
+	// insert a comment here and in other entities
 	if pos[0] == nil && pos[1] == nil {
 		h.pos = mat.NewVecDense(
 			2,
@@ -46,6 +45,7 @@ func (h *Herbivore) init(g *Game, name string, energy any, pos [2]any) {
 		h.pos = mat.NewVecDense(2, []float64{x, y})
 	}
 
+	// insert a comment here and in other entities
 	if energy == nil {
 		h.energy = startingHerbivoresEnergy/2 + rand.Intn(startingHerbivoresEnergy)
 	} else {
@@ -53,6 +53,9 @@ func (h *Herbivore) init(g *Game, name string, energy any, pos [2]any) {
 		h.energy = energyInt
 	}
 
+	h.gameP = g
+	game := *h.gameP
+	game.herbivores[h] = struct{}{}
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	game.herbivoresPos[y][x][h] = struct{}{}
 }
@@ -178,9 +181,13 @@ func (h *Herbivore) pickPartnerToBreed(x, y float64) *Herbivore {
 	game := *h.gameP
 	var potentialPartners []*Herbivore
 	for herbi := range game.herbivoresPos[y][x] {
-		if herbi.energy >= herbivoresBreedThreshold {
-			potentialPartners = append(potentialPartners, herbi)
+		if herbi.energy < herbivoresBreedThreshold {
+			continue
 		}
+		if !herbi.toRemove {
+			continue
+		}
+		potentialPartners = append(potentialPartners, herbi)
 	}
 	if len(potentialPartners) == 0 {
 		return nil
@@ -189,7 +196,6 @@ func (h *Herbivore) pickPartnerToBreed(x, y float64) *Herbivore {
 	return potentialPartners[k]
 }
 
-// FIXME: look below
 func (h *Herbivore) died(energy int) {
 	game := *h.gameP
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
@@ -198,21 +204,23 @@ func (h *Herbivore) died(energy int) {
 	delete(game.herbivores, h)
 }
 
-// FIXME: do not delete herbivore while iterating over herbivores list.
-// Add to list to deletion. Apply the same to all other entities.
 func doHerbivoreActions(g *Game) {
+	var toDelete []*Herbivore
 	for i := range g.herbivores {
 		if i.energy -= herbivoresMoveCost; i.energy <= 0 {
-			i.died(startingHerbivoresEnergy * 0.3)
+			i.toRemove = false
+			toDelete = append(toDelete, i)
 			continue
 		}
-		if bred := i.breed(); bred {
+		if i.breed() {
 			continue
 		}
-		if ate := i.eat(); ate {
+		if i.eat() {
 			continue
 		}
-		// i.reproduce()
 		i.move()
+	}
+	for _, dead := range toDelete {
+		dead.died(startingHerbivoresEnergy * 0.3)
 	}
 }

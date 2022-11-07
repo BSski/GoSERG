@@ -128,6 +128,8 @@ func spawnFood(g *Game, x, y float64, energy int, foodType string) {
 	newFoodP.init(g, foodType, energy, [2]any{x, y})
 }
 
+// To remember: do not delete food while iterating over food list.
+// Add to list to deletion instead, same as in herbi/carni actions.
 //func doFoodActions(g *Game) {
 //	for i := range g.foods {
 //		// becomeOlder()

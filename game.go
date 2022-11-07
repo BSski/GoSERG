@@ -109,6 +109,7 @@ func (g *Game) Update() error {
 			g.counter += 1
 			return nil
 		}
+		growVegetables(g)
 		doHerbivoreActions(g)
 		doCarnivoreActions(g)
 		//doFoodActions(g)

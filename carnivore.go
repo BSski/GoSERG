@@ -11,6 +11,7 @@ import (
 type Carnivore struct {
 	gameP *Game
 
+	alive  bool
 	name   string
 	energy int
 	pos    *mat.VecDense
@@ -18,10 +19,7 @@ type Carnivore struct {
 }
 
 func (c *Carnivore) init(g *Game, name string, energy any, pos [2]any) {
-	c.gameP = g
-	game := *c.gameP
-	game.carnivores[c] = struct{}{}
-
+	c.alive = true
 	cColor := color.NRGBA{
 		R: 235,
 		G: 30,
@@ -31,6 +29,7 @@ func (c *Carnivore) init(g *Game, name string, energy any, pos [2]any) {
 	c.name = name
 	c.color = cColor
 
+	// insert a comment here and in other entities
 	if pos[0] == nil && pos[1] == nil {
 		c.pos = mat.NewVecDense(
 			2,
@@ -45,6 +44,7 @@ func (c *Carnivore) init(g *Game, name string, energy any, pos [2]any) {
 		c.pos = mat.NewVecDense(2, []float64{x, y})
 	}
 
+	// insert a comment here and in other entities
 	if energy == nil {
 		c.energy = startingCarnivoresEnergy/2 + rand.Intn(startingCarnivoresEnergy)
 	} else {
@@ -52,6 +52,9 @@ func (c *Carnivore) init(g *Game, name string, energy any, pos [2]any) {
 		c.energy = energyInt
 	}
 
+	c.gameP = g
+	game := *c.gameP
+	game.carnivores[c] = struct{}{}
 	x, y := c.pos.AtVec(0), c.pos.AtVec(1)
 	game.carnivoresPos[y][x][c] = struct{}{}
 }
@@ -221,9 +224,13 @@ func (c *Carnivore) pickPartnerToBreed(x, y float64) *Carnivore {
 	game := *c.gameP
 	var potentialPartners []*Carnivore
 	for carni := range game.carnivoresPos[y][x] {
-		if carni.energy >= carnivoresBreedThreshold {
-			potentialPartners = append(potentialPartners, carni)
+		if carni.energy < carnivoresBreedThreshold {
+			continue
 		}
+		if !carni.alive {
+			continue
+		}
+		potentialPartners = append(potentialPartners, carni)
 	}
 	if len(potentialPartners) == 0 {
 		return nil
@@ -241,21 +248,23 @@ func (c *Carnivore) died(energy int) {
 }
 
 func doCarnivoreActions(g *Game) {
+	var toDelete []*Carnivore
 	for i := range g.carnivores {
 		if i.energy -= carnivoresMoveCost; i.energy <= 0 {
-			i.died(startingCarnivoresEnergy * 0.3)
+			i.alive = false
+			toDelete = append(toDelete, i)
 			continue
 		}
-		if bred := i.breed(); bred {
+		if i.breed() {
 			continue
 		}
-		if ate := i.eat(); ate {
+		if i.eat() {
 			continue
 		}
-		//if reproduced := i.reproduce(); reproduced {
-		//	continue
-		//}
 		i.move()
 		i.hunt()
+	}
+	for _, dead := range toDelete {
+		dead.died(startingCarnivoresEnergy * 0.3)
 	}
 }

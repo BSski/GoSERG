@@ -15,25 +15,28 @@ const (
 	updateInterval = 15
 
 	// Herbivores.
-	startingHerbivoresCnt    = 50
-	startingHerbivoresEnergy = 30 // only evens, please
+	startingHerbivoresCnt    = 0
+	startingHerbivoresEnergy = 30 // Only evens, please.
 	herbivoresMoveCost       = 0
 	herbivoresMaxEnergy      = 150
-	herbivoresBreedThreshold = 80
+	herbivoresBreedThreshold = 70
 
 	// Carnivores.
 	startingCarnivoresCnt    = 0
-	startingCarnivoresEnergy = 30 // only evens, please
-	carnivoresMoveCost       = 2
+	startingCarnivoresEnergy = 30 // Only evens, please.
+	carnivoresMoveCost       = 4
 	carnivoresMaxEnergy      = 150
 	carnivoresBreedThreshold = 80
 
 	// Food.
-	startingRandomFoodsCnt = 50
-	startingFoodEnergy     = 20
+	startingRandomFoodsCnt = 0
+	startingFoodEnergy     = 50 // Can't be 0.
 	startingMeatCnt        = 0
 	startingRottenMeatCnt  = 0
 	startingVegetablesCnt  = 50
+
+	// Environment.
+	foodPerInterval = 5
 
 	// Board settings.
 	tileSize           = 14 // only evens, please
@@ -95,9 +98,9 @@ func run(stdout io.Writer) error {
 // koszt ruchu
 // jeśli food ma więcej energii, niż limit energii zwierzęcia, to zjada ono tylko do syta
 // rozmnażanie
+// randomowo syp vegetables per round
 
 // TODO:
-// randomowo syp vegetables per round, albo obmysl lepiej mechanizm
 // add RESET button.
 // dodaj plamę krwi w miejscu smierci,
 // plama krwi po zjedzeniu kogos na pare rund, byc moze niezalezna od foodu
@@ -110,3 +113,12 @@ func run(stdout io.Writer) error {
 // architecture: moze zrob jeszcze jedna liste, na ktorej trzymalbys wszystkie food per tile, hm /\
 // maybe instead of [2]any{x, y} I could just pass math.Vec?
 // entities are browseable and one can see their children or even family tree
+// counter mechanizm i chodzenie co ileś kroków; szybkość
+// geny, cechy
+// dodaj animacje umierania/zjadania (krew, czaszka) ktorej animacja trwa niezaleznie od ustawien szybkosci gry i fpsów UI
+//   i powyzej jakiejs predkosci po prostu przestaje sie wyswietlac
+
+// when introducing new pair/group behavior inside herbi or carbi
+// group (not between groups): make sure to check if animal status is alive
+
+// introduce your own Vector struct and add necessary methods, add, get x y
