@@ -21,10 +21,10 @@ type Herbivore struct {
 func (h *Herbivore) init(g *Game, name string, energy any, pos [2]any) {
 	h.toRemove = true
 	hColor := color.NRGBA{
-		R: 30,
-		G: 235,
-		B: 30,
-		A: 210,
+		R: 10,
+		G: 170,
+		B: 10,
+		A: 240,
 	}
 	h.name = name
 	h.color = hColor

@@ -8,22 +8,26 @@ import (
 )
 
 type Game struct {
-	herbivores  map[*Herbivore]struct{}
-	carnivores  map[*Carnivore]struct{}
-	foods       map[*Food]struct{}
-	meats       map[*Food]struct{}
-	rottenMeats map[*Food]struct{}
-	vegetables  map[*Food]struct{}
-
+	herbivores    map[*Herbivore]struct{}
 	herbivoresPos map[float64]map[float64]map[*Herbivore]struct{} // Those must be float64 to be compatible with vectors.
+
+	carnivores    map[*Carnivore]struct{}
 	carnivoresPos map[float64]map[float64]map[*Carnivore]struct{}
 
+	foods map[*Food]struct{}
+
+	meats          map[*Food]struct{}
 	meatPos        map[float64]map[float64]map[*Food]struct{}
-	rottenMeatPos  map[float64]map[float64]map[*Food]struct{}
-	vegetablesPos  map[float64]map[float64]map[*Food]struct{}
 	meatCntP       *int
+	rottenMeats    map[*Food]struct{}
+	rottenMeatPos  map[float64]map[float64]map[*Food]struct{}
 	rottenMeatCntP *int
+	vegetables     map[*Food]struct{}
+	vegetablesPos  map[float64]map[float64]map[*Food]struct{}
 	vegetableCntP  *int
+
+	bloodSpots    map[*BloodSpot]struct{}
+	bloodSpotsPos map[float64]map[float64]map[*BloodSpot]struct{}
 
 	counter  int
 	tilesPos []float64
@@ -33,10 +37,11 @@ type Game struct {
 
 func newGame() *Game {
 	g := &Game{}
-	reset(g)
-	// TODO: Invoke a Reset function which empties everything and does everything from zero
+	return reset(g)
+}
 
-	return g
+func (g *Game) Layout(_, _ int) (int, int) {
+	return screenWidth, screenHeight
 }
 
 func (g *Game) Update() error {
@@ -47,6 +52,7 @@ func (g *Game) Update() error {
 			g.counter += 1
 			return nil
 		}
+		ageBloodSpots(g)
 		growVegetables(g)
 		doHerbivoreActions(g)
 		doCarnivoreActions(g)
@@ -79,6 +85,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		y += tileSize + boardTilesGapWidth
 	}
 
+	for i := range g.bloodSpots {
+		i.drawMe(screen)
+	}
 	for i := range g.vegetables {
 		i.drawMe(screen)
 	}
@@ -101,8 +110,4 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	drawText(screen, "meat: "+strconv.Itoa(*g.meatCntP), 10, 65)
 	drawText(screen, "rottenMeat: "+strconv.Itoa(*g.rottenMeatCntP), 10, 85)
 	drawText(screen, "vegetable: "+strconv.Itoa(*g.vegetableCntP), 10, 105)
-}
-
-func (g *Game) Layout(_, _ int) (int, int) {
-	return screenWidth, screenHeight
 }

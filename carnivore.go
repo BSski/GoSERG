@@ -21,10 +21,10 @@ type Carnivore struct {
 func (c *Carnivore) init(g *Game, name string, energy any, pos [2]any) {
 	c.alive = true
 	cColor := color.NRGBA{
-		R: 235,
-		G: 30,
-		B: 30,
-		A: 200,
+		R: 80,
+		G: 0,
+		B: 0,
+		A: 240,
 	}
 	c.name = name
 	c.color = cColor
@@ -124,6 +124,8 @@ func (c *Carnivore) hunt() {
 
 	animalPToEat := c.pickHerbivoreToKill(x, y)
 	animalPToEat.died(animalPToEat.energy)
+	bloodSpot := BloodSpot{}
+	bloodSpot.init(c.gameP, [2]float64{x, y})
 }
 
 func (c *Carnivore) pickHerbivoreToKill(x, y float64) *Herbivore {

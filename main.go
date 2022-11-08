@@ -15,7 +15,7 @@ const (
 	updateInterval = 15
 
 	// Herbivores.
-	startingHerbivoresCnt    = 25
+	startingHerbivoresCnt    = 15
 	startingHerbivoresEnergy = 30 // Only evens, please.
 	herbivoresMoveCost       = 0
 	herbivoresMaxEnergy      = 150
@@ -24,19 +24,19 @@ const (
 	// Carnivores.
 	startingCarnivoresCnt    = 5
 	startingCarnivoresEnergy = 30 // Only evens, please.
-	carnivoresMoveCost       = 6
+	carnivoresMoveCost       = 0
 	carnivoresMaxEnergy      = 150
 	carnivoresBreedThreshold = 80
 
 	// Food.
-	startingRandomFoodsCnt = 5
-	startingFoodEnergy     = 50 // Can't be 0.
+	startingRandomFoodsCnt = 0
 	startingMeatCnt        = 0
 	startingRottenMeatCnt  = 0
-	startingVegetablesCnt  = 50
+	startingVegetablesCnt  = 0
 
 	// Environment.
-	foodPerInterval = 2
+	foodPerInterval    = 0
+	startingFoodEnergy = 50 // Can't be 0.
 
 	// Board settings.
 	tileSize           = 14 // only evens, please

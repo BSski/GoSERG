@@ -2,7 +2,7 @@ package main
 
 import "math/rand"
 
-func reset(g *Game) {
+func reset(g *Game) *Game {
 	g.meatCntP = new(int)
 	g.rottenMeatCntP = new(int)
 	g.vegetableCntP = new(int)
@@ -23,6 +23,8 @@ func reset(g *Game) {
 	g.rottenMeats = make(map[*Food]struct{})
 	g.vegetables = make(map[*Food]struct{})
 	g.foods = make(map[*Food]struct{})
+	g.bloodSpots = make(map[*BloodSpot]struct{})
+
 	for i := 0; i < startingRandomFoodsCnt; i++ {
 		newFoodP := &Food{}
 
@@ -65,6 +67,7 @@ func reset(g *Game) {
 			[2]any{nil, nil},
 		)
 	}
+	return g
 }
 
 func initPos(g *Game) {
@@ -73,6 +76,7 @@ func initPos(g *Game) {
 	g.meatPos = make(map[float64]map[float64]map[*Food]struct{})
 	g.rottenMeatPos = make(map[float64]map[float64]map[*Food]struct{})
 	g.vegetablesPos = make(map[float64]map[float64]map[*Food]struct{})
+	g.bloodSpotsPos = make(map[float64]map[float64]map[*BloodSpot]struct{})
 	g.tilesPos = make([]float64, 0)
 
 	// Herbivores.
@@ -145,7 +149,22 @@ func initPos(g *Game) {
 		y += tileSize + boardTilesGapWidth
 	}
 
-	// g.tilesPos is not really needed AFAIK, just used for printing positions. Maybe just create it if debugging?
+	// BloodSpots.
+	y = 0
+	for i := 0; i < boardWidthTiles; i++ {
+		x := 0
+		for j := 0; j < boardWidthTiles; j++ {
+			if g.bloodSpotsPos[float64(y)] == nil {
+				g.bloodSpotsPos[float64(y)] = make(map[float64]map[*BloodSpot]struct{})
+			}
+			g.bloodSpotsPos[float64(y)][float64(x)] = make(map[*BloodSpot]struct{}, 0)
+			x += tileSize + boardTilesGapWidth
+		}
+		y += tileSize + boardTilesGapWidth
+	}
+
+	// FIXME:
+	// g.tilesPos is not really needed AFAIK, just used for printing positions. Maybe just create it only if debugging?
 	// No need to use append also, since the length is known before. Just do tilesPos[i] = ... .
 	y = 0
 	for i := 0; i < boardWidthTiles; i++ {
