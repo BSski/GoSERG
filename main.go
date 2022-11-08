@@ -39,7 +39,7 @@ const (
 	startingFoodEnergy = 50 // Can't be 0.
 
 	// Board settings.
-	tileSize           = 14 // only evens, please
+	tileSize           = 18 // only evens, please
 	boardStartX        = 200
 	boardStartY        = 18
 	boardBorderWidth   = 3
@@ -92,10 +92,11 @@ func run(stdout io.Writer) error {
 // rozmnażanie
 // random vegetables per round growth
 // add RESET button
+// bloodspot on kill
 
 // TODO:
-// dodaj plamę krwi w miejscu smierci,
-// plama krwi po zjedzeniu kogos na pare rund, byc moze niezalezna od foodu
+// performance issues after reseting or long running simulation
+//     moze usunietych dodawaj do listy usunietych i stamtad ich recyklinguj? init should clean all
 // zrob wyswietlanie ze jak jest wiecej niz 1 food na tile, to wyswietlaja sie obok siebie zeby bylo widac
 //     moze zrob po prostu random offset, ale tak zeby nie wystawaly poza tile?
 // nowe ziomki maja żółty border

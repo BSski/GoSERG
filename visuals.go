@@ -20,9 +20,9 @@ func (b *BloodSpot) init(g *Game, pos [2]float64) {
 	// insert a comment here and in other entities
 	b.pos = mat.NewVecDense(2, []float64{pos[0], pos[1]})
 
-	b.ttl = 16
+	b.ttl = 14
 	b.gameP = g
-	b.seed = float64(rand.Intn(100)) / 100
+	b.seed = float64(50+rand.Intn(40)) / 100
 	game := *b.gameP
 	game.bloodSpots[b] = struct{}{}
 	x, y := b.pos.AtVec(0), b.pos.AtVec(1)
@@ -32,9 +32,9 @@ func (b *BloodSpot) init(g *Game, pos [2]float64) {
 func (b *BloodSpot) drawMe(screen *ebiten.Image) {
 	var x float64
 	switch {
-	case b.ttl > 12:
+	case b.ttl > 10:
 		x = 1.0
-	case b.ttl > 8:
+	case b.ttl > 7:
 		x = 0.8
 	case b.ttl > 4:
 		x = 0.6
@@ -57,49 +57,49 @@ func (b *BloodSpot) drawMe(screen *ebiten.Image) {
 	ebitenutil.DrawCircle(
 		screen,
 		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)+tileSize/4,
-		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)+tileSize/3,
+		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)+tileSize/4,
 		size*x*0.4,
 		color.NRGBA{
 			R: 255,
 			G: 10,
 			B: 10,
-			A: uint8(200 * x * b.seed),
+			A: uint8(210 * x * (b.seed / 2)),
 		},
 	)
 	ebitenutil.DrawCircle(
 		screen,
-		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)-tileSize/3,
+		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)-tileSize/4+1,
 		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)-tileSize/4,
 		size*x*0.8,
 		color.NRGBA{
 			R: 255,
 			G: 10,
 			B: 10,
-			A: uint8(180 * b.seed / 2),
+			A: uint8(190 * x),
 		},
 	)
 	ebitenutil.DrawCircle(
 		screen,
-		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)+tileSize/4,
-		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)-tileSize/3,
+		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)+tileSize/4-1,
+		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)-tileSize/4-1,
 		size*x*0.8,
 		color.NRGBA{
 			R: 255,
 			G: 10,
 			B: 10,
-			A: 100,
+			A: uint8(160 * x * b.seed),
 		},
 	)
 	ebitenutil.DrawCircle(
 		screen,
 		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)-tileSize/4,
-		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)+tileSize/3,
+		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)+tileSize/4,
 		size*x*0.8,
 		color.NRGBA{
 			R: 255,
 			G: 10,
 			B: 10,
-			A: 140,
+			A: uint8(180 * x * b.seed),
 		},
 	)
 }
