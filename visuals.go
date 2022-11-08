@@ -22,7 +22,7 @@ func (b *BloodSpot) init(g *Game, pos [2]float64) {
 
 	b.ttl = 14
 	b.gameP = g
-	b.seed = float64(50+rand.Intn(40)) / 100
+	b.seed = float64(60+rand.Intn(30)) / 100
 	game := *b.gameP
 	game.bloodSpots[b] = struct{}{}
 	x, y := b.pos.AtVec(0), b.pos.AtVec(1)
@@ -32,11 +32,11 @@ func (b *BloodSpot) init(g *Game, pos [2]float64) {
 func (b *BloodSpot) drawMe(screen *ebiten.Image) {
 	var x float64
 	switch {
-	case b.ttl > 10:
+	case b.ttl > 9:
 		x = 1.0
-	case b.ttl > 7:
+	case b.ttl > 6:
 		x = 0.8
-	case b.ttl > 4:
+	case b.ttl > 3:
 		x = 0.6
 	default:
 		x = 0.4
@@ -46,17 +46,29 @@ func (b *BloodSpot) drawMe(screen *ebiten.Image) {
 		screen,
 		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0),
 		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1),
-		size,
+		size*0.77,
 		color.NRGBA{
-			R: 205,
+			R: uint8(190 + 40*x),
 			G: 10,
 			B: 10,
-			A: uint8(220 * x),
+			A: uint8(218 * x * (b.seed + 0.1)),
 		},
 	)
 	ebitenutil.DrawCircle(
 		screen,
-		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)+tileSize/4,
+		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0),
+		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1),
+		size*0.5,
+		color.NRGBA{
+			R: uint8(150 + 100*x),
+			G: 10,
+			B: 10,
+			A: uint8(205 * b.seed),
+		},
+	)
+	ebitenutil.DrawCircle(
+		screen,
+		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)+tileSize/4-x,
 		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)+tileSize/4,
 		size*x*0.4,
 		color.NRGBA{
@@ -68,21 +80,21 @@ func (b *BloodSpot) drawMe(screen *ebiten.Image) {
 	)
 	ebitenutil.DrawCircle(
 		screen,
-		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)-tileSize/4+1,
-		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)-tileSize/4,
-		size*x*0.8,
+		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)-tileSize/4+1-x,
+		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)-tileSize/4+x,
+		size*x*0.77,
 		color.NRGBA{
 			R: 255,
 			G: 10,
 			B: 10,
-			A: uint8(190 * x),
+			A: uint8(180 * (x - 0.2)),
 		},
 	)
 	ebitenutil.DrawCircle(
 		screen,
 		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)+tileSize/4-1,
 		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)-tileSize/4-1,
-		size*x*0.8,
+		size*x*0.77,
 		color.NRGBA{
 			R: 255,
 			G: 10,
@@ -94,7 +106,7 @@ func (b *BloodSpot) drawMe(screen *ebiten.Image) {
 		screen,
 		boardStartX+boardBorderWidth+tileMiddlePx+b.pos.AtVec(0)-tileSize/4,
 		boardStartY+boardBorderWidth+tileMiddlePx+b.pos.AtVec(1)+tileSize/4,
-		size*x*0.8,
+		size*x*0.77,
 		color.NRGBA{
 			R: 255,
 			G: 10,
