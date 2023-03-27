@@ -2,31 +2,31 @@ package main
 
 import "math/rand"
 
-func reset(g *Game) *Game {
+func reset(g *game) *game {
 	g.meatCntP = new(int)
 	g.rottenMeatCntP = new(int)
 	g.vegetableCntP = new(int)
 
 	initPos(g)
 
-	g.herbivores = make(map[*Herbivore]struct{})
+	g.herbivores = make(map[*herbivore]struct{})
 	for i := 0; i < startingHerbivoresCnt; i++ {
-		newHerbiP := &Herbivore{}
+		newHerbiP := &herbivore{}
 		newHerbiP.init(g, "A herbivore", nil, [2]any{nil, nil})
 	}
-	g.carnivores = make(map[*Carnivore]struct{})
+	g.carnivores = make(map[*carnivore]struct{})
 	for i := 0; i < startingCarnivoresCnt; i++ {
-		newCarniP := &Carnivore{}
+		newCarniP := &carnivore{}
 		newCarniP.init(g, "A carnivore", nil, [2]any{nil, nil})
 	}
-	g.meats = make(map[*Food]struct{})
-	g.rottenMeats = make(map[*Food]struct{})
-	g.vegetables = make(map[*Food]struct{})
-	g.foods = make(map[*Food]struct{})
-	g.bloodSpots = make(map[*BloodSpot]struct{})
+	g.meats = make(map[*food]struct{})
+	g.rottenMeats = make(map[*food]struct{})
+	g.vegetables = make(map[*food]struct{})
+	g.foods = make(map[*food]struct{})
+	g.bloodSpots = make(map[*bloodSpot]struct{})
 
 	for i := 0; i < startingRandomFoodsCnt; i++ {
-		newFoodP := &Food{}
+		newFoodP := &food{}
 
 		foodTypes := map[int]string{
 			0: "meat",
@@ -41,7 +41,7 @@ func reset(g *Game) *Game {
 		)
 	}
 	for i := 0; i < startingMeatCnt; i++ {
-		newFoodP := &Food{}
+		newFoodP := &food{}
 		newFoodP.init(
 			g,
 			"meat",
@@ -50,7 +50,7 @@ func reset(g *Game) *Game {
 		)
 	}
 	for i := 0; i < startingRottenMeatCnt; i++ {
-		newFoodP := &Food{}
+		newFoodP := &food{}
 		newFoodP.init(
 			g,
 			"rottenMeat",
@@ -59,7 +59,7 @@ func reset(g *Game) *Game {
 		)
 	}
 	for i := 0; i < startingVegetablesCnt; i++ {
-		newFoodP := &Food{}
+		newFoodP := &food{}
 		newFoodP.init(
 			g,
 			"vegetable",
@@ -70,13 +70,13 @@ func reset(g *Game) *Game {
 	return g
 }
 
-func initPos(g *Game) {
-	g.herbivoresPos = make(map[float64]map[float64]map[*Herbivore]struct{})
-	g.carnivoresPos = make(map[float64]map[float64]map[*Carnivore]struct{})
-	g.meatPos = make(map[float64]map[float64]map[*Food]struct{})
-	g.rottenMeatPos = make(map[float64]map[float64]map[*Food]struct{})
-	g.vegetablesPos = make(map[float64]map[float64]map[*Food]struct{})
-	g.bloodSpotsPos = make(map[float64]map[float64]map[*BloodSpot]struct{})
+func initPos(g *game) {
+	g.herbivoresPos = make(map[float64]map[float64]map[*herbivore]struct{})
+	g.carnivoresPos = make(map[float64]map[float64]map[*carnivore]struct{})
+	g.meatPos = make(map[float64]map[float64]map[*food]struct{})
+	g.rottenMeatPos = make(map[float64]map[float64]map[*food]struct{})
+	g.vegetablesPos = make(map[float64]map[float64]map[*food]struct{})
+	g.bloodSpotsPos = make(map[float64]map[float64]map[*bloodSpot]struct{})
 	g.tilesPos = make([]float64, 0)
 
 	// Herbivores.
@@ -85,9 +85,9 @@ func initPos(g *Game) {
 		x := 0
 		for j := 0; j < boardWidthTiles; j++ {
 			if g.herbivoresPos[float64(y)] == nil {
-				g.herbivoresPos[float64(y)] = make(map[float64]map[*Herbivore]struct{})
+				g.herbivoresPos[float64(y)] = make(map[float64]map[*herbivore]struct{})
 			}
-			g.herbivoresPos[float64(y)][float64(x)] = make(map[*Herbivore]struct{})
+			g.herbivoresPos[float64(y)][float64(x)] = make(map[*herbivore]struct{})
 			x += tileSize + boardTilesGapWidth
 		}
 		y += tileSize + boardTilesGapWidth
@@ -99,9 +99,9 @@ func initPos(g *Game) {
 		x := 0
 		for j := 0; j < boardWidthTiles; j++ {
 			if g.carnivoresPos[float64(y)] == nil {
-				g.carnivoresPos[float64(y)] = make(map[float64]map[*Carnivore]struct{})
+				g.carnivoresPos[float64(y)] = make(map[float64]map[*carnivore]struct{})
 			}
-			g.carnivoresPos[float64(y)][float64(x)] = make(map[*Carnivore]struct{}, 0)
+			g.carnivoresPos[float64(y)][float64(x)] = make(map[*carnivore]struct{}, 0)
 			x += tileSize + boardTilesGapWidth
 		}
 		y += tileSize + boardTilesGapWidth
@@ -113,9 +113,9 @@ func initPos(g *Game) {
 		x := 0
 		for j := 0; j < boardWidthTiles; j++ {
 			if g.meatPos[float64(y)] == nil {
-				g.meatPos[float64(y)] = make(map[float64]map[*Food]struct{})
+				g.meatPos[float64(y)] = make(map[float64]map[*food]struct{})
 			}
-			g.meatPos[float64(y)][float64(x)] = make(map[*Food]struct{}, 0)
+			g.meatPos[float64(y)][float64(x)] = make(map[*food]struct{}, 0)
 			x += tileSize + boardTilesGapWidth
 		}
 		y += tileSize + boardTilesGapWidth
@@ -127,9 +127,9 @@ func initPos(g *Game) {
 		x := 0
 		for j := 0; j < boardWidthTiles; j++ {
 			if g.rottenMeatPos[float64(y)] == nil {
-				g.rottenMeatPos[float64(y)] = make(map[float64]map[*Food]struct{})
+				g.rottenMeatPos[float64(y)] = make(map[float64]map[*food]struct{})
 			}
-			g.rottenMeatPos[float64(y)][float64(x)] = make(map[*Food]struct{}, 0)
+			g.rottenMeatPos[float64(y)][float64(x)] = make(map[*food]struct{}, 0)
 			x += tileSize + boardTilesGapWidth
 		}
 		y += tileSize + boardTilesGapWidth
@@ -141,9 +141,9 @@ func initPos(g *Game) {
 		x := 0
 		for j := 0; j < boardWidthTiles; j++ {
 			if g.vegetablesPos[float64(y)] == nil {
-				g.vegetablesPos[float64(y)] = make(map[float64]map[*Food]struct{})
+				g.vegetablesPos[float64(y)] = make(map[float64]map[*food]struct{})
 			}
-			g.vegetablesPos[float64(y)][float64(x)] = make(map[*Food]struct{}, 0)
+			g.vegetablesPos[float64(y)][float64(x)] = make(map[*food]struct{}, 0)
 			x += tileSize + boardTilesGapWidth
 		}
 		y += tileSize + boardTilesGapWidth
@@ -155,9 +155,9 @@ func initPos(g *Game) {
 		x := 0
 		for j := 0; j < boardWidthTiles; j++ {
 			if g.bloodSpotsPos[float64(y)] == nil {
-				g.bloodSpotsPos[float64(y)] = make(map[float64]map[*BloodSpot]struct{})
+				g.bloodSpotsPos[float64(y)] = make(map[float64]map[*bloodSpot]struct{})
 			}
-			g.bloodSpotsPos[float64(y)][float64(x)] = make(map[*BloodSpot]struct{}, 0)
+			g.bloodSpotsPos[float64(y)][float64(x)] = make(map[*bloodSpot]struct{}, 0)
 			x += tileSize + boardTilesGapWidth
 		}
 		y += tileSize + boardTilesGapWidth

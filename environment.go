@@ -1,8 +1,8 @@
 package main
 
-func growVegetables(g *Game) {
+func growVegetables(g *game) {
 	for i := 0; i < foodPerInterval; i++ {
-		newFoodP := &Food{}
+		newFoodP := &food{}
 		newFoodP.init(
 			g,
 			"vegetable",

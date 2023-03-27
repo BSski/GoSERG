@@ -7,27 +7,27 @@ import (
 	"strconv"
 )
 
-type Game struct {
-	herbivores    map[*Herbivore]struct{}
-	herbivoresPos map[float64]map[float64]map[*Herbivore]struct{} // Those must be float64 to be compatible with vectors.
+type game struct {
+	herbivores    map[*herbivore]struct{}
+	herbivoresPos map[float64]map[float64]map[*herbivore]struct{} // Those must be float64 to be compatible with vectors.
 
-	carnivores    map[*Carnivore]struct{}
-	carnivoresPos map[float64]map[float64]map[*Carnivore]struct{}
+	carnivores    map[*carnivore]struct{}
+	carnivoresPos map[float64]map[float64]map[*carnivore]struct{}
 
-	foods map[*Food]struct{}
+	foods map[*food]struct{}
 
-	meats          map[*Food]struct{}
-	meatPos        map[float64]map[float64]map[*Food]struct{}
+	meats          map[*food]struct{}
+	meatPos        map[float64]map[float64]map[*food]struct{}
 	meatCntP       *int
-	rottenMeats    map[*Food]struct{}
-	rottenMeatPos  map[float64]map[float64]map[*Food]struct{}
+	rottenMeats    map[*food]struct{}
+	rottenMeatPos  map[float64]map[float64]map[*food]struct{}
 	rottenMeatCntP *int
-	vegetables     map[*Food]struct{}
-	vegetablesPos  map[float64]map[float64]map[*Food]struct{}
+	vegetables     map[*food]struct{}
+	vegetablesPos  map[float64]map[float64]map[*food]struct{}
 	vegetableCntP  *int
 
-	bloodSpots    map[*BloodSpot]struct{}
-	bloodSpotsPos map[float64]map[float64]map[*BloodSpot]struct{}
+	bloodSpots    map[*bloodSpot]struct{}
+	bloodSpotsPos map[float64]map[float64]map[*bloodSpot]struct{}
 
 	counter  int
 	tilesPos []float64
@@ -35,16 +35,16 @@ type Game struct {
 	paused bool
 }
 
-func newGame() *Game {
-	g := &Game{}
+func newGame() *game {
+	g := &game{}
 	return reset(g)
 }
 
-func (g *Game) Layout(_, _ int) (int, int) {
+func (g *game) Layout(_, _ int) (int, int) {
 	return screenWidth, screenHeight
 }
 
-func (g *Game) Update() error {
+func (g *game) Update() error {
 	checkKeybinds(g)
 
 	if g.counter%updateInterval == 0 {
@@ -64,7 +64,7 @@ func (g *Game) Update() error {
 	return nil
 }
 
-func (g *Game) Draw(screen *ebiten.Image) {
+func (g *game) Draw(screen *ebiten.Image) {
 	ebitenutil.DrawRect(screen, boardStartX, boardStartY, boardWidthPx, boardWidthPx, color.Gray{Y: 200})
 
 	// drawAnimal tiles

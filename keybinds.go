@@ -5,7 +5,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
-func checkKeybinds(g *Game) {
+func checkKeybinds(g *game) {
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		g.paused = checkPauseAction(g)
 	}
@@ -14,7 +14,7 @@ func checkKeybinds(g *Game) {
 	}
 }
 
-func checkPauseAction(g *Game) bool {
+func checkPauseAction(g *game) bool {
 	if g.paused == false {
 		return true
 	} else {

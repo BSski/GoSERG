@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func printHerbivores(g *Game) {
+func printHerbivores(g *game) {
 	fmt.Println("")
 	fmt.Println("")
 	fmt.Println("")
@@ -14,7 +14,7 @@ func printHerbivores(g *Game) {
 	}
 }
 
-func printMeat(g *Game) {
+func printMeat(g *game) {
 	fmt.Println("")
 	fmt.Println("")
 	fmt.Println("")

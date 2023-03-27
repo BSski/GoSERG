@@ -8,15 +8,15 @@ import (
 	"math/rand"
 )
 
-type BloodSpot struct {
-	gameP *Game
+type bloodSpot struct {
+	gameP *game
 
 	seed float64
 	ttl  int
 	pos  *mat.VecDense
 }
 
-func (b *BloodSpot) init(g *Game, pos [2]float64) {
+func (b *bloodSpot) init(g *game, pos [2]float64) {
 	// insert a comment here and in other entities
 	b.pos = mat.NewVecDense(2, []float64{pos[0], pos[1]})
 
@@ -29,7 +29,7 @@ func (b *BloodSpot) init(g *Game, pos [2]float64) {
 	game.bloodSpotsPos[y][x][b] = struct{}{}
 }
 
-func (b *BloodSpot) drawMe(screen *ebiten.Image) {
+func (b *bloodSpot) drawMe(screen *ebiten.Image) {
 	var x float64
 	switch {
 	case b.ttl > 9:
@@ -116,14 +116,14 @@ func (b *BloodSpot) drawMe(screen *ebiten.Image) {
 	)
 }
 
-func (b *BloodSpot) vanish() {
+func (b *bloodSpot) vanish() {
 	game := *b.gameP
 	x, y := b.pos.AtVec(0), b.pos.AtVec(1)
 	delete(game.bloodSpotsPos[y][x], b)
 	delete(game.bloodSpots, b)
 }
 
-func ageBloodSpots(g *Game) {
+func ageBloodSpots(g *game) {
 	for i := range g.bloodSpots {
 		if i.ttl -= 1; i.ttl <= 0 {
 			i.vanish()

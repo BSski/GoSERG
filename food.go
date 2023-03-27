@@ -8,17 +8,17 @@ import (
 	"math/rand"
 )
 
-type Food struct {
-	gameP *Game
+type food struct {
+	gameP *game
 
 	energy         int
 	pos            *mat.VecDense
 	color          color.NRGBA
 	foodType       string
-	currentTypePos map[float64]map[float64]map[*Food]struct{}
+	currentTypePos map[float64]map[float64]map[*food]struct{}
 }
 
-func (f *Food) init(g *Game, foodType string, energy any, pos [2]any) {
+func (f *food) init(g *game, foodType string, energy any, pos [2]any) {
 	f.gameP = g
 	game := *f.gameP
 
@@ -81,7 +81,7 @@ func (f *Food) init(g *Game, foodType string, energy any, pos [2]any) {
 	f.currentTypePos[y][x][f] = struct{}{}
 }
 
-func (f *Food) drawMe(screen *ebiten.Image) {
+func (f *food) drawMe(screen *ebiten.Image) {
 	var x float64
 	switch {
 	case f.energy > 30:
@@ -101,7 +101,7 @@ func (f *Food) drawMe(screen *ebiten.Image) {
 	)
 }
 
-func (f *Food) getBitten(biteSize int) {
+func (f *food) getBitten(biteSize int) {
 	f.energy -= biteSize
 	if f.energy <= 0 {
 		game := *f.gameP
@@ -123,14 +123,14 @@ func (f *Food) getBitten(biteSize int) {
 	}
 }
 
-func spawnFood(g *Game, x, y float64, energy int, foodType string) {
-	newFoodP := &Food{}
+func spawnFood(g *game, x, y float64, energy int, foodType string) {
+	newFoodP := &food{}
 	newFoodP.init(g, foodType, energy, [2]any{x, y})
 }
 
 // To remember: do not delete food while iterating over food list.
 // Add to list to deletion instead, same as in herbi/carni actions.
-//func doFoodActions(g *Game) {
+//func doFoodActions(g *game) {
 //	for i := range g.foods {
 //		// becomeOlder()
 //	}

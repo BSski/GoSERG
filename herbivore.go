@@ -8,8 +8,8 @@ import (
 	"math/rand"
 )
 
-type Herbivore struct {
-	gameP *Game
+type herbivore struct {
+	gameP *game
 
 	toRemove bool
 	name     string
@@ -18,7 +18,7 @@ type Herbivore struct {
 	color    color.NRGBA
 }
 
-func (h *Herbivore) init(g *Game, name string, energy any, pos [2]any) {
+func (h *herbivore) init(g *game, name string, energy any, pos [2]any) {
 	h.toRemove = true
 	hColor := color.NRGBA{
 		R: 10,
@@ -59,7 +59,7 @@ func (h *Herbivore) init(g *Game, name string, energy any, pos [2]any) {
 	game.herbivoresPos[y][x][h] = struct{}{}
 }
 
-func (h *Herbivore) move() {
+func (h *herbivore) move() {
 	game := *h.gameP
 
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
@@ -80,7 +80,7 @@ func (h *Herbivore) move() {
 }
 
 // If an animal crosses the board boundary, teleport it to the other side.
-func (h *Herbivore) teleportAtBoundary(pos *mat.VecDense) *mat.VecDense {
+func (h *herbivore) teleportAtBoundary(pos *mat.VecDense) *mat.VecDense {
 	if pos.AtVec(0) > lastTilePx {
 		pos.SetVec(0, 0)
 	} else if pos.AtVec(0) < 0 {
@@ -94,7 +94,7 @@ func (h *Herbivore) teleportAtBoundary(pos *mat.VecDense) *mat.VecDense {
 	return pos
 }
 
-func (h *Herbivore) drawMe(screen *ebiten.Image) {
+func (h *herbivore) drawMe(screen *ebiten.Image) {
 	var x float64
 	switch {
 	case h.energy > 30:
@@ -114,7 +114,7 @@ func (h *Herbivore) drawMe(screen *ebiten.Image) {
 	)
 }
 
-func (h *Herbivore) eat() bool {
+func (h *herbivore) eat() bool {
 	game := *h.gameP
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	if len(game.vegetablesPos[y][x]) == 0 {
@@ -136,7 +136,7 @@ func (h *Herbivore) eat() bool {
 	return true
 }
 
-func (h *Herbivore) pickFoodToEat(x, y float64) *Food {
+func (h *herbivore) pickFoodToEat(x, y float64) *food {
 	game := *h.gameP
 	// Picking random one could be done just by picking first one, because
 	// iterating over a map results in semi-random order. It's better to do it explicitly.
@@ -151,7 +151,7 @@ func (h *Herbivore) pickFoodToEat(x, y float64) *Food {
 	return nil
 }
 
-func (h *Herbivore) breed() bool {
+func (h *herbivore) breed() bool {
 	if h.energy < herbivoresBreedThreshold {
 		return false
 	}
@@ -168,16 +168,16 @@ func (h *Herbivore) breed() bool {
 	}
 
 	childEnergy := (h.energy + partnerP.energy) / 4
-	childP := &Herbivore{}
+	childP := &herbivore{}
 	childP.init(h.gameP, "A herbivore", childEnergy, [2]any{x, y})
 	h.energy /= 2
 	partnerP.energy /= 2
 	return true
 }
 
-func (h *Herbivore) pickPartnerToBreed(x, y float64) *Herbivore {
+func (h *herbivore) pickPartnerToBreed(x, y float64) *herbivore {
 	game := *h.gameP
-	var potentialPartners []*Herbivore
+	var potentialPartners []*herbivore
 	for herbi := range game.herbivoresPos[y][x] {
 		if herbi.energy < herbivoresBreedThreshold {
 			continue
@@ -194,7 +194,7 @@ func (h *Herbivore) pickPartnerToBreed(x, y float64) *Herbivore {
 	return potentialPartners[k]
 }
 
-func (h *Herbivore) died(energy int) {
+func (h *herbivore) died(energy int) {
 	game := *h.gameP
 	x, y := h.pos.AtVec(0), h.pos.AtVec(1)
 	spawnFood(h.gameP, x, y, energy, "meat")
@@ -202,8 +202,8 @@ func (h *Herbivore) died(energy int) {
 	delete(game.herbivores, h)
 }
 
-func doHerbivoreActions(g *Game) {
-	var toDelete []*Herbivore
+func doHerbivoreActions(g *game) {
+	var toDelete []*herbivore
 	for i := range g.herbivores {
 		if i.energy -= herbivoresMoveCost; i.energy <= 0 {
 			i.toRemove = false

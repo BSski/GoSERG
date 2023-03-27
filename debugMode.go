@@ -1,12 +1,12 @@
 package main
 
-func debugNewGame() *Game {
+func debugNewGame() *game {
 	g := newGame()
 	debugSetting(g)
 	return g
 }
-func debugSetting(g *Game) {
-	meatExampleP := &Food{}
+func debugSetting(g *game) {
+	meatExampleP := &food{}
 	meatExampleP.init(
 		g,
 		"meat",
@@ -14,7 +14,7 @@ func debugSetting(g *Game) {
 		[2]any{144, 144},
 	)
 
-	rottenMeatExampleP := &Food{}
+	rottenMeatExampleP := &food{}
 	rottenMeatExampleP.init(
 		g,
 		"rottenMeat",
@@ -22,7 +22,7 @@ func debugSetting(g *Game) {
 		[2]any{144, 144},
 	)
 
-	vegetableExampleP := &Food{}
+	vegetableExampleP := &food{}
 	vegetableExampleP.init(
 		g,
 		"vegetable",
