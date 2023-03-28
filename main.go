@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"image"
 	"io"
 	"log"
 	"math/rand"
@@ -20,6 +22,13 @@ func main() {
 func run(stdout io.Writer) error {
 	rand.Seed(time.Now().UnixNano())
 	ebiten.SetWindowSize(1061, 670)
+
+	var err error
+	_, sergLogo, err := ebitenutil.NewImageFromFile("sprites/serg.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	ebiten.SetWindowIcon([]image.Image{sergLogo})
 	ebiten.SetWindowTitle("GoSERG")
 
 	if err := ebiten.RunGame(newGame()); err != nil {
