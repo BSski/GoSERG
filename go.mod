@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.4.4
 	golang.org/x/image v0.0.0-20220722155232-062f8c9fd539
-	gonum.org/v1/gonum v0.12.0
 )
 
 require (
