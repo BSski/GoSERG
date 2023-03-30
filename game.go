@@ -278,8 +278,6 @@ func (g *game) Draw(screen *ebiten.Image) {
 	options.GeoM.Translate(860, 11)
 	screen.DrawImage(g.rightPanelSprites[g.rightPanelOption], options)
 
-	g.herbivoresTotalQuantities = []int{1, 2, 3, 4, 5, 6, 7, 8, 99, 999, 999}
-	// TODO: rightPanelOptions print "Carnivores" on option 0 for some reason.
 	xHerbiChart := 36
 	for i := 0; i < len(g.herbivoresTotalQuantities); i++ {
 		if len(g.herbivoresTotalQuantities) > 800 {
