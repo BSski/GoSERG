@@ -70,7 +70,7 @@ func newGame() *game {
 
 	g := &game{
 		rightPanelSprites: [3]*ebiten.Image{rightPanelOption1, rightPanelOption2, rightPanelOption3},
-		rightPanelOption:  0,
+		rightPanelOption:  2,
 	}
 	reset(g)
 	return g

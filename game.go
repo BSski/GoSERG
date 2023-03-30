@@ -343,5 +343,17 @@ func (g *game) Draw(screen *ebiten.Image) {
 			drawDistributionBars(screen, 873, d.y, d.values, len(d.values), color.RGBA{R: 0, G: 255, B: 85, A: 255})
 		}
 	case 2:
+		data := []struct {
+			values []int
+			y      int
+		}{
+			{g.carnivoresSpeeds, 89},
+			{g.carnivoresBowelLengths, 239},
+			{g.carnivoresFatLimits, 389},
+			{g.carnivoresLegsLengths, 539},
+		}
+		for _, d := range data {
+			drawDistributionBars(screen, 873, d.y, d.values, len(d.values), color.RGBA{R: 255, G: 112, B: 77, A: 255})
+		}
 	}
 }
