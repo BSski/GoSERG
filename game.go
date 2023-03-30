@@ -20,6 +20,8 @@ var (
 	mPlus1pRegular13 font.Face
 	mPlus1pRegular14 font.Face
 	mPlus1pRegular18 font.Face
+
+	buttons map[string]button
 )
 
 func init() {
@@ -81,6 +83,8 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	buttons = getBtns()
 }
 
 func (g *game) Layout(_, _ int) (int, int) {
@@ -195,7 +199,7 @@ func (g *game) Draw(screen *ebiten.Image) {
 		},
 	}
 
-	chartInfo := chartsInfo[g.rightPanelButtonClicked]
+	chartInfo := chartsInfo[g.rightPanelOption]
 
 	if title, ok := chartInfo["title"].(string); ok {
 		text.Draw(screen, title, mPlus1pRegular11, 913, 58, color.RGBA{R: 50, G: 50, B: 50, A: 255})
@@ -263,4 +267,81 @@ func (g *game) Draw(screen *ebiten.Image) {
 	}
 
 	text.Draw(screen, "NUMBER", mPlus1pRegular12, 85, 435, color.Gray{Y: 50})
+
+	for b := range buttons {
+		options := &ebiten.DrawImageOptions{}
+		options.GeoM.Translate(buttons[b].x, buttons[b].y)
+		screen.DrawImage(buttons[b].sprites[buttons[b].state], options)
+	}
+
+	options := &ebiten.DrawImageOptions{}
+	options.GeoM.Translate(860, 11)
+	screen.DrawImage(g.rightPanelSprites[g.rightPanelOption], options)
+
+	g.herbivoresTotalQuantities = []int{1, 2, 3, 4, 5, 6, 7, 8, 99, 999, 999}
+	// TODO: rightPanelOptions print "Carnivores" on option 0 for some reason.
+	xHerbiChart := 36
+	for i := 0; i < len(g.herbivoresTotalQuantities); i++ {
+		if len(g.herbivoresTotalQuantities) > 800 {
+			if i%(int(len(g.herbivoresTotalQuantities)/800)+1) == 0 {
+				xHerbiChart++
+				vector.DrawFilledRect(screen, float32(xHerbiChart), float32(648-int(g.herbivoresTotalQuantities[i]/5)), 2, 2, color.RGBA{R: 0, G: 230, B: 115, A: 255}, false)
+			}
+		} else {
+			vector.DrawFilledRect(screen, float32(37+i), float32(648-int(g.herbivoresTotalQuantities[i]/5)), 2, 2, color.RGBA{R: 0, G: 230, B: 115, A: 255}, false)
+		}
+	}
+	xCarniChart := 36
+	for i := 0; i < len(g.carnivoresTotalQuantities); i++ {
+		if len(g.carnivoresTotalQuantities) > 800 {
+			if i%(int(len(g.carnivoresTotalQuantities)/800)+1) == 0 {
+				xCarniChart++
+				vector.DrawFilledRect(screen, float32(xCarniChart), float32(648-int(g.carnivoresTotalQuantities[i]/5)), 2, 2, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
+			}
+		} else {
+			vector.DrawFilledRect(screen, float32(37+i), float32(648-int(g.carnivoresTotalQuantities[i]/5)), 2, 2, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
+		}
+	}
+
+	// Drawing charts.
+	// Quantity of herbivores and carnivores charts.
+	for i := 0; i < len(g.herbivoresQuantities); i++ {
+		vector.DrawFilledRect(screen, float32(29+i), float32(422-int(g.herbivoresQuantities[i]/5)), 2, 2, color.RGBA{R: 0, G: 230, B: 115, A: 255}, false)
+	}
+	for i := 0; i < len(g.carnivoresQuantities); i++ {
+		vector.DrawFilledRect(screen, float32(29+i), float32(422-int(g.carnivoresQuantities[i]/5)), 2, 2, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
+	}
+
+	switch g.rightPanelOption {
+	case 0:
+		herbivoreData := [][]float64{
+			g.herbivoresMeanSpeeds,
+			g.herbivoresMeanBowelLengths,
+			g.herbivoresMeanFatLimits,
+			g.herbivoresMeanLegsLengths,
+		}
+		carnivoreData := [][]float64{
+			g.carnivoresMeanSpeeds,
+			g.carnivoresMeanBowelLengths,
+			g.carnivoresMeanFatLimits,
+			g.carnivoresMeanLegsLengths,
+		}
+		startY := []int{180, 330, 480, 630}
+		drawCharts(screen, herbivoreData, startY, color.RGBA{R: 0, G: 255, B: 85, A: 255})
+		drawCharts(screen, carnivoreData, startY, color.RGBA{R: 255, G: 112, B: 77, A: 255})
+	case 1:
+		data := []struct {
+			values []int
+			y      int
+		}{
+			{g.herbivoresSpeeds, 89},
+			{g.herbivoresBowelLengths, 239},
+			{g.herbivoresFatLimits, 389},
+			{g.herbivoresLegsLengths, 539},
+		}
+		for _, d := range data {
+			drawDistributionBars(screen, 873, d.y, d.values, len(d.values), color.RGBA{R: 0, G: 255, B: 85, A: 255})
+		}
+	case 2:
+	}
 }

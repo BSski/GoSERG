@@ -23,7 +23,6 @@ func run(stdout io.Writer) error {
 	rand.Seed(time.Now().UnixNano())
 	ebiten.SetWindowSize(1061, 670)
 
-	var err error
 	_, sergLogo, err := ebitenutil.NewImageFromFile("sprites/serg.png")
 	if err != nil {
 		log.Fatal(err)
