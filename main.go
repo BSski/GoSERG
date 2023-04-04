@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	//defer profile.Start().Stop()
 	if err := run(os.Stdout); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
@@ -22,7 +23,9 @@ func main() {
 func run(stdout io.Writer) error {
 	rand.Seed(time.Now().UnixNano())
 	ebiten.SetWindowSize(1061, 670)
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 
+	// TODO: Check what will happen if you turn off vsync.
 	_, sergLogo, err := ebitenutil.NewImageFromFile("sprites/serg.png")
 	if err != nil {
 		log.Fatal(err)

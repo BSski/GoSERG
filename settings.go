@@ -1,9 +1,11 @@
 package main
 
 type settings struct {
-	tempo float32
+	boardSize int
 
-	mutationChance float32
+	tempo float64
+
+	mutationChance float64
 
 	herbsSpawnRate int
 	herbsPerSpawn  int

@@ -21,7 +21,7 @@ var (
 	mPlus1pRegular14 font.Face
 	mPlus1pRegular18 font.Face
 
-	buttons map[string]button
+	buttons map[string]*button
 )
 
 func init() {
@@ -91,14 +91,91 @@ func (g *game) Layout(_, _ int) (int, int) {
 	return 1061, 670
 }
 
+// TODO: big problems with buttons: no debounce and also some are not working and throwing errors.
 func (g *game) Update() error {
+	processEvents(g)
+
+	// TODO: maybe do this and delete all pause checks?
+	//if g.pause {
+	//	return nil
+	//}
+
+	// TODO: set g.clock.tick(g.cycles_per_sec) here.
+	g.counterPrev = g.counter
+	g.bigCounterPrev = g.bigCounter
+
+	if !g.pause {
+		g.counter += g.s.tempo
+		if int(g.counter) >= 120 {
+			g.bigCounter += 1
+			g.counter = 0
+		}
+	}
+
+	g.counterForFps += 1
+	if g.counterForFps >= 120 {
+		g.counterForFps = 0
+	}
+
+	if int(g.counterPrev) != int(g.counter) && int(g.counter)%speed[g.s.herbsSpawnRate] == 0 {
+		createHerbs(g, g.s.herbsPerSpawn)
+	}
+
+	if !g.pause {
+		// Check if any herbivore or carnivore starved.
+		for i := 0; i < len(g.carnivores); i++ {
+			if g.carnivores[i].energy <= 0 {
+				g.carnivores[i].starve()
+			}
+		}
+		for i := 0; i < len(g.herbivores); i++ {
+			if g.herbivores[i].energy <= 0 {
+				g.herbivores[i].starve()
+			}
+		}
+
+		// Breed or eat.
+		for i := 0; i < len(g.carnivores); i++ {
+			g.carnivores[i].action()
+			g.carnivores[i].age += 1
+		}
+		for i := 0; i < len(g.herbivores); i++ {
+			g.herbivores[i].action()
+			g.herbivores[i].age += 1
+		}
+	}
+
+	// Move carnivores.
+	for i := 0; i < len(g.carnivores); i++ {
+		g.carnivores[i].move()
+	}
+
+	// Move herbivores.
+	for i := 0; i < len(g.herbivores); i++ {
+		g.herbivores[i].move()
+	}
+
 	return nil
 }
 
 func (g *game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Gray{Y: 239})
-	text.Draw(screen, "SERG", pressStart2P, 35, 72, color.Gray{Y: 80})
-	text.Draw(screen, "bsski 2023", mPlus1pRegular11, 77, 83, color.Gray{Y: 200})
+
+	// TODO: czy ten if jest potrzebny?
+	//if int(g.counterForFps)%g.cyclesPerSecDividers[g.chosenCyclesPerSec] == 0 {
+	//
+	//}
+
+	// Animation to prevent Windows from hanging the window when paused.
+	// Useful in approximating lag.
+	text.Draw(screen, string(g.animation[g.animationCounter]), mPlus1pRegular14, 1048, 648, color.Gray{Y: 50})
+	if g.animationCounter == len(g.animation)-1 {
+		g.animationCounter = 0
+	}
+	g.animationCounter += 1
+
+	text.Draw(screen, "SERG", pressStart2P, 35, 60, color.Gray{Y: 80})
+	text.Draw(screen, "bsski 2023", mPlus1pRegular11, 77, 71, color.Gray{Y: 200})
 
 	squareSize := float32(10)
 	y := float32(19)
@@ -354,4 +431,30 @@ func (g *game) Draw(screen *ebiten.Image) {
 			drawDistributionBars(screen, 873, d.y, d.values, len(d.values), color.RGBA{R: 255, G: 112, B: 77, A: 255})
 		}
 	}
+
+	// Draw all herbs and increment their age.
+	for i := 0; i < len(g.herbs); i++ {
+		g.herbs[i].draw(screen)
+		if !g.pause {
+			g.herbs[i].age += 1
+		}
+	}
+
+	// TODO: change carni/herbi colors basing on their energy level.
+	// Draw all carnivores and increment their age.
+	for i := 0; i < len(g.carnivores); i++ {
+		g.carnivores[i].draw(screen)
+		if !g.pause {
+			g.carnivores[i].age += 1
+		}
+	}
+
+	// Draw all herbivores and increment their age.
+	for i := 0; i < len(g.herbivores); i++ {
+		g.herbivores[i].draw(screen)
+		if !g.pause {
+			g.herbivores[i].age += 1
+		}
+	}
+	vector.DrawFilledRect(screen, 694, 43, 9, 9, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
 }

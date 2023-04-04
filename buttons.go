@@ -15,7 +15,7 @@ type button struct {
 	y          float64
 }
 
-func getBtns() map[string]button {
+func getBtns() map[string]*button {
 	minusDownSpr, _, err := ebitenutil.NewImageFromFile("sprites/minus_down.png")
 	if err != nil {
 		log.Fatal(err)
@@ -57,7 +57,7 @@ func getBtns() map[string]button {
 		log.Fatal(err)
 	}
 
-	var buttons = map[string]button{
+	var buttons = map[string]*button{
 		"start": {
 			state:   0,
 			sprites: [2]*ebiten.Image{startUpSpr, startDownSpr},
@@ -76,197 +76,185 @@ func getBtns() map[string]button {
 			x:       136,
 			y:       86,
 		},
-		"cps_plus": {
+		"cpsPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       85,
 		},
-		"cps_minus": {
+		"cpsMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       85,
 		},
-		"tempo_plus": {
+		"tempoPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       105,
 		},
-		"tempo_minus": {
+		"tempoMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       105,
 		},
-		"mutation_plus": {
+		"mutationPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       125,
 		},
-		"mutation_minus": {
+		"mutationMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       125,
 		},
-		"herbs_starting_nr_plus": {
+		"herbsStartingNrPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       165,
 		},
-		"herbs_starting_nr_minus": {
+		"herbsStartingNrMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       165,
 		},
-		"herbs_energy_plus": {
+		"herbsEnergyPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       185,
 		},
-		"herbs_energy_minus": {
+		"herbsEnergyMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       185,
 		},
-		"herbs_per_spawn_plus": {
+		"herbsPerSpawnPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       205,
 		},
-		"herbs_per_spawn_minus": {
+		"herbsPerSpawnMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       205,
 		},
-		"herbs_spawn_rate_plus": {
+		"herbsSpawnRatePlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       225,
 		},
-		"herbs_spawn_rate_minus": {
+		"herbsSpawnRateMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       225,
 		},
-		"herbivores_starting_nr_plus": {
+		"herbivoresStartingNrPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       265,
 		},
-		"herbivores_starting_nr_minus": {
+		"herbivoresStartingNrMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       265,
 		},
-		"herbivores_spawn_energy_plus": {
+		"herbivoresSpawnEnergyPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       285,
 		},
-		"herbivores_spawn_energy_minus": {
+		"herbivoresSpawnEnergyMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       285,
 		},
-		"herbivores_breed_level_plus": {
+		"herbivoresBreedLevelPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       305,
 		},
-		"herbivores_breed_level_minus": {
+		"herbivoresBreedLevelMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       305,
 		},
-		"herbivores_move_cost_plus": {
+		"herbivoresMoveCostPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       325,
 		},
-		"herbivores_move_cost_minus": {
+		"herbivoresMoveCostMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       325,
 		},
-		"carnivores_starting_nr_plus": {
+		"carnivoresStartingNrPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       365,
 		},
-		"carnivores_starting_nr_minus": {
+		"carnivoresStartingNrMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       365,
 		},
-		"carnivores_spawn_energy_plus": {
+		"carnivoresSpawnEnergyPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       385,
 		},
-		"carnivores_spawn_energy_minus": {
+		"carnivoresSpawnEnergyMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       385,
 		},
-		"carnivores_breed_level_plus": {
+		"carnivoresBreedLevelPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       405,
 		},
-		"carnivores_breed_level_minus": {
+		"carnivoresBreedLevelMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       405,
 		},
-		"carnivores_move_cost_plus": {
+		"carnivoresMoveCostPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       425,
 		},
-		"carnivores_move_cost_minus": {
+		"carnivoresMoveCostMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       425,
-		},
-		"carnivores_kill_energy_plus": {
-			state:   0,
-			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
-			x:       826,
-			y:       445,
-		},
-		"carnivores_kill_energy_minus": {
-			state:   0,
-			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
-			x:       811,
-			y:       445,
 		},
 	}
 	return buttons
