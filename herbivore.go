@@ -167,11 +167,11 @@ func (h *herbivore) move() {
 
 	var moveCost float64
 	moveCost += float64(h.g.s.herbivoresMoveCost)
-	moveCost += float64(h.g.s.herbivoresMoveCost) * float64(speed[h.dna[0]])
+	moveCost += float64(h.g.s.herbivoresMoveCost) * float64(speedCost[h.dna[0]])
 	moveCost += float64(h.g.s.herbivoresMoveCost) * bowelLengthCost[h.dna[1]]
 	moveCost += float64(h.g.s.herbivoresMoveCost) * fatLimitCost[h.dna[2]]
 	moveCost += float64(h.g.s.herbivoresMoveCost) * legsLengthCost[h.dna[3]]
-	moveCost *= float64(h.legsLength)
+	moveCost *= float64(legsLength[h.dna[3]])
 	h.energy -= int(moveCost)
 
 	// Move away from the border.
@@ -214,9 +214,9 @@ func (h *herbivore) move() {
 				return
 			}
 		}
-		xSum, ySum, xPresent, yPresent := h.scanDistantMates()
+		xSum, ySum, xPresent, yPresent := h.scanDistantSubjects()
 		if xPresent > 0 || yPresent > 0 {
-			h.chaseDistantMate(xSum, ySum, xPresent, yPresent)
+			h.chaseDistantSubject(xSum, ySum, xPresent, yPresent)
 			return
 		}
 		h.makeRandomMove()
@@ -224,7 +224,21 @@ func (h *herbivore) move() {
 	}
 
 	// Move towards food.
-	// TODO: continue here, but fix FIXMEs first.
+	for t := range vectors {
+		if len(h.g.herbsPos[h.y+vectors[t][1]][h.x+vectors[t][0]]) > 0 {
+			h.x += vectors[t][0]
+			h.y += vectors[t][1]
+			h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
+			return
+		}
+	}
+	xSum, ySum, xPresent, yPresent = h.scanDistantSubjects()
+	if xPresent > 0 || yPresent > 0 {
+		h.chaseDistantSubject(xSum, ySum, xPresent, yPresent)
+		return
+	}
+
+	h.makeRandomMove()
 }
 
 func (h *herbivore) runFromClosePredator(vectors [4][2]int) {
@@ -239,11 +253,10 @@ func (h *herbivore) runFromClosePredator(vectors [4][2]int) {
 	h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
 }
 
-// FIXME: you used wrong var in condition, not xSum but xPresent. Check everywhere whether it's there too.
 func (h *herbivore) runFromDistantPredator(xSum, ySum, xPresent, yPresent int) {
-	if xSum > 0 && ySum > 0 {
+	if xPresent > 0 && yPresent > 0 {
 		h.y, h.x = h.runFromXY(xSum, ySum)
-	} else if xSum > 0 {
+	} else if xPresent > 0 {
 		h.y, h.x = h.runFromX(xSum)
 	} else {
 		h.y, h.x = h.runFromY(ySum)
@@ -358,7 +371,7 @@ func (h *herbivore) runFromY(ySum int) (y, x int) {
 	}
 }
 
-func (h *herbivore) scanDistantMates() (xSum, ySum, xPresent, yPresent int) {
+func (h *herbivore) scanDistantSubjects() (xSum, ySum, xPresent, yPresent int) {
 	for _, i := range [][2]int{
 		{-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2},
 		{-1, -2}, {-1, -1}, {-1, 1}, {-1, 2}, {0, -2},
@@ -388,7 +401,7 @@ func (h *herbivore) scanDistantMates() (xSum, ySum, xPresent, yPresent int) {
 	return xSum, ySum, xPresent, yPresent
 }
 
-func (h *herbivore) chaseDistantMate(xSum, ySum, xPresent, yPresent int) {
+func (h *herbivore) chaseDistantSubject(xSum, ySum, xPresent, yPresent int) {
 	if xPresent == 1 && yPresent == 1 {
 		h.y, h.x = h.chaseXY(xSum, ySum)
 	} else if xPresent == 1 {

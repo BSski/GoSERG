@@ -83,6 +83,7 @@ func (g *game) init() {
 }
 
 func newGame() *game {
+	// This shouldn't be here if you will use this func as reset func.
 	rightPanelOption0, _, err := ebitenutil.NewImageFromFile("sprites/right_panel_buttons0.png")
 	if err != nil {
 		log.Fatal(err)

@@ -30,7 +30,7 @@ func (c *carnivore) init() {
 
 func (c *carnivore) draw(screen *ebiten.Image) {
 	var cColor color.RGBA
-	if c.energy < c.g.s.herbivoresBreedLevel {
+	if c.energy < c.g.s.carnivoresBreedLevel {
 		cColor = color.RGBA{R: 255, G: 112, B: 77, A: 255}
 	} else {
 		cColor = color.RGBA{R: 190, G: 46, B: 0, A: 255}
@@ -165,13 +165,14 @@ func (c *carnivore) move() {
 			break
 		}
 	}
+
 	var moveCost float64
 	moveCost += float64(c.g.s.carnivoresMoveCost)
-	moveCost += float64(c.g.s.carnivoresMoveCost) * float64(speed[c.dna[0]])
+	moveCost += float64(c.g.s.carnivoresMoveCost) * float64(speedCost[c.dna[0]])
 	moveCost += float64(c.g.s.carnivoresMoveCost) * bowelLengthCost[c.dna[1]]
 	moveCost += float64(c.g.s.carnivoresMoveCost) * fatLimitCost[c.dna[2]]
 	moveCost += float64(c.g.s.carnivoresMoveCost) * legsLengthCost[c.dna[3]]
-	moveCost *= float64(c.legsLength)
+	moveCost *= float64(legsLength[c.dna[3]])
 	c.energy -= int(moveCost)
 
 	// Move away from the border.

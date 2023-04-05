@@ -38,3 +38,10 @@ func run(stdout io.Writer) error {
 	}
 	return nil
 }
+
+// TODO:
+// - [bug] animals don't get energy from food
+// - [bug] carnivores do not eat herbivores, only chase?
+// - [bug] animals do not reproduce
+// - [bug] animals lose energy way too fast
+// possibly related to the change of lists from animals to *animals

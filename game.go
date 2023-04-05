@@ -93,14 +93,17 @@ func (g *game) Layout(_, _ int) (int, int) {
 
 // TODO: big problems with buttons: no debounce and also some are not working and throwing errors.
 func (g *game) Update() error {
-	processEvents(g)
+	if int(g.counterForFps)%g.cyclesPerSecDividers[g.chosenCyclesPerSec] == 0 {
+		processEvents(g)
+	}
 
 	// TODO: maybe do this and delete all pause checks?
 	//if g.pause {
 	//	return nil
 	//}
 
-	// TODO: set g.clock.tick(g.cycles_per_sec) here.
+	ebiten.SetTPS(g.cyclesPerSecList[g.chosenCyclesPerSec])
+
 	g.counterPrev = g.counter
 	g.bigCounterPrev = g.bigCounter
 
@@ -122,7 +125,6 @@ func (g *game) Update() error {
 	}
 
 	if !g.pause {
-		// Check if any herbivore or carnivore starved.
 		for i := 0; i < len(g.carnivores); i++ {
 			if g.carnivores[i].energy <= 0 {
 				g.carnivores[i].starve()
@@ -134,7 +136,6 @@ func (g *game) Update() error {
 			}
 		}
 
-		// Breed or eat.
 		for i := 0; i < len(g.carnivores); i++ {
 			g.carnivores[i].action()
 			g.carnivores[i].age += 1
@@ -145,12 +146,10 @@ func (g *game) Update() error {
 		}
 	}
 
-	// Move carnivores.
 	for i := 0; i < len(g.carnivores); i++ {
 		g.carnivores[i].move()
 	}
 
-	// Move herbivores.
 	for i := 0; i < len(g.herbivores); i++ {
 		g.herbivores[i].move()
 	}
@@ -163,7 +162,7 @@ func (g *game) Draw(screen *ebiten.Image) {
 
 	// TODO: czy ten if jest potrzebny?
 	//if int(g.counterForFps)%g.cyclesPerSecDividers[g.chosenCyclesPerSec] == 0 {
-	//
+
 	//}
 
 	// Animation to prevent Windows from hanging the window when paused.
@@ -456,5 +455,4 @@ func (g *game) Draw(screen *ebiten.Image) {
 			g.herbivores[i].age += 1
 		}
 	}
-	vector.DrawFilledRect(screen, 694, 43, 9, 9, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
 }

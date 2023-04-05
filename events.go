@@ -6,7 +6,7 @@ func processEvents(g *game) {
 	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
 		spawnHerbivore(g, 50)
 	} else if ebiten.IsKeyPressed(ebiten.KeyArrowRight) {
-		spawnCarnivore(g, 5)
+		spawnCarnivore(g, 1)
 	} else if ebiten.IsKeyPressed(ebiten.KeyArrowUp) {
 		spawnHerbivore(g, 1)
 	} else if ebiten.IsKeyPressed(ebiten.KeySpace) {
