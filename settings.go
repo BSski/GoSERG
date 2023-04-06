@@ -24,3 +24,21 @@ type settings struct {
 	herbivoresMoveCost int
 	carnivoresMoveCost int
 }
+
+var s = settings{
+	boardSize:             41,
+	tempo:                 0.28,
+	mutationChance:        0.04,
+	herbsSpawnRate:        6,
+	herbsPerSpawn:         7,
+	herbsEnergy:           2000,
+	herbsStartingNr:       500,
+	herbivoresStartingNr:  200,
+	carnivoresStartingNr:  30,
+	herbivoresSpawnEnergy: 1900,
+	carnivoresSpawnEnergy: 2400,
+	herbivoresBreedLevel:  2000,
+	carnivoresBreedLevel:  2500,
+	herbivoresMoveCost:    70,
+	carnivoresMoveCost:    30,
+}

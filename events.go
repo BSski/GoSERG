@@ -1,31 +1,34 @@
 package main
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
+)
 
 func processEvents(g *game) {
-	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
 		spawnHerbivore(g, 50)
-	} else if ebiten.IsKeyPressed(ebiten.KeyArrowRight) {
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
 		spawnCarnivore(g, 1)
-	} else if ebiten.IsKeyPressed(ebiten.KeyArrowUp) {
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
 		spawnHerbivore(g, 1)
-	} else if ebiten.IsKeyPressed(ebiten.KeySpace) {
+	} else if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		if g.pause == false {
 			g.pause = true
 		} else {
 			g.pause = false
 		}
-	} else if ebiten.IsKeyPressed(ebiten.Key1) {
+	} else if inpututil.IsKeyJustPressed(ebiten.Key1) {
 		g.rightPanelOption = 0
-	} else if ebiten.IsKeyPressed(ebiten.Key2) {
+	} else if inpututil.IsKeyJustPressed(ebiten.Key2) {
 		g.rightPanelOption = 1
-	} else if ebiten.IsKeyPressed(ebiten.Key3) {
+	} else if inpututil.IsKeyJustPressed(ebiten.Key3) {
 		g.rightPanelOption = 2
-	} else if ebiten.IsKeyPressed(ebiten.KeyR) {
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyR) {
 		g.reset = true
 	}
 
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
 		if 36 <= x && 76 >= x && 86 <= y && 106 >= y {
 			// Start button
@@ -258,7 +261,8 @@ func processEvents(g *game) {
 		} else if 980 <= x && 1036 >= x && 11 <= y && 44 >= y {
 			g.rightPanelOption = 2
 		}
-	} else {
+	}
+	if !ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		for key := range buttons {
 			buttons[key].state = 0
 		}

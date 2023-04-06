@@ -83,7 +83,7 @@ func (g *game) init() {
 }
 
 func newGame() *game {
-	// This shouldn't be here if you will use this func as reset func.
+	// FIXME: This shouldn't be here if you will use this func as a reset func.
 	rightPanelOption0, _, err := ebitenutil.NewImageFromFile("sprites/right_panel_buttons0.png")
 	if err != nil {
 		log.Fatal(err)
@@ -95,53 +95,6 @@ func newGame() *game {
 	rightPanelOption2, _, err := ebitenutil.NewImageFromFile("sprites/right_panel_buttons2.png")
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	s := settings{
-		boardSize:             41,
-		tempo:                 0.28,
-		mutationChance:        0.04,
-		herbsSpawnRate:        6,
-		herbsPerSpawn:         7,
-		herbsEnergy:           2000,
-		herbsStartingNr:       500,
-		herbivoresStartingNr:  200,
-		carnivoresStartingNr:  30,
-		herbivoresSpawnEnergy: 1900,
-		carnivoresSpawnEnergy: 2400,
-		herbivoresBreedLevel:  2000,
-		carnivoresBreedLevel:  2500,
-		herbivoresMoveCost:    70,
-		carnivoresMoveCost:    30,
-	}
-	c := consts{
-		partialDnaRange: [4]int{2, 3, 4, 5},
-		vonNeumannPerms: [24][4][2]int{
-			{{1, 0}, {-1, 0}, {0, 1}, {0, -1}},
-			{{1, 0}, {-1, 0}, {0, -1}, {0, 1}},
-			{{1, 0}, {0, 1}, {-1, 0}, {0, -1}},
-			{{1, 0}, {0, 1}, {0, -1}, {-1, 0}},
-			{{1, 0}, {0, -1}, {-1, 0}, {0, 1}},
-			{{1, 0}, {0, -1}, {0, 1}, {-1, 0}},
-			{{-1, 0}, {1, 0}, {0, 1}, {0, -1}},
-			{{-1, 0}, {1, 0}, {0, -1}, {0, 1}},
-			{{-1, 0}, {0, 1}, {1, 0}, {0, -1}},
-			{{-1, 0}, {0, 1}, {0, -1}, {1, 0}},
-			{{-1, 0}, {0, -1}, {1, 0}, {0, 1}},
-			{{-1, 0}, {0, -1}, {0, 1}, {1, 0}},
-			{{0, 1}, {1, 0}, {-1, 0}, {0, -1}},
-			{{0, 1}, {1, 0}, {0, -1}, {-1, 0}},
-			{{0, 1}, {-1, 0}, {1, 0}, {0, -1}},
-			{{0, 1}, {-1, 0}, {0, -1}, {1, 0}},
-			{{0, 1}, {0, -1}, {1, 0}, {-1, 0}},
-			{{0, 1}, {0, -1}, {-1, 0}, {1, 0}},
-			{{0, -1}, {1, 0}, {-1, 0}, {0, 1}},
-			{{0, -1}, {1, 0}, {0, 1}, {-1, 0}},
-			{{0, -1}, {-1, 0}, {1, 0}, {0, 1}},
-			{{0, -1}, {-1, 0}, {0, 1}, {1, 0}},
-			{{0, -1}, {0, 1}, {1, 0}, {-1, 0}},
-			{{0, -1}, {0, 1}, {-1, 0}, {1, 0}},
-		},
 	}
 
 	g := &game{

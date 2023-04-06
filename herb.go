@@ -16,7 +16,15 @@ type herb struct {
 }
 
 func (h *herb) draw(screen *ebiten.Image) {
-	vector.DrawFilledCircle(screen, h.g.grid[h.y][h.x][0], h.g.grid[h.y][h.x][1], 3, color.RGBA{R: 34, G: 139, B: 34, A: 255}, false)
+	vector.DrawFilledRect(
+		screen,
+		h.g.grid[h.y][h.x][0]+1,
+		h.g.grid[h.y][h.x][1]+1,
+		5,
+		5,
+		color.RGBA{R: 34, G: 139, B: 34, A: 255},
+		false,
+	)
 }
 
 func (h *herb) die() {
@@ -28,7 +36,10 @@ func (h *herb) die() {
 	}
 	for i, v := range h.g.herbsPos[h.y][h.x] {
 		if v == h {
-			h.g.herbsPos[h.y][h.x] = append(h.g.herbsPos[h.y][h.x][:i], h.g.herbsPos[h.y][h.x][i+1:]...)
+			h.g.herbsPos[h.y][h.x] = append(
+				h.g.herbsPos[h.y][h.x][:i],
+				h.g.herbsPos[h.y][h.x][i+1:]...,
+			)
 			break
 		}
 	}
