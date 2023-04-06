@@ -15,25 +15,25 @@ type carnivore struct {
 	energy      int
 	dna         [4]int
 	speed       int
-	bowelLength int
+	bowelLength float64
 	fatLimit    int
-	legsLength  int
+	legsLength  float64
 	age         int
 }
 
 func (c *carnivore) init() {
-	c.speed = c.dna[0]
-	c.bowelLength = c.dna[1]
-	c.fatLimit = c.dna[2]
-	c.legsLength = c.dna[3]
+	c.speed = speeds[c.dna[0]]
+	c.bowelLength = bowelLengths[c.dna[1]]
+	c.fatLimit = fatLimits[c.dna[2]]
+	c.legsLength = legsLengths[c.dna[3]]
 }
 
 func (c *carnivore) draw(screen *ebiten.Image) {
 	var cColor color.RGBA
-	if c.energy < c.g.s.carnivoresBreedLevel {
-		cColor = color.RGBA{R: 255, G: 112, B: 77, A: 255}
-	} else {
+	if c.energy >= c.g.s.carnivoresBreedLevel {
 		cColor = color.RGBA{R: 190, G: 46, B: 0, A: 255}
+	} else {
+		cColor = color.RGBA{R: 255, G: 112, B: 77, A: 255}
 	}
 
 	vector.DrawFilledRect(screen, c.g.grid[c.y][c.x][0]-1, c.g.grid[c.y][c.x][1]-1, 11, 11, color.Gray{Y: 45}, false)
@@ -61,7 +61,7 @@ func (c *carnivore) die() {
 }
 
 func (c *carnivore) action() {
-	if c.energy > c.g.s.carnivoresBreedLevel {
+	if c.energy >= c.g.s.carnivoresBreedLevel {
 		c.breed()
 	} else {
 		c.eat()
@@ -79,7 +79,7 @@ func (c *carnivore) breed() {
 		if v == c {
 			continue
 		}
-		if v.energy > c.g.s.carnivoresBreedLevel {
+		if v.energy >= c.g.s.carnivoresBreedLevel {
 			c.energy = c.energy / 2
 			v.energy = v.energy / 2
 			c.giveBirth(
@@ -124,7 +124,7 @@ func (c *carnivore) eat() {
 		return
 	}
 	f := c.g.herbivoresPos[c.y][c.x][0]
-	c.energy += f.energy * c.bowelLength
+	c.energy += int(float64(f.energy) * c.bowelLength)
 	f.die()
 }
 
@@ -168,11 +168,11 @@ func (c *carnivore) move() {
 
 	var moveCost float64
 	moveCost += float64(c.g.s.carnivoresMoveCost)
-	moveCost += float64(c.g.s.carnivoresMoveCost) * float64(speedCost[c.dna[0]])
-	moveCost += float64(c.g.s.carnivoresMoveCost) * bowelLengthCost[c.dna[1]]
-	moveCost += float64(c.g.s.carnivoresMoveCost) * fatLimitCost[c.dna[2]]
-	moveCost += float64(c.g.s.carnivoresMoveCost) * legsLengthCost[c.dna[3]]
-	moveCost *= float64(legsLength[c.dna[3]])
+	moveCost += float64(c.g.s.carnivoresMoveCost) * speedCosts[c.dna[0]]
+	moveCost += float64(c.g.s.carnivoresMoveCost) * bowelLengthCosts[c.dna[1]]
+	moveCost += float64(c.g.s.carnivoresMoveCost) * fatLimitCosts[c.dna[2]]
+	moveCost += float64(c.g.s.carnivoresMoveCost) * legsLengthCosts[c.dna[3]]
+	moveCost *= legsLengths[c.dna[3]]
 	c.energy -= int(moveCost)
 
 	// Move away from the border.
@@ -195,16 +195,16 @@ func (c *carnivore) move() {
 	// Move towards a mate.
 	if c.energy >= c.g.s.carnivoresBreedLevel {
 		for t := range vectors {
-			if len(c.g.carnivoresPos[c.y+vectors[t][1]][c.x+vectors[t][0]]) > 1 {
+			if len(c.g.carnivoresPos[c.y+vectors[t][1]][c.x+vectors[t][0]]) > 0 {
 				c.x += vectors[t][0]
 				c.y += vectors[t][1]
 				c.g.carnivoresPos[c.y][c.x] = append(c.g.carnivoresPos[c.y][c.x], c)
 				return
 			}
 		}
-		xSum, ySum, xPresent, yPresent := c.scanNeighborhood()
+		xSum, ySum, xPresent, yPresent := c.scanDistantMates()
 		if xPresent > 0 || yPresent > 0 {
-			c.actAboutDistantEntity(xSum, ySum, xPresent, yPresent)
+			c.chaseDistantSubject(xSum, ySum, xPresent, yPresent)
 			return
 		}
 		c.makeRandomMove()
@@ -220,16 +220,16 @@ func (c *carnivore) move() {
 			return
 		}
 	}
-	xSum, ySum, xPresent, yPresent := c.scanNeighborhood()
+	xSum, ySum, xPresent, yPresent := c.scanDistantFood()
 	if xPresent > 0 || yPresent > 0 {
-		c.actAboutDistantEntity(xSum, ySum, xPresent, yPresent)
+		c.chaseDistantSubject(xSum, ySum, xPresent, yPresent)
 		return
 	}
 
 	c.makeRandomMove()
 }
 
-func (c *carnivore) scanNeighborhood() (xSum, ySum, xPresent, yPresent int) {
+func (c *carnivore) scanDistantMates() (xSum, ySum, xPresent, yPresent int) {
 	for _, i := range [][2]int{
 		{-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2},
 		{-1, -2}, {-1, -1}, {-1, 1}, {-1, 2}, {0, -2},
@@ -259,17 +259,48 @@ func (c *carnivore) scanNeighborhood() (xSum, ySum, xPresent, yPresent int) {
 	return xSum, ySum, xPresent, yPresent
 }
 
-func (c *carnivore) actAboutDistantEntity(xSum, ySum, xPresent, yPresent int) {
+func (c *carnivore) scanDistantFood() (xSum, ySum, xPresent, yPresent int) {
+	for _, i := range [][2]int{
+		{-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2},
+		{-1, -2}, {-1, -1}, {-1, 1}, {-1, 2}, {0, -2},
+		{0, 2}, {1, -2}, {1, -1}, {1, 1}, {1, 2},
+		{2, -2}, {2, -1}, {2, 0}, {2, 1}, {2, 2},
+	} {
+		if len(c.g.herbivoresPos[c.y+i[1]][c.x+i[0]]) == 0 {
+			continue
+		}
+		if i[0] != 0 {
+			if i[0] < 0 {
+				xSum += -1 * len(c.g.herbivoresPos[c.y+i[1]][c.x+i[0]])
+			} else {
+				xSum += len(c.g.herbivoresPos[c.y+i[1]][c.x+i[0]])
+			}
+			xPresent = 1
+		}
+		if i[1] != 0 {
+			if i[1] < 0 {
+				ySum += -1 * len(c.g.herbivoresPos[c.y+i[1]][c.x+i[0]])
+			} else {
+				ySum += len(c.g.herbivoresPos[c.y+i[1]][c.x+i[0]])
+			}
+			yPresent = 1
+		}
+	}
+	return xSum, ySum, xPresent, yPresent
+}
+
+func (c *carnivore) chaseDistantSubject(xSum, ySum, xPresent, yPresent int) {
 	if xPresent > 0 && yPresent > 0 {
 		c.y, c.x = c.chaseXY(xSum, ySum)
 	} else if xPresent > 0 {
-		c.y, c.x = c.chaseX(xSum)
+		c.x = c.chaseX(xSum)
 	} else {
-		c.y, c.x = c.chaseY(ySum)
+		c.y = c.chaseY(ySum)
 	}
 	c.g.carnivoresPos[c.y][c.x] = append(c.g.carnivoresPos[c.y][c.x], c)
 }
 
+// FIXME: Chase functions can be extracted to animal struct for both carni and herbi.
 func (c *carnivore) chaseXY(xSum, ySum int) (y, x int) {
 	if math.Abs(float64(xSum)) == math.Abs(float64(ySum)) {
 		if xSum == 0 && ySum == 0 {
@@ -320,27 +351,27 @@ func (c *carnivore) chaseXY(xSum, ySum int) (y, x int) {
 	return c.y, c.x
 }
 
-func (c *carnivore) chaseX(xSum int) (y, x int) {
+func (c *carnivore) chaseX(xSum int) int {
 	if xSum == 0 {
 		if rand.Float64() >= 0.5 {
-			return c.y, c.x + 1
+			return c.x + 1
 		} else {
-			return c.y, c.x - 1
+			return c.x - 1
 		}
 	} else {
-		return c.y, c.x + int(math.Abs(float64(xSum))/float64(xSum))
+		return c.x + int(math.Abs(float64(xSum))/float64(xSum))
 	}
 }
 
-func (c *carnivore) chaseY(ySum int) (y, x int) {
+func (c *carnivore) chaseY(ySum int) int {
 	if ySum == 0 {
 		if rand.Float64() >= 0.5 {
-			return c.y + 1, c.x
+			return c.y + 1
 		} else {
-			return c.y - 1, c.x
+			return c.y - 1
 		}
 	} else {
-		return c.y + int(math.Abs(float64(ySum))/float64(ySum)), c.x
+		return c.y + int(math.Abs(float64(ySum))/float64(ySum))
 	}
 }
 

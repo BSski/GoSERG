@@ -14,21 +14,18 @@ type game struct {
 	animation        []rune
 	animationCounter int
 
-	counter            float64
-	counterPrev        float64
-	bigCounter         float64
-	bigCounterPrev     float64
-	counterForFps      float64
-	totalCyclesCounter int
+	counter        float64
+	counterPrev    float64
+	bigCounter     float64
+	bigCounterPrev float64
 
 	reset bool
 	pause bool
 
-	chosenCyclesPerSec   int
-	cyclesPerSec         int
-	cyclesPerSecList     [14]int
-	cyclesPerSecDividers [14]int
-	chartsDrawingSpeed   int
+	chosenCyclesPerSec int
+	cyclesPerSec       int
+	cyclesPerSecList   [29]int
+	chartsDrawingSpeed int
 
 	herbs      []*herb
 	herbivores []*herbivore
@@ -105,21 +102,48 @@ func newGame() *game {
 		animation:        []rune("||||////----\\\\\\\\"),
 		animationCounter: 0,
 
-		counter:            0,
-		counterPrev:        0,
-		bigCounter:         0,
-		bigCounterPrev:     0,
-		counterForFps:      0,
-		totalCyclesCounter: 0,
+		counter:        0,
+		counterPrev:    0,
+		bigCounter:     0,
+		bigCounterPrev: 0,
 
 		reset: true,
 		pause: false,
 
-		chosenCyclesPerSec:   13,
-		cyclesPerSecList:     [14]int{30, 60, 90, 120, 150, 180, 240, 300, 360, 450, 600, 720, 900, 1200},
-		cyclesPerSecDividers: [14]int{1, 2, 3, 4, 5, 6, 8, 10, 10, 12, 20, 20, 20, 20},
-		chartsDrawingSpeed:   0,
-		cyclesPerSec:         0,
+		chosenCyclesPerSec: 19,
+		cyclesPerSecList: [29]int{
+			30,
+			60,
+			90,
+			120,
+			150,
+			180,
+			240,
+			300,
+			360,
+			450,
+			600,
+			720,
+			900,
+			1200,
+			1800,
+			2400,
+			3000,
+			3600,
+			4200,
+			4800,
+			5400,
+			6000,
+			8000,
+			10000,
+			12000,
+			15000,
+			18000,
+			21000,
+			25000,
+		},
+		chartsDrawingSpeed: 0,
+		cyclesPerSec:       0,
 
 		herbs:      []*herb{},
 		herbivores: []*herbivore{},
@@ -170,9 +194,57 @@ func newGame() *game {
 		rightPanelOption:  0,
 	}
 	g.init()
-	reset(g)
 	return g
 }
 
-func reset(g *game) {
+func (g *game) resetGame() {
+	g.counter = 0
+	g.counterPrev = 0
+	g.bigCounter = 0
+	g.bigCounterPrev = 0
+
+	g.herbsPos = generateHerbsPositions()
+	g.herbivoresPos = generateHerbivoresPositions()
+	g.carnivoresPos = generateCarnivoresPositions()
+
+	g.herbs = []*herb{}
+	g.herbivores = []*herbivore{}
+	g.carnivores = []*carnivore{}
+
+	g.herbivoresQuantities = []int{}
+	g.carnivoresQuantities = []int{}
+
+	g.herbivoresTotalQuantities = []int{}
+	g.carnivoresTotalQuantities = []int{}
+
+	g.herbivoresMeanSpeed = 0
+	g.herbivoresMeanBowelsLength = 0
+
+	g.herbivoresMeanFatLimit = 0
+	g.herbivoresMeanLegsLength = 0
+
+	g.carnivoresMeanSpeed = 0
+	g.carnivoresMeanBowelsLength = 0
+	g.carnivoresMeanFatLimit = 0
+	g.carnivoresMeanLegsLength = 0
+
+	g.herbivoresMeanSpeeds = []float64{}
+	g.herbivoresMeanBowelLengths = []float64{}
+	g.herbivoresMeanFatLimits = []float64{}
+	g.herbivoresMeanLegsLengths = []float64{}
+
+	g.carnivoresMeanSpeeds = []float64{}
+	g.carnivoresMeanBowelLengths = []float64{}
+	g.carnivoresMeanFatLimits = []float64{}
+	g.carnivoresMeanLegsLengths = []float64{}
+
+	g.herbivoresSpeeds = []int{}
+	g.herbivoresBowelLengths = []int{}
+	g.herbivoresFatLimits = []int{}
+	g.herbivoresLegsLengths = []int{}
+
+	g.carnivoresSpeeds = []int{}
+	g.carnivoresBowelLengths = []int{}
+	g.carnivoresFatLimits = []int{}
+	g.carnivoresLegsLengths = []int{}
 }

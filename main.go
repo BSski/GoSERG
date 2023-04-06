@@ -40,8 +40,17 @@ func run(stdout io.Writer) error {
 }
 
 // TODO:
-// - [bug] animals don't get energy from food
-// - [bug] carnivores do not eat herbivores, only chase?
-// - [bug] animals do not reproduce
-// - [bug] animals lose energy way too fast
-// possibly related to the change of lists from animals to *animals
+// - herbivores seem to get not enough energy from herbs
+// maybe add breed refraction time, in action you would check if it is 0 and then breed
+
+// write entire thing til the end and then check all gameClient vars and delete not used
+
+// cos powoduje ze carnivores (moze herbi tez) znikaja z carnivoresPos (CHYBA NIE JEDNAK)
+
+// maybe you can remove tempo at all since you can ;;; no, you can't do TPS to 1 because then it will be too slow for buttons to work
+// the simulation is not dying as quickly as in python, something might be wrong, check code
+
+// make sure to mention on GoSERG website that everything was made by you, including charts
+
+// herbivores quantity somehow appears on top right panel chart, right? the green dots
+// move speed chart 1-2 pixels up

@@ -9,9 +9,11 @@ func processEvents(g *game) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
 		spawnHerbivore(g, 50)
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
-		spawnCarnivore(g, 1)
+		spawnCarnivore(g, 10)
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
 		spawnHerbivore(g, 1)
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+		spawnCarnivore(g, 1)
 	} else if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		if g.pause == false {
 			g.pause = true
@@ -45,8 +47,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 85 <= y && 98 >= y {
 			// Cycles Per Second plus
 			g.chosenCyclesPerSec += 1
-			if g.chosenCyclesPerSec > 13 {
-				g.chosenCyclesPerSec = 13
+			if g.chosenCyclesPerSec > 28 {
+				g.chosenCyclesPerSec = 28
 			}
 			g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
 			buttons["cpsPlus"].state = 1

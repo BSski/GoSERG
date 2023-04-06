@@ -109,12 +109,7 @@ func (g *game) Update() error {
 		}
 	}
 
-	g.counterForFps += 1
-	if g.counterForFps >= 120 {
-		g.counterForFps = 0
-	}
-
-	if int(g.counterPrev) != int(g.counter) && int(g.counter)%speed[g.s.herbsSpawnRate] == 0 {
+	if int(g.counterPrev) != int(g.counter) && int(g.counter)%speeds[g.s.herbsSpawnRate] == 0 {
 		createHerbs(g, g.s.herbsPerSpawn)
 	}
 
@@ -152,7 +147,47 @@ func (g *game) Update() error {
 		g.herbivores[i].move()
 	}
 
+	if g.reset == true {
+		g.reset = false
+		g.resetGame()
+	}
+
+	g.updateAnimalsDataHerbi(&g.herbivoresMeanSpeed, &g.herbivoresMeanSpeeds, 0, &g.herbivoresSpeeds)
+
 	return nil
+}
+
+// FIXME: it iterates over animals many times, make it a big single loop
+func (g *game) updateAnimalsDataHerbi(
+	meanVal *float64,
+	meanValues *[]float64,
+	gene int,
+	values *[]int,
+) {
+	if len(*meanValues) > 160 {
+		*meanValues = (*meanValues)[1:]
+	}
+	var vals []int
+	for _, h := range g.herbivores {
+		vals = append(vals, h.dna[gene])
+	}
+	*values = vals
+	if len(g.herbivores) > 0 {
+		*meanVal = sumToFloat64(vals) / float64(len(g.herbivores))
+		*meanValues = append(*meanValues, *meanVal)
+	} else {
+		if len(*meanValues) > 160 {
+			*meanValues = (*meanValues)[1:]
+		}
+	}
+}
+
+func sumToFloat64(vals []int) float64 {
+	var sum int
+	for _, v := range vals {
+		sum += v
+	}
+	return float64(sum)
 }
 
 func (g *game) Draw(screen *ebiten.Image) {

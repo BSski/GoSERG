@@ -15,25 +15,25 @@ type herbivore struct {
 	energy      int
 	dna         [4]int
 	speed       int
-	bowelLength int
+	bowelLength float64
 	fatLimit    int
-	legsLength  int
+	legsLength  float64
 	age         int
 }
 
 func (h *herbivore) init() {
-	h.speed = h.dna[0]
-	h.bowelLength = h.dna[1]
-	h.fatLimit = h.dna[2]
-	h.legsLength = h.dna[3]
+	h.speed = speeds[h.dna[0]]
+	h.bowelLength = bowelLengths[h.dna[1]]
+	h.fatLimit = fatLimits[h.dna[2]]
+	h.legsLength = legsLengths[h.dna[3]]
 }
 
 func (h *herbivore) draw(screen *ebiten.Image) {
 	var hColor color.RGBA
-	if h.energy < h.g.s.herbivoresBreedLevel {
-		hColor = color.RGBA{R: 0, G: 255, B: 85, A: 255}
-	} else {
+	if h.energy >= h.g.s.herbivoresBreedLevel {
 		hColor = color.RGBA{R: 0, G: 123, B: 51, A: 255}
+	} else {
+		hColor = color.RGBA{R: 0, G: 255, B: 85, A: 255}
 	}
 	vector.DrawFilledRect(screen, h.g.grid[h.y][h.x][0]-1, h.g.grid[h.y][h.x][1]-1, 11, 11, color.Gray{Y: 45}, false)
 	vector.DrawFilledRect(screen, h.g.grid[h.y][h.x][0], h.g.grid[h.y][h.x][1], 9, 9, hColor, false)
@@ -60,7 +60,7 @@ func (h *herbivore) die() {
 }
 
 func (h *herbivore) action() {
-	if h.energy > h.g.s.herbivoresBreedLevel {
+	if h.energy >= h.g.s.herbivoresBreedLevel {
 		h.breed()
 	} else {
 		h.eat()
@@ -78,7 +78,7 @@ func (h *herbivore) breed() {
 		if v == h {
 			continue
 		}
-		if v.energy > h.g.s.herbivoresBreedLevel {
+		if v.energy >= h.g.s.herbivoresBreedLevel {
 			h.energy = h.energy / 2
 			v.energy = v.energy / 2
 			h.giveBirth(
@@ -123,7 +123,7 @@ func (h *herbivore) eat() {
 		return
 	}
 	f := h.g.herbsPos[h.y][h.x][0]
-	h.energy += f.energy * h.bowelLength
+	h.energy += int(float64(f.energy) * h.bowelLength)
 	f.die()
 }
 
@@ -167,11 +167,11 @@ func (h *herbivore) move() {
 
 	var moveCost float64
 	moveCost += float64(h.g.s.herbivoresMoveCost)
-	moveCost += float64(h.g.s.herbivoresMoveCost) * float64(speedCost[h.dna[0]])
-	moveCost += float64(h.g.s.herbivoresMoveCost) * bowelLengthCost[h.dna[1]]
-	moveCost += float64(h.g.s.herbivoresMoveCost) * fatLimitCost[h.dna[2]]
-	moveCost += float64(h.g.s.herbivoresMoveCost) * legsLengthCost[h.dna[3]]
-	moveCost *= float64(legsLength[h.dna[3]])
+	moveCost += float64(h.g.s.herbivoresMoveCost) * speedCosts[h.dna[0]]
+	moveCost += float64(h.g.s.herbivoresMoveCost) * bowelLengthCosts[h.dna[1]]
+	moveCost += float64(h.g.s.herbivoresMoveCost) * fatLimitCosts[h.dna[2]]
+	moveCost += float64(h.g.s.herbivoresMoveCost) * legsLengthCosts[h.dna[3]]
+	moveCost *= float64(legsLengths[h.dna[3]])
 	h.energy -= int(moveCost)
 
 	// Move away from the border.
@@ -191,7 +191,7 @@ func (h *herbivore) move() {
 
 	vectors := h.g.c.vonNeumannPerms[rand.Intn(24)]
 	// Move away from close predators.
-	isPredatorClose := (h.g.carnivoresPos[h.y+1][h.x] != nil || h.g.carnivoresPos[h.y-1][h.x] != nil || h.g.carnivoresPos[h.y][h.x+1] != nil || h.g.carnivoresPos[h.y][h.x-1] != nil)
+	isPredatorClose := (len(h.g.carnivoresPos[h.y+1][h.x]) != 0 || len(h.g.carnivoresPos[h.y-1][h.x]) != 0 || len(h.g.carnivoresPos[h.y][h.x+1]) != 0 || len(h.g.carnivoresPos[h.y][h.x-1]) != 0)
 	if isPredatorClose {
 		h.runFromClosePredator(vectors)
 		return
@@ -205,16 +205,16 @@ func (h *herbivore) move() {
 	}
 
 	// Move towards a mate.
-	if h.energy > h.g.s.herbivoresBreedLevel {
+	if h.energy >= h.g.s.herbivoresBreedLevel {
 		for t := range vectors {
-			if len(h.g.herbivoresPos[h.y+vectors[t][1]][h.x+vectors[t][0]]) > 1 {
+			if len(h.g.herbivoresPos[h.y+vectors[t][1]][h.x+vectors[t][0]]) > 0 {
 				h.x += vectors[t][0]
 				h.y += vectors[t][1]
 				h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
 				return
 			}
 		}
-		xSum, ySum, xPresent, yPresent := h.scanDistantSubjects()
+		xSum, ySum, xPresent, yPresent := h.scanDistantMates()
 		if xPresent > 0 || yPresent > 0 {
 			h.chaseDistantSubject(xSum, ySum, xPresent, yPresent)
 			return
@@ -232,7 +232,7 @@ func (h *herbivore) move() {
 			return
 		}
 	}
-	xSum, ySum, xPresent, yPresent = h.scanDistantSubjects()
+	xSum, ySum, xPresent, yPresent = h.scanDistantFood()
 	if xPresent > 0 || yPresent > 0 {
 		h.chaseDistantSubject(xSum, ySum, xPresent, yPresent)
 		return
@@ -294,7 +294,7 @@ func (h *herbivore) scanForPredators() (xSum, ySum, xPresent, yPresent int) {
 	return xSum, ySum, xPresent, yPresent
 }
 
-func (h *herbivore) runFromXY(xSum, ySum int) (y, x int) {
+func (h *herbivore) runFromXY(xSum, ySum int) (int, int) {
 	if math.Abs(float64(xSum)) == math.Abs(float64(ySum)) {
 		if xSum == 0 && ySum == 0 {
 			r := rand.Float64()
@@ -346,8 +346,8 @@ func (h *herbivore) runFromXY(xSum, ySum int) (y, x int) {
 	return h.y, h.x
 }
 
-// FIXME: make sure that you use [y,x] everywhere, not [x,y] anywhere.
-func (h *herbivore) runFromX(xSum int) (y, x int) {
+// FIXME: make sure that you use [y,x] everywhere, not [x,y].
+func (h *herbivore) runFromX(xSum int) (int, int) {
 	if xSum == 0 {
 		if rand.Float64() >= 0.5 {
 			return h.y + 1, h.x
@@ -359,7 +359,7 @@ func (h *herbivore) runFromX(xSum int) (y, x int) {
 	}
 }
 
-func (h *herbivore) runFromY(ySum int) (y, x int) {
+func (h *herbivore) runFromY(ySum int) (int, int) {
 	if ySum == 0 {
 		if rand.Float64() >= 0.5 {
 			return h.y, h.x + 1
@@ -371,7 +371,7 @@ func (h *herbivore) runFromY(ySum int) (y, x int) {
 	}
 }
 
-func (h *herbivore) scanDistantSubjects() (xSum, ySum, xPresent, yPresent int) {
+func (h *herbivore) scanDistantMates() (xSum, ySum, xPresent, yPresent int) {
 	for _, i := range [][2]int{
 		{-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2},
 		{-1, -2}, {-1, -1}, {-1, 1}, {-1, 2}, {0, -2},
@@ -401,13 +401,43 @@ func (h *herbivore) scanDistantSubjects() (xSum, ySum, xPresent, yPresent int) {
 	return xSum, ySum, xPresent, yPresent
 }
 
+func (h *herbivore) scanDistantFood() (xSum, ySum, xPresent, yPresent int) {
+	for _, i := range [][2]int{
+		{-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2},
+		{-1, -2}, {-1, -1}, {-1, 1}, {-1, 2}, {0, -2},
+		{0, 2}, {1, -2}, {1, -1}, {1, 1}, {1, 2},
+		{2, -2}, {2, -1}, {2, 0}, {2, 1}, {2, 2},
+	} {
+		if len(h.g.herbsPos[h.y+i[1]][h.x+i[0]]) == 0 {
+			continue
+		}
+		if i[0] != 0 {
+			if i[0] < 0 {
+				xSum += -1 * len(h.g.herbsPos[h.y+i[1]][h.x+i[0]])
+			} else {
+				xSum += len(h.g.herbsPos[h.y+i[1]][h.x+i[0]])
+			}
+			xPresent = 1
+		}
+		if i[1] != 0 {
+			if i[1] < 0 {
+				ySum += -1 * len(h.g.herbsPos[h.y+i[1]][h.x+i[0]])
+			} else {
+				ySum += len(h.g.herbsPos[h.y+i[1]][h.x+i[0]])
+			}
+			yPresent = 1
+		}
+	}
+	return xSum, ySum, xPresent, yPresent
+}
+
 func (h *herbivore) chaseDistantSubject(xSum, ySum, xPresent, yPresent int) {
 	if xPresent == 1 && yPresent == 1 {
 		h.y, h.x = h.chaseXY(xSum, ySum)
 	} else if xPresent == 1 {
-		h.y, h.x = h.chaseX(xSum)
+		h.x = h.chaseX(xSum)
 	} else {
-		h.y, h.x = h.chaseY(ySum)
+		h.y = h.chaseY(ySum)
 	}
 	h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
 }
@@ -462,27 +492,27 @@ func (h *herbivore) chaseXY(xSum, ySum int) (y, x int) {
 	return h.y, h.x
 }
 
-func (h *herbivore) chaseX(xSum int) (y, x int) {
+func (h *herbivore) chaseX(xSum int) int {
 	if xSum == 0 {
 		if rand.Float64() >= 0.5 {
-			return h.y, h.x + 1
+			return h.x + 1
 		} else {
-			return h.y, h.x - 1
+			return h.x - 1
 		}
 	} else {
-		return h.y, h.x + int(math.Abs(float64(xSum))/float64(xSum))
+		return h.x + int(math.Abs(float64(xSum))/float64(xSum))
 	}
 }
 
-func (h *herbivore) chaseY(ySum int) (y, x int) {
+func (h *herbivore) chaseY(ySum int) int {
 	if ySum == 0 {
 		if rand.Float64() >= 0.5 {
-			return h.y + 1, h.x
+			return h.y + 1
 		} else {
-			return h.y - 1, h.x
+			return h.y - 1
 		}
 	} else {
-		return h.y + int(math.Abs(float64(ySum))/float64(ySum)), h.x
+		return h.y + int(math.Abs(float64(ySum))/float64(ySum))
 	}
 }
 

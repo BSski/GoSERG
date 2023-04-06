@@ -1,6 +1,6 @@
 package main
 
-var speed map[int]int = map[int]int{
+var speeds = map[int]int{
 	-5: 120,
 	-4: 60,
 	-3: 40,
@@ -16,7 +16,7 @@ var speed map[int]int = map[int]int{
 	7:  1,
 }
 
-var speedCost map[int]float64 = map[int]float64{
+var speedCosts = map[int]float64{
 	0: 0.000,
 	1: 0.005,
 	2: 0.010,
@@ -27,7 +27,7 @@ var speedCost map[int]float64 = map[int]float64{
 	7: 0.035,
 }
 
-var bowelLength map[int]float64 = map[int]float64{
+var bowelLengths = map[int]float64{
 	0: 0.51,
 	1: 0.59,
 	2: 0.66,
@@ -38,7 +38,7 @@ var bowelLength map[int]float64 = map[int]float64{
 	7: 1.00,
 }
 
-var bowelLengthCost map[int]float64 = map[int]float64{
+var bowelLengthCosts = map[int]float64{
 	0: 0.00,
 	1: 0.018,
 	2: 0.036,
@@ -49,7 +49,7 @@ var bowelLengthCost map[int]float64 = map[int]float64{
 	7: 0.124,
 }
 
-var fatLimit map[int]float64 = map[int]float64{
+var fatLimits = map[int]int{
 	0: 1500,
 	1: 2000,
 	2: 2500,
@@ -60,7 +60,7 @@ var fatLimit map[int]float64 = map[int]float64{
 	7: 5000,
 }
 
-var fatLimitCost map[int]float64 = map[int]float64{
+var fatLimitCosts = map[int]float64{
 	0: 0.00,
 	1: 0.018,
 	2: 0.036,
@@ -71,7 +71,7 @@ var fatLimitCost map[int]float64 = map[int]float64{
 	7: 0.124,
 }
 
-var legsLength map[int]float64 = map[int]float64{
+var legsLengths = map[int]float64{
 	0: 1.00,
 	1: 0.965,
 	2: 0.930,
@@ -82,7 +82,7 @@ var legsLength map[int]float64 = map[int]float64{
 	7: 0.755,
 }
 
-var legsLengthCost map[int]float64 = map[int]float64{
+var legsLengthCosts = map[int]float64{
 	0: 0.00,
 	1: 0.018,
 	2: 0.036,
