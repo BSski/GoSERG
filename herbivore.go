@@ -171,7 +171,7 @@ func (h *herbivore) move() {
 	moveCost += float64(h.g.s.herbivoresMoveCost) * bowelLengthCosts[h.dna[1]]
 	moveCost += float64(h.g.s.herbivoresMoveCost) * fatLimitCosts[h.dna[2]]
 	moveCost += float64(h.g.s.herbivoresMoveCost) * legsLengthCosts[h.dna[3]]
-	moveCost *= float64(legsLengths[h.dna[3]])
+	moveCost *= legsLengths[h.dna[3]]
 	h.energy -= int(moveCost)
 
 	// Move away from the border.

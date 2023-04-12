@@ -152,8 +152,17 @@ func (g *game) Update() error {
 		g.resetGame()
 	}
 
-	g.updateAnimalsDataHerbi(&g.herbivoresMeanSpeed, &g.herbivoresMeanSpeeds, 0, &g.herbivoresSpeeds)
+	if int(g.counterPrev) != int(g.counter) {
+		g.updateAnimalsDataHerbi(&g.herbivoresMeanSpeed, &g.herbivoresMeanSpeeds, 0, &g.herbivoresSpeeds)
+		g.updateAnimalsDataHerbi(&g.herbivoresMeanBowelLength, &g.herbivoresMeanBowelLengths, 1, &g.herbivoresBowelLengths)
+		g.updateAnimalsDataHerbi(&g.herbivoresMeanFatLimit, &g.herbivoresMeanFatLimits, 2, &g.herbivoresFatLimits)
+		g.updateAnimalsDataHerbi(&g.herbivoresMeanLegsLength, &g.herbivoresMeanLegsLengths, 3, &g.herbivoresLegsLengths)
+		g.updateAnimalsDataCarni(&g.carnivoresMeanSpeed, &g.carnivoresMeanSpeeds, 0, &g.carnivoresSpeeds)
+		g.updateAnimalsDataCarni(&g.carnivoresMeanBowelLength, &g.carnivoresMeanBowelLengths, 1, &g.carnivoresBowelLengths)
+		g.updateAnimalsDataCarni(&g.carnivoresMeanFatLimit, &g.carnivoresMeanFatLimits, 2, &g.carnivoresFatLimits)
+		g.updateAnimalsDataCarni(&g.carnivoresMeanLegsLength, &g.carnivoresMeanLegsLengths, 3, &g.carnivoresLegsLengths)
 
+	}
 	return nil
 }
 
@@ -164,7 +173,7 @@ func (g *game) updateAnimalsDataHerbi(
 	gene int,
 	values *[]int,
 ) {
-	if len(*meanValues) > 160 {
+	if len(*meanValues) >= 160 {
 		*meanValues = (*meanValues)[1:]
 	}
 	var vals []int
@@ -174,6 +183,30 @@ func (g *game) updateAnimalsDataHerbi(
 	*values = vals
 	if len(g.herbivores) > 0 {
 		*meanVal = sumToFloat64(vals) / float64(len(g.herbivores))
+		*meanValues = append(*meanValues, *meanVal)
+	} else {
+		if len(*meanValues) > 160 {
+			*meanValues = (*meanValues)[1:]
+		}
+	}
+}
+
+func (g *game) updateAnimalsDataCarni(
+	meanVal *float64,
+	meanValues *[]float64,
+	gene int,
+	values *[]int,
+) {
+	if len(*meanValues) >= 160 {
+		*meanValues = (*meanValues)[1:]
+	}
+	var vals []int
+	for _, c := range g.carnivores {
+		vals = append(vals, c.dna[gene])
+	}
+	*values = vals
+	if len(g.carnivores) > 0 {
+		*meanVal = sumToFloat64(vals) / float64(len(g.carnivores))
 		*meanValues = append(*meanValues, *meanVal)
 	} else {
 		if len(*meanValues) > 160 {
@@ -210,4 +243,5 @@ func (g *game) Draw(screen *ebiten.Image) {
 	sc.drawHerbs(screen, g)
 	sc.drawHerbivores(screen, g)
 	sc.drawCarnivores(screen, g)
+
 }

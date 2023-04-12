@@ -41,15 +41,15 @@ type game struct {
 	herbivoresTotalQuantities []int
 	carnivoresTotalQuantities []int
 
-	herbivoresMeanSpeed        float64
-	herbivoresMeanBowelsLength float64
-	herbivoresMeanFatLimit     float64
-	herbivoresMeanLegsLength   float64
+	herbivoresMeanSpeed       float64
+	herbivoresMeanBowelLength float64
+	herbivoresMeanFatLimit    float64
+	herbivoresMeanLegsLength  float64
 
-	carnivoresMeanSpeed        float64
-	carnivoresMeanBowelsLength float64
-	carnivoresMeanFatLimit     float64
-	carnivoresMeanLegsLength   float64
+	carnivoresMeanSpeed       float64
+	carnivoresMeanBowelLength float64
+	carnivoresMeanFatLimit    float64
+	carnivoresMeanLegsLength  float64
 
 	herbivoresMeanSpeeds       []float64
 	herbivoresMeanBowelLengths []float64
@@ -80,7 +80,6 @@ func (g *game) init() {
 }
 
 func newGame() *game {
-	// FIXME: This shouldn't be here if you will use this func as a reset func.
 	rightPanelOption0, _, err := ebitenutil.NewImageFromFile("sprites/right_panel_buttons0.png")
 	if err != nil {
 		log.Fatal(err)
@@ -159,16 +158,16 @@ func newGame() *game {
 		herbivoresTotalQuantities: []int{},
 		carnivoresTotalQuantities: []int{},
 
-		herbivoresMeanSpeed:        0,
-		herbivoresMeanBowelsLength: 0,
+		herbivoresMeanSpeed:       0,
+		herbivoresMeanBowelLength: 0,
 
 		herbivoresMeanFatLimit:   0,
 		herbivoresMeanLegsLength: 0,
 
-		carnivoresMeanSpeed:        0,
-		carnivoresMeanBowelsLength: 0,
-		carnivoresMeanFatLimit:     0,
-		carnivoresMeanLegsLength:   0,
+		carnivoresMeanSpeed:       0,
+		carnivoresMeanBowelLength: 0,
+		carnivoresMeanFatLimit:    0,
+		carnivoresMeanLegsLength:  0,
 
 		herbivoresMeanSpeeds:       []float64{},
 		herbivoresMeanBowelLengths: []float64{},
@@ -218,13 +217,13 @@ func (g *game) resetGame() {
 	g.carnivoresTotalQuantities = []int{}
 
 	g.herbivoresMeanSpeed = 0
-	g.herbivoresMeanBowelsLength = 0
+	g.herbivoresMeanBowelLength = 0
 
 	g.herbivoresMeanFatLimit = 0
 	g.herbivoresMeanLegsLength = 0
 
 	g.carnivoresMeanSpeed = 0
-	g.carnivoresMeanBowelsLength = 0
+	g.carnivoresMeanBowelLength = 0
 	g.carnivoresMeanFatLimit = 0
 	g.carnivoresMeanLegsLength = 0
 

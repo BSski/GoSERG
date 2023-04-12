@@ -186,10 +186,10 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 			values []int
 			y      int
 		}{
-			{g.herbivoresSpeeds, 89},
-			{g.herbivoresBowelLengths, 239},
-			{g.herbivoresFatLimits, 389},
-			{g.herbivoresLegsLengths, 539},
+			{g.herbivoresSpeeds, 88},
+			{g.herbivoresBowelLengths, 238},
+			{g.herbivoresFatLimits, 388},
+			{g.herbivoresLegsLengths, 538},
 		}
 		for _, d := range data {
 			drawDistributionBars(screen, 873, d.y, d.values, len(d.values), color.RGBA{R: 0, G: 255, B: 85, A: 255})
@@ -199,10 +199,10 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 			values []int
 			y      int
 		}{
-			{g.carnivoresSpeeds, 89},
-			{g.carnivoresBowelLengths, 239},
-			{g.carnivoresFatLimits, 389},
-			{g.carnivoresLegsLengths, 539},
+			{g.carnivoresSpeeds, 88},
+			{g.carnivoresBowelLengths, 238},
+			{g.carnivoresFatLimits, 388},
+			{g.carnivoresLegsLengths, 538},
 		}
 		for _, d := range data {
 			drawDistributionBars(screen, 873, d.y, d.values, len(d.values), color.RGBA{R: 255, G: 112, B: 77, A: 255})
