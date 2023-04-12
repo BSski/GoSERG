@@ -137,26 +137,26 @@ func (g *game) Update() error {
 	}
 
 	if int(g.counterPrev) != int(g.counter) {
-		if len(g.herbivoresQuantities) >= 160 {
-			g.herbivoresQuantities = (g.herbivoresQuantities)[1:]
+		if len(g.d.herbivoresQuantities) >= 160 {
+			g.d.herbivoresQuantities = (g.d.herbivoresQuantities)[1:]
 		}
-		g.herbivoresQuantities = append(g.herbivoresQuantities, len(g.herbivores))
-		g.herbivoresTotalQuantities = append(g.herbivoresTotalQuantities, len(g.herbivores))
+		g.d.herbivoresQuantities = append(g.d.herbivoresQuantities, len(g.herbivores))
+		g.d.herbivoresTotalQuantities = append(g.d.herbivoresTotalQuantities, len(g.herbivores))
 
-		if len(g.carnivoresQuantities) >= 160 {
-			g.carnivoresQuantities = (g.carnivoresQuantities)[1:]
+		if len(g.d.carnivoresQuantities) >= 160 {
+			g.d.carnivoresQuantities = (g.d.carnivoresQuantities)[1:]
 		}
-		g.carnivoresQuantities = append(g.carnivoresQuantities, len(g.carnivores))
-		g.carnivoresTotalQuantities = append(g.carnivoresTotalQuantities, len(g.carnivores))
+		g.d.carnivoresQuantities = append(g.d.carnivoresQuantities, len(g.carnivores))
+		g.d.carnivoresTotalQuantities = append(g.d.carnivoresTotalQuantities, len(g.carnivores))
 
-		g.updateAnimalsMeanData(&g.herbivoresMeanSpeeds, len(g.herbivores), &g.herbivoresSpeeds)
-		g.updateAnimalsMeanData(&g.herbivoresMeanBowelLengths, len(g.herbivores), &g.herbivoresBowelLengths)
-		g.updateAnimalsMeanData(&g.herbivoresMeanFatLimits, len(g.herbivores), &g.herbivoresFatLimits)
-		g.updateAnimalsMeanData(&g.herbivoresMeanLegsLengths, len(g.herbivores), &g.herbivoresLegsLengths)
-		g.updateAnimalsMeanData(&g.carnivoresMeanSpeeds, len(g.carnivores), &g.carnivoresSpeeds)
-		g.updateAnimalsMeanData(&g.carnivoresMeanBowelLengths, len(g.carnivores), &g.carnivoresBowelLengths)
-		g.updateAnimalsMeanData(&g.carnivoresMeanFatLimits, len(g.carnivores), &g.carnivoresFatLimits)
-		g.updateAnimalsMeanData(&g.carnivoresMeanLegsLengths, len(g.carnivores), &g.carnivoresLegsLengths)
+		g.updateAnimalsMeanData(&g.d.herbivoresMeanSpeeds, len(g.herbivores), &g.d.herbivoresSpeeds)
+		g.updateAnimalsMeanData(&g.d.herbivoresMeanBowelLengths, len(g.herbivores), &g.d.herbivoresBowelLengths)
+		g.updateAnimalsMeanData(&g.d.herbivoresMeanFatLimits, len(g.herbivores), &g.d.herbivoresFatLimits)
+		g.updateAnimalsMeanData(&g.d.herbivoresMeanLegsLengths, len(g.herbivores), &g.d.herbivoresLegsLengths)
+		g.updateAnimalsMeanData(&g.d.carnivoresMeanSpeeds, len(g.carnivores), &g.d.carnivoresSpeeds)
+		g.updateAnimalsMeanData(&g.d.carnivoresMeanBowelLengths, len(g.carnivores), &g.d.carnivoresBowelLengths)
+		g.updateAnimalsMeanData(&g.d.carnivoresMeanFatLimits, len(g.carnivores), &g.d.carnivoresFatLimits)
+		g.updateAnimalsMeanData(&g.d.carnivoresMeanLegsLengths, len(g.carnivores), &g.d.carnivoresLegsLengths)
 	}
 
 	return nil

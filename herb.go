@@ -54,7 +54,7 @@ func spawnHerbs(g *game, nr int) {
 				g:      g,
 				x:      x,
 				y:      y,
-				energy: g.s.herbivoresSpawnEnergy,
+				energy: g.s.herbsEnergy,
 			}
 			g.herbs = append(g.herbs, &h)
 			g.herbsPos[y][x] = append(g.herbsPos[y][x], &h)

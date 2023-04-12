@@ -58,10 +58,10 @@ func (c *carnivore) die() {
 			break
 		}
 	}
-	c.g.carnivoresSpeeds[c.dna[0]] -= 1
-	c.g.carnivoresBowelLengths[c.dna[1]] -= 1
-	c.g.carnivoresFatLimits[c.dna[2]] -= 1
-	c.g.carnivoresLegsLengths[c.dna[3]] -= 1
+	c.g.d.carnivoresSpeeds[c.dna[0]] -= 1
+	c.g.d.carnivoresBowelLengths[c.dna[1]] -= 1
+	c.g.d.carnivoresFatLimits[c.dna[2]] -= 1
+	c.g.d.carnivoresLegsLengths[c.dna[3]] -= 1
 }
 
 func (c *carnivore) action() {
@@ -121,10 +121,10 @@ func (_ *carnivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int) {
 	c.init()
 	g.carnivores = append(g.carnivores, &c)
 	g.carnivoresPos[y][x] = append(g.carnivoresPos[y][x], &c)
-	g.carnivoresSpeeds[c.dna[0]] += 1
-	g.carnivoresBowelLengths[c.dna[1]] += 1
-	g.carnivoresFatLimits[c.dna[2]] += 1
-	g.carnivoresLegsLengths[c.dna[3]] += 1
+	g.d.carnivoresSpeeds[c.dna[0]] += 1
+	g.d.carnivoresBowelLengths[c.dna[1]] += 1
+	g.d.carnivoresFatLimits[c.dna[2]] += 1
+	g.d.carnivoresLegsLengths[c.dna[3]] += 1
 }
 
 func (c *carnivore) eat() {
@@ -156,10 +156,10 @@ func spawnCarnivore(g *game, nr int) {
 		c.init()
 		g.carnivores = append(g.carnivores, &c)
 		g.carnivoresPos[y][x] = append(g.carnivoresPos[y][x], &c)
-		g.carnivoresSpeeds[c.dna[0]] += 1
-		g.carnivoresBowelLengths[c.dna[1]] += 1
-		g.carnivoresFatLimits[c.dna[2]] += 1
-		g.carnivoresLegsLengths[c.dna[3]] += 1
+		g.d.carnivoresSpeeds[c.dna[0]] += 1
+		g.d.carnivoresBowelLengths[c.dna[1]] += 1
+		g.d.carnivoresFatLimits[c.dna[2]] += 1
+		g.d.carnivoresLegsLengths[c.dna[3]] += 1
 	}
 }
 

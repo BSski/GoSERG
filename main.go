@@ -47,5 +47,3 @@ func run(stdout io.Writer) error {
 // opisz ladnie co to jest, co mozna zrobic, co sie klika, nie przesadź
 // opisz ze sam zrobiles wszystko
 // ze to oryginalnie projekt w pythonie i zrefactorowales go w Pythonie i przepisales na Go
-
-// zamiast pelno zmiennych carnivores_bowel_length itd to zrob z tego structa i zrob carnivores[0].bowel_length

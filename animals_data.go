@@ -1,7 +1,34 @@
 package main
 
 type data struct {
+	herbivoresQuantities []int
+	carnivoresQuantities []int
+
+	herbivoresTotalQuantities []int
+	carnivoresTotalQuantities []int
+
+	herbivoresMeanSpeeds       []float64
+	herbivoresMeanBowelLengths []float64
+	herbivoresMeanFatLimits    []float64
+	herbivoresMeanLegsLengths  []float64
+
+	carnivoresMeanSpeeds       []float64
+	carnivoresMeanBowelLengths []float64
+	carnivoresMeanFatLimits    []float64
+	carnivoresMeanLegsLengths  []float64
+
+	herbivoresSpeeds       [8]int
+	herbivoresBowelLengths [8]int
+	herbivoresFatLimits    [8]int
+	herbivoresLegsLengths  [8]int
+
+	carnivoresSpeeds       [8]int
+	carnivoresBowelLengths [8]int
+	carnivoresFatLimits    [8]int
+	carnivoresLegsLengths  [8]int
 }
+
+var d data
 
 func (g *game) updateAnimalsMeanData(
 	meanValues *[]float64,

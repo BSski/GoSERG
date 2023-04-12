@@ -86,11 +86,11 @@ func (sc *scene) drawQuantitiesChart(screen *ebiten.Image) {
 }
 
 func (sc *scene) plotQuantities(screen *ebiten.Image, g *game) {
-	for i := 0; i < len(g.herbivoresQuantities); i++ {
-		vector.DrawFilledRect(screen, float32(29+i), float32(422-int(g.herbivoresQuantities[i]/5)), 2, 2, color.RGBA{R: 0, G: 230, B: 115, A: 255}, false)
+	for i := 0; i < len(g.d.herbivoresQuantities); i++ {
+		vector.DrawFilledRect(screen, float32(29+i), float32(422-int(g.d.herbivoresQuantities[i]/5)), 2, 2, color.RGBA{R: 0, G: 230, B: 115, A: 255}, false)
 	}
-	for i := 0; i < len(g.carnivoresQuantities); i++ {
-		vector.DrawFilledRect(screen, float32(29+i), float32(422-int(g.carnivoresQuantities[i]/5)), 2, 2, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
+	for i := 0; i < len(g.d.carnivoresQuantities); i++ {
+		vector.DrawFilledRect(screen, float32(29+i), float32(422-int(g.d.carnivoresQuantities[i]/5)), 2, 2, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
 	}
 }
 
@@ -114,16 +114,16 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 		return
 	}
 	xHerbiChart := 36
-	for i := 0; i < len(g.herbivoresTotalQuantities); i++ {
-		if len(g.herbivoresTotalQuantities) > 800 {
-			if i%(int(float64(len(g.herbivoresTotalQuantities))/float64(800))+1) != 0 {
+	for i := 0; i < len(g.d.herbivoresTotalQuantities); i++ {
+		if len(g.d.herbivoresTotalQuantities) > 800 {
+			if i%(int(float64(len(g.d.herbivoresTotalQuantities))/float64(800))+1) != 0 {
 				continue
 			}
 			xHerbiChart += 1
 			vector.DrawFilledRect(
 				screen,
 				float32(xHerbiChart),
-				float32(648-int(g.herbivoresTotalQuantities[i]/5)),
+				float32(648-int(g.d.herbivoresTotalQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 0, G: 230, B: 115, A: 255},
@@ -133,7 +133,7 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 			vector.DrawFilledRect(
 				screen,
 				float32(37+i),
-				float32(648-int(g.herbivoresTotalQuantities[i]/5)),
+				float32(648-int(g.d.herbivoresTotalQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 0, G: 230, B: 115, A: 255},
@@ -142,16 +142,16 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 		}
 	}
 	xCarniChart := 36
-	for i := 0; i < len(g.carnivoresTotalQuantities); i++ {
-		if len(g.carnivoresTotalQuantities) > 800 {
-			if i%(int(float64(len(g.carnivoresTotalQuantities))/float64(800))+1) != 0 {
+	for i := 0; i < len(g.d.carnivoresTotalQuantities); i++ {
+		if len(g.d.carnivoresTotalQuantities) > 800 {
+			if i%(int(float64(len(g.d.carnivoresTotalQuantities))/float64(800))+1) != 0 {
 				continue
 			}
 			xCarniChart += 1
 			vector.DrawFilledRect(
 				screen,
 				float32(xCarniChart),
-				float32(648-int(g.carnivoresTotalQuantities[i]/5)),
+				float32(648-int(g.d.carnivoresTotalQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 255, G: 77, B: 77, A: 255},
@@ -161,7 +161,7 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 			vector.DrawFilledRect(
 				screen,
 				float32(37+i),
-				float32(648-int(g.carnivoresTotalQuantities[i]/5)),
+				float32(648-int(g.d.carnivoresTotalQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 255, G: 77, B: 77, A: 255},
@@ -241,16 +241,16 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 	switch g.rightPanelOption {
 	case 0:
 		herbivoreData := [][]float64{
-			g.herbivoresMeanSpeeds,
-			g.herbivoresMeanBowelLengths,
-			g.herbivoresMeanFatLimits,
-			g.herbivoresMeanLegsLengths,
+			g.d.herbivoresMeanSpeeds,
+			g.d.herbivoresMeanBowelLengths,
+			g.d.herbivoresMeanFatLimits,
+			g.d.herbivoresMeanLegsLengths,
 		}
 		carnivoreData := [][]float64{
-			g.carnivoresMeanSpeeds,
-			g.carnivoresMeanBowelLengths,
-			g.carnivoresMeanFatLimits,
-			g.carnivoresMeanLegsLengths,
+			g.d.carnivoresMeanSpeeds,
+			g.d.carnivoresMeanBowelLengths,
+			g.d.carnivoresMeanFatLimits,
+			g.d.carnivoresMeanLegsLengths,
 		}
 		startY := []int{180, 330, 480, 630}
 		drawCharts(screen, herbivoreData, startY, color.RGBA{R: 0, G: 255, B: 85, A: 255})
@@ -260,10 +260,10 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 			values [8]int
 			y      int
 		}{
-			{g.herbivoresSpeeds, 87},
-			{g.herbivoresBowelLengths, 237},
-			{g.herbivoresFatLimits, 387},
-			{g.herbivoresLegsLengths, 537},
+			{g.d.herbivoresSpeeds, 87},
+			{g.d.herbivoresBowelLengths, 237},
+			{g.d.herbivoresFatLimits, 387},
+			{g.d.herbivoresLegsLengths, 537},
 		}
 		for _, d := range data {
 			drawDistributionBars(screen, 873, d.y, d.values, len(g.herbivores), color.RGBA{R: 0, G: 255, B: 85, A: 255})
@@ -273,10 +273,10 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 			values [8]int
 			y      int
 		}{
-			{g.carnivoresSpeeds, 87},
-			{g.carnivoresBowelLengths, 237},
-			{g.carnivoresFatLimits, 387},
-			{g.carnivoresLegsLengths, 537},
+			{g.d.carnivoresSpeeds, 87},
+			{g.d.carnivoresBowelLengths, 237},
+			{g.d.carnivoresFatLimits, 387},
+			{g.d.carnivoresLegsLengths, 537},
 		}
 		for _, d := range data {
 			drawDistributionBars(screen, 873, d.y, d.values, len(g.carnivores), color.RGBA{R: 255, G: 112, B: 77, A: 255})
