@@ -32,15 +32,15 @@ func processEvents(g *game) {
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if 36 <= x && 76 >= x && 86 <= y && 106 >= y {
+		if 36 <= x && 76 >= x && 96 <= y && 116 >= y {
 			// Start button
 			g.pause = false
 			buttons["start"].state = 1
-		} else if 85 <= x && 124 >= x && 86 <= y && 106 >= y {
+		} else if 85 <= x && 124 >= x && 96 <= y && 116 >= y {
 			// Pause button
 			g.pause = true
 			buttons["pause"].state = 1
-		} else if 136 <= x && 175 >= x && 86 <= y && 106 >= y {
+		} else if 136 <= x && 175 >= x && 96 <= y && 116 >= y {
 			// Reset button
 			g.reset = true
 			buttons["reset"].state = 1

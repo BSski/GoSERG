@@ -66,3 +66,5 @@ func run(stdout io.Writer) error {
 
 // wykresy average speed itd nie znikaja jak nie ma herbi/carni
 // na dole wykresow skacze jeden pixel niefajnie, najezdza na obwodke
+
+// total wykres nie rysuje sie dobrze, kropki skaczą? i skraca się źle

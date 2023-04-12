@@ -62,19 +62,19 @@ func getBtns() map[string]*button {
 			state:   0,
 			sprites: [2]*ebiten.Image{startUpSpr, startDownSpr},
 			x:       36,
-			y:       86,
+			y:       96,
 		},
 		"pause": {
 			state:   0,
 			sprites: [2]*ebiten.Image{pauseUpSpr, pauseDownSpr},
 			x:       85,
-			y:       86,
+			y:       96,
 		},
 		"reset": {
 			state:   0,
 			sprites: [2]*ebiten.Image{resetUpSpr, resetDownSpr},
 			x:       136,
-			y:       86,
+			y:       96,
 		},
 		"cpsPlus": {
 			state:   0,

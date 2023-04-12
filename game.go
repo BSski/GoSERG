@@ -15,7 +15,6 @@ var (
 	mPlus1pRegular12 font.Face
 	mPlus1pRegular13 font.Face
 	mPlus1pRegular14 font.Face
-	mPlus1pRegular18 font.Face
 
 	buttons map[string]*button
 )
@@ -71,14 +70,6 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	mPlus1pRegular18, err = opentype.NewFace(tt2, &opentype.FaceOptions{
-		Size:    18,
-		DPI:     dpi,
-		Hinting: font.HintingVertical,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	buttons = getBtns()
 }
@@ -87,26 +78,30 @@ func (g *game) Layout(_, _ int) (int, int) {
 	return 1061, 670
 }
 
-// TODO: big problems with buttons: no debounce and also some are not working and throwing errors.
 func (g *game) Update() error {
 	processEvents(g)
+
+	if g.reset == true {
+		g.reset = false
+		g.resetGame()
+	}
+
+	g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
+	ebiten.SetTPS(g.cyclesPerSec)
 
 	// TODO: maybe do this and delete all pause checks?
 	//if g.pause {
 	//	return nil
 	//}
 
-	ebiten.SetTPS(g.cyclesPerSecList[g.chosenCyclesPerSec])
-
 	g.counterPrev = g.counter
-	g.bigCounterPrev = g.bigCounter
 
 	if !g.pause {
 		g.counter += g.s.tempo
 		if int(g.counter) >= 120 {
-			g.bigCounter += 1
 			g.counter = 0
 		}
+		g.totalCyclesCounter += 1
 	}
 
 	if int(g.counterPrev) != int(g.counter) && int(g.counter)%speeds[g.s.herbsSpawnRate] == 0 {
@@ -147,80 +142,30 @@ func (g *game) Update() error {
 		g.herbivores[i].move()
 	}
 
-	if g.reset == true {
-		g.reset = false
-		g.resetGame()
-	}
-
 	if int(g.counterPrev) != int(g.counter) {
-		g.updateAnimalsDataHerbi(&g.herbivoresMeanSpeed, &g.herbivoresMeanSpeeds, 0, &g.herbivoresSpeeds)
-		g.updateAnimalsDataHerbi(&g.herbivoresMeanBowelLength, &g.herbivoresMeanBowelLengths, 1, &g.herbivoresBowelLengths)
-		g.updateAnimalsDataHerbi(&g.herbivoresMeanFatLimit, &g.herbivoresMeanFatLimits, 2, &g.herbivoresFatLimits)
-		g.updateAnimalsDataHerbi(&g.herbivoresMeanLegsLength, &g.herbivoresMeanLegsLengths, 3, &g.herbivoresLegsLengths)
-		g.updateAnimalsDataCarni(&g.carnivoresMeanSpeed, &g.carnivoresMeanSpeeds, 0, &g.carnivoresSpeeds)
-		g.updateAnimalsDataCarni(&g.carnivoresMeanBowelLength, &g.carnivoresMeanBowelLengths, 1, &g.carnivoresBowelLengths)
-		g.updateAnimalsDataCarni(&g.carnivoresMeanFatLimit, &g.carnivoresMeanFatLimits, 2, &g.carnivoresFatLimits)
-		g.updateAnimalsDataCarni(&g.carnivoresMeanLegsLength, &g.carnivoresMeanLegsLengths, 3, &g.carnivoresLegsLengths)
+		if len(g.herbivoresQuantities) >= 160 {
+			g.herbivoresQuantities = (g.herbivoresQuantities)[1:]
+		}
+		g.herbivoresQuantities = append(g.herbivoresQuantities, len(g.herbivores))
+		g.herbivoresTotalQuantities = append(g.herbivoresTotalQuantities, len(g.herbivores))
 
+		if len(g.carnivoresQuantities) >= 160 {
+			g.carnivoresQuantities = (g.carnivoresQuantities)[1:]
+		}
+		g.carnivoresQuantities = append(g.carnivoresQuantities, len(g.carnivores))
+		g.carnivoresTotalQuantities = append(g.carnivoresTotalQuantities, len(g.carnivores))
+
+		g.updateAnimalsMeanData(&g.herbivoresMeanSpeeds, len(g.herbivores), &g.herbivoresSpeeds)
+		g.updateAnimalsMeanData(&g.herbivoresMeanBowelLengths, len(g.herbivores), &g.herbivoresBowelLengths)
+		g.updateAnimalsMeanData(&g.herbivoresMeanFatLimits, len(g.herbivores), &g.herbivoresFatLimits)
+		g.updateAnimalsMeanData(&g.herbivoresMeanLegsLengths, len(g.herbivores), &g.herbivoresLegsLengths)
+		g.updateAnimalsMeanData(&g.carnivoresMeanSpeeds, len(g.carnivores), &g.carnivoresSpeeds)
+		g.updateAnimalsMeanData(&g.carnivoresMeanBowelLengths, len(g.carnivores), &g.carnivoresBowelLengths)
+		g.updateAnimalsMeanData(&g.carnivoresMeanFatLimits, len(g.carnivores), &g.carnivoresFatLimits)
+		g.updateAnimalsMeanData(&g.carnivoresMeanLegsLengths, len(g.carnivores), &g.carnivoresLegsLengths)
 	}
+
 	return nil
-}
-
-// FIXME: it iterates over animals many times, make it a big single loop
-func (g *game) updateAnimalsDataHerbi(
-	meanVal *float64,
-	meanValues *[]float64,
-	gene int,
-	values *[]int,
-) {
-	if len(*meanValues) >= 160 {
-		*meanValues = (*meanValues)[1:]
-	}
-	var vals []int
-	for _, h := range g.herbivores {
-		vals = append(vals, h.dna[gene])
-	}
-	*values = vals
-	if len(g.herbivores) > 0 {
-		*meanVal = sumToFloat64(vals) / float64(len(g.herbivores))
-		*meanValues = append(*meanValues, *meanVal)
-	} else {
-		if len(*meanValues) > 160 {
-			*meanValues = (*meanValues)[1:]
-		}
-	}
-}
-
-func (g *game) updateAnimalsDataCarni(
-	meanVal *float64,
-	meanValues *[]float64,
-	gene int,
-	values *[]int,
-) {
-	if len(*meanValues) >= 160 {
-		*meanValues = (*meanValues)[1:]
-	}
-	var vals []int
-	for _, c := range g.carnivores {
-		vals = append(vals, c.dna[gene])
-	}
-	*values = vals
-	if len(g.carnivores) > 0 {
-		*meanVal = sumToFloat64(vals) / float64(len(g.carnivores))
-		*meanValues = append(*meanValues, *meanVal)
-	} else {
-		if len(*meanValues) > 160 {
-			*meanValues = (*meanValues)[1:]
-		}
-	}
-}
-
-func sumToFloat64(vals []int) float64 {
-	var sum int
-	for _, v := range vals {
-		sum += v
-	}
-	return float64(sum)
 }
 
 func (g *game) Draw(screen *ebiten.Image) {
@@ -237,7 +182,7 @@ func (g *game) Draw(screen *ebiten.Image) {
 	sc.plotHistoricQuantities(screen, g)
 	sc.drawRightPanel(screen, g)
 	sc.plotRightPanel(screen, g)
-	sc.drawCountersIcons(screen)
+	sc.drawCounters(screen, g)
 	sc.drawSettings(screen, g)
 	sc.drawButtons(screen)
 	sc.drawHerbs(screen, g)

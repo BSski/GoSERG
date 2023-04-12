@@ -14,13 +14,14 @@ type game struct {
 	animation        []rune
 	animationCounter int
 
-	counter        float64
-	counterPrev    float64
-	bigCounter     float64
-	bigCounterPrev float64
+	counter            float64
+	counterPrev        float64
+	totalCyclesCounter int
 
 	reset bool
 	pause bool
+
+	plotHistoricQuantitiesCheckbox bool
 
 	chosenCyclesPerSec int
 	cyclesPerSec       int
@@ -41,16 +42,6 @@ type game struct {
 	herbivoresTotalQuantities []int
 	carnivoresTotalQuantities []int
 
-	herbivoresMeanSpeed       float64
-	herbivoresMeanBowelLength float64
-	herbivoresMeanFatLimit    float64
-	herbivoresMeanLegsLength  float64
-
-	carnivoresMeanSpeed       float64
-	carnivoresMeanBowelLength float64
-	carnivoresMeanFatLimit    float64
-	carnivoresMeanLegsLength  float64
-
 	herbivoresMeanSpeeds       []float64
 	herbivoresMeanBowelLengths []float64
 	herbivoresMeanFatLimits    []float64
@@ -61,15 +52,15 @@ type game struct {
 	carnivoresMeanFatLimits    []float64
 	carnivoresMeanLegsLengths  []float64
 
-	herbivoresSpeeds       []int
-	herbivoresBowelLengths []int
-	herbivoresFatLimits    []int
-	herbivoresLegsLengths  []int
+	herbivoresSpeeds       [8]int
+	herbivoresBowelLengths [8]int
+	herbivoresFatLimits    [8]int
+	herbivoresLegsLengths  [8]int
 
-	carnivoresSpeeds       []int
-	carnivoresBowelLengths []int
-	carnivoresFatLimits    []int
-	carnivoresLegsLengths  []int
+	carnivoresSpeeds       [8]int
+	carnivoresBowelLengths [8]int
+	carnivoresFatLimits    [8]int
+	carnivoresLegsLengths  [8]int
 
 	rightPanelSprites [3]*ebiten.Image
 	rightPanelOption  int
@@ -101,10 +92,9 @@ func newGame() *game {
 		animation:        []rune("||||////----\\\\\\\\"),
 		animationCounter: 0,
 
-		counter:        0,
-		counterPrev:    0,
-		bigCounter:     0,
-		bigCounterPrev: 0,
+		counter:            0,
+		counterPrev:        0,
+		totalCyclesCounter: 0,
 
 		reset: true,
 		pause: false,
@@ -158,17 +148,6 @@ func newGame() *game {
 		herbivoresTotalQuantities: []int{},
 		carnivoresTotalQuantities: []int{},
 
-		herbivoresMeanSpeed:       0,
-		herbivoresMeanBowelLength: 0,
-
-		herbivoresMeanFatLimit:   0,
-		herbivoresMeanLegsLength: 0,
-
-		carnivoresMeanSpeed:       0,
-		carnivoresMeanBowelLength: 0,
-		carnivoresMeanFatLimit:    0,
-		carnivoresMeanLegsLength:  0,
-
 		herbivoresMeanSpeeds:       []float64{},
 		herbivoresMeanBowelLengths: []float64{},
 		herbivoresMeanFatLimits:    []float64{},
@@ -179,15 +158,15 @@ func newGame() *game {
 		carnivoresMeanFatLimits:    []float64{},
 		carnivoresMeanLegsLengths:  []float64{},
 
-		herbivoresSpeeds:       []int{},
-		herbivoresBowelLengths: []int{},
-		herbivoresFatLimits:    []int{},
-		herbivoresLegsLengths:  []int{},
+		herbivoresSpeeds:       [8]int{0, 0, 0, 0, 0, 0, 0, 0},
+		herbivoresBowelLengths: [8]int{0, 0, 0, 0, 0, 0, 0, 0},
+		herbivoresFatLimits:    [8]int{0, 0, 0, 0, 0, 0, 0, 0},
+		herbivoresLegsLengths:  [8]int{0, 0, 0, 0, 0, 0, 0, 0},
 
-		carnivoresSpeeds:       []int{},
-		carnivoresBowelLengths: []int{},
-		carnivoresFatLimits:    []int{},
-		carnivoresLegsLengths:  []int{},
+		carnivoresSpeeds:       [8]int{0, 0, 0, 0, 0, 0, 0, 0},
+		carnivoresBowelLengths: [8]int{0, 0, 0, 0, 0, 0, 0, 0},
+		carnivoresFatLimits:    [8]int{0, 0, 0, 0, 0, 0, 0, 0},
+		carnivoresLegsLengths:  [8]int{0, 0, 0, 0, 0, 0, 0, 0},
 
 		rightPanelSprites: [3]*ebiten.Image{rightPanelOption0, rightPanelOption1, rightPanelOption2},
 		rightPanelOption:  0,
@@ -199,8 +178,7 @@ func newGame() *game {
 func (g *game) resetGame() {
 	g.counter = 0
 	g.counterPrev = 0
-	g.bigCounter = 0
-	g.bigCounterPrev = 0
+	g.totalCyclesCounter = 0
 
 	g.herbsPos = generateHerbsPositions()
 	g.herbivoresPos = generateHerbivoresPositions()
@@ -216,17 +194,6 @@ func (g *game) resetGame() {
 	g.herbivoresTotalQuantities = []int{}
 	g.carnivoresTotalQuantities = []int{}
 
-	g.herbivoresMeanSpeed = 0
-	g.herbivoresMeanBowelLength = 0
-
-	g.herbivoresMeanFatLimit = 0
-	g.herbivoresMeanLegsLength = 0
-
-	g.carnivoresMeanSpeed = 0
-	g.carnivoresMeanBowelLength = 0
-	g.carnivoresMeanFatLimit = 0
-	g.carnivoresMeanLegsLength = 0
-
 	g.herbivoresMeanSpeeds = []float64{}
 	g.herbivoresMeanBowelLengths = []float64{}
 	g.herbivoresMeanFatLimits = []float64{}
@@ -237,13 +204,13 @@ func (g *game) resetGame() {
 	g.carnivoresMeanFatLimits = []float64{}
 	g.carnivoresMeanLegsLengths = []float64{}
 
-	g.herbivoresSpeeds = []int{}
-	g.herbivoresBowelLengths = []int{}
-	g.herbivoresFatLimits = []int{}
-	g.herbivoresLegsLengths = []int{}
+	g.herbivoresSpeeds = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+	g.herbivoresBowelLengths = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+	g.herbivoresFatLimits = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+	g.herbivoresLegsLengths = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
 
-	g.carnivoresSpeeds = []int{}
-	g.carnivoresBowelLengths = []int{}
-	g.carnivoresFatLimits = []int{}
-	g.carnivoresLegsLengths = []int{}
+	g.carnivoresSpeeds = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+	g.carnivoresBowelLengths = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+	g.carnivoresFatLimits = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+	g.carnivoresLegsLengths = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
 }
