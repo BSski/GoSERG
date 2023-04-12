@@ -89,49 +89,43 @@ func (g *game) Update() error {
 	g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
 	ebiten.SetTPS(g.cyclesPerSec)
 
-	// TODO: maybe do this and delete all pause checks?
-	//if g.pause {
-	//	return nil
-	//}
+	if g.pause {
+		return nil
+	}
 
 	g.counterPrev = g.counter
-
-	if !g.pause {
-		g.counter += g.s.tempo
-		if int(g.counter) >= 120 {
-			g.counter = 0
-		}
-		g.totalCyclesCounter += 1
+	g.counter += g.s.tempo
+	if int(g.counter) >= 120 {
+		g.counter = 0
 	}
+	g.totalCyclesCounter += 1
 
 	if int(g.counterPrev) != int(g.counter) && int(g.counter)%speeds[g.s.herbsSpawnRate] == 0 {
-		createHerbs(g, g.s.herbsPerSpawn)
+		spawnHerbs(g, g.s.herbsPerSpawn)
 	}
 
-	if !g.pause {
-		for i := 0; i < len(g.herbs); i++ {
-			g.herbs[i].age += 1
-		}
+	for i := 0; i < len(g.herbs); i++ {
+		g.herbs[i].age += 1
+	}
 
-		for i := 0; i < len(g.carnivores); i++ {
-			if g.carnivores[i].energy <= 0 {
-				g.carnivores[i].starve()
-			}
+	for i := 0; i < len(g.carnivores); i++ {
+		if g.carnivores[i].energy <= 0 {
+			g.carnivores[i].starve()
 		}
-		for i := 0; i < len(g.herbivores); i++ {
-			if g.herbivores[i].energy <= 0 {
-				g.herbivores[i].starve()
-			}
+	}
+	for i := 0; i < len(g.herbivores); i++ {
+		if g.herbivores[i].energy <= 0 {
+			g.herbivores[i].starve()
 		}
+	}
 
-		for i := 0; i < len(g.carnivores); i++ {
-			g.carnivores[i].action()
-			g.carnivores[i].age += 1
-		}
-		for i := 0; i < len(g.herbivores); i++ {
-			g.herbivores[i].action()
-			g.herbivores[i].age += 1
-		}
+	for i := 0; i < len(g.carnivores); i++ {
+		g.carnivores[i].action()
+		g.carnivores[i].age += 1
+	}
+	for i := 0; i < len(g.herbivores); i++ {
+		g.herbivores[i].action()
+		g.herbivores[i].age += 1
 	}
 
 	for i := 0; i < len(g.carnivores); i++ {

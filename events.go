@@ -62,14 +62,14 @@ func processEvents(g *game) {
 			buttons["cpsMinus"].state = 1
 		} else if 826 <= x && 839 >= x && 105 <= y && 118 >= y {
 			// g.s.tempo plus
-			g.s.tempo += 0.09
+			g.s.tempo += 0.03
 			if g.s.tempo > 1.00 {
 				g.s.tempo = 1.00
 			}
 			buttons["tempoPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 105 <= y && 118 >= y {
 			// g.s.tempo minus
-			g.s.tempo -= 0.09
+			g.s.tempo -= 0.03
 			if g.s.tempo < 0.01 {
 				g.s.tempo = 0.01
 			}
@@ -91,8 +91,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 165 <= y && 178 >= y {
 			// Herbs starting nr plus
 			g.s.herbsStartingNr += 50
-			if g.s.herbsStartingNr > 1000 {
-				g.s.herbsStartingNr = 1000
+			if g.s.herbsStartingNr > g.regularTilesQuantity {
+				g.s.herbsStartingNr = g.regularTilesQuantity
 			}
 			buttons["herbsStartingNrPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 165 <= y && 178 >= y {
@@ -105,8 +105,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 185 <= y && 198 >= y {
 			// Herbs energy plus
 			g.s.herbsEnergy += 50
-			if g.s.herbsEnergy > 5500 {
-				g.s.herbsEnergy = 5500
+			if g.s.herbsEnergy > 9900 {
+				g.s.herbsEnergy = 9900
 			}
 			buttons["herbsEnergyPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 185 <= y && 198 >= y {
@@ -118,14 +118,14 @@ func processEvents(g *game) {
 			buttons["herbsEnergyMinus"].state = 1
 		} else if 826 <= x && 839 >= x && 205 <= y && 218 >= y {
 			// Herbs per spawn plus
-			g.s.herbsPerSpawn += 1
-			if g.s.herbsPerSpawn > 100 {
-				g.s.herbsPerSpawn = 100
+			g.s.herbsPerSpawn += 2
+			if g.s.herbsPerSpawn > 300 {
+				g.s.herbsPerSpawn = 300
 			}
 			buttons["herbsPerSpawnPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 205 <= y && 218 >= y {
 			// Herbs per spawn minus
-			g.s.herbsPerSpawn -= 1
+			g.s.herbsPerSpawn -= 2
 			if g.s.herbsPerSpawn < 0 {
 				g.s.herbsPerSpawn = 0
 			}
@@ -147,8 +147,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 265 <= y && 278 >= y {
 			// Herbivores starting nr plus
 			g.s.herbivoresStartingNr += 20
-			if g.s.herbivoresStartingNr > 800 {
-				g.s.herbivoresStartingNr = 800
+			if g.s.herbivoresStartingNr > g.regularTilesQuantity {
+				g.s.herbivoresStartingNr = g.regularTilesQuantity
 			}
 			buttons["herbivoresStartingNrPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 265 <= y && 278 >= y {
@@ -161,8 +161,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 285 <= y && 298 >= y {
 			// Herbivores spawn energy plus
 			g.s.herbivoresSpawnEnergy += 50
-			if g.s.herbivoresSpawnEnergy > 5500 {
-				g.s.herbivoresSpawnEnergy = 5500
+			if g.s.herbivoresSpawnEnergy > 9900 {
+				g.s.herbivoresSpawnEnergy = 9900
 			}
 			buttons["herbivoresSpawnEnergyPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 285 <= y && 298 >= y {
@@ -175,8 +175,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 305 <= y && 318 >= y {
 			// Herbivores breeding level plus
 			g.s.herbivoresBreedLevel += 50
-			if g.s.herbivoresBreedLevel > 5500 {
-				g.s.herbivoresBreedLevel = 5500
+			if g.s.herbivoresBreedLevel > 9900 {
+				g.s.herbivoresBreedLevel = 9900
 			}
 			buttons["herbivoresBreedLevelPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 305 <= y && 318 >= y {
@@ -189,8 +189,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 325 <= y && 338 >= y {
 			// Herbivores move cost plus
 			g.s.herbivoresMoveCost += 5
-			if g.s.herbivoresMoveCost > 200 {
-				g.s.herbivoresMoveCost = 200
+			if g.s.herbivoresMoveCost > 1000 {
+				g.s.herbivoresMoveCost = 1000
 			}
 			buttons["herbivoresMoveCostPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 325 <= y && 338 >= y {
@@ -203,8 +203,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 365 <= y && 378 >= y {
 			// Carnivores starting nr plus
 			g.s.carnivoresStartingNr += 5
-			if g.s.carnivoresStartingNr > 300 {
-				g.s.carnivoresStartingNr = 300
+			if g.s.carnivoresStartingNr > g.regularTilesQuantity {
+				g.s.carnivoresStartingNr = g.regularTilesQuantity
 			}
 			buttons["carnivoresStartingNrPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 365 <= y && 378 >= y {
@@ -217,8 +217,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 385 <= y && 398 >= y {
 			// Carnivores spawn energy plus
 			g.s.carnivoresSpawnEnergy += 50
-			if g.s.carnivoresSpawnEnergy > 5500 {
-				g.s.carnivoresSpawnEnergy = 5500
+			if g.s.carnivoresSpawnEnergy > 9900 {
+				g.s.carnivoresSpawnEnergy = 9900
 			}
 			buttons["carnivoresSpawnEnergyPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 385 <= y && 398 >= y {
@@ -231,8 +231,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 405 <= y && 418 >= y {
 			// Carnivores breeding level plus
 			g.s.carnivoresBreedLevel += 50
-			if g.s.carnivoresBreedLevel > 5500 {
-				g.s.carnivoresBreedLevel = 5500
+			if g.s.carnivoresBreedLevel > 9900 {
+				g.s.carnivoresBreedLevel = 9900
 			}
 			buttons["carnivoresBreedLevelPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 405 <= y && 418 >= y {
@@ -245,8 +245,8 @@ func processEvents(g *game) {
 		} else if 826 <= x && 839 >= x && 425 <= y && 438 >= y {
 			// Carnivores move cost plus
 			g.s.carnivoresMoveCost += 5
-			if g.s.carnivoresMoveCost > 250 {
-				g.s.carnivoresMoveCost = 250
+			if g.s.carnivoresMoveCost > 1000 {
+				g.s.carnivoresMoveCost = 1000
 			}
 			buttons["carnivoresMoveCostPlus"].state = 1
 		} else if 811 <= x && 824 >= x && 425 <= y && 438 >= y {

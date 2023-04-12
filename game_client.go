@@ -7,9 +7,11 @@ import (
 )
 
 type game struct {
-	s    settings
-	c    consts
-	grid [][][2]float32
+	s                    settings
+	c                    consts
+	grid                 [][][2]float32
+	boardSize            int
+	regularTilesQuantity int
 
 	animation        []rune
 	animationCounter int
@@ -26,7 +28,6 @@ type game struct {
 	chosenCyclesPerSec int
 	cyclesPerSec       int
 	cyclesPerSecList   [29]int
-	chartsDrawingSpeed int
 
 	herbs      []*herb
 	herbivores []*herbivore
@@ -68,6 +69,7 @@ type game struct {
 
 func (g *game) init() {
 	g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
+	g.regularTilesQuantity = (g.boardSize - 2) * (g.boardSize - 2)
 }
 
 func newGame() *game {
@@ -85,9 +87,10 @@ func newGame() *game {
 	}
 
 	g := &game{
-		s:    s,
-		c:    c,
-		grid: generateGrid(),
+		s:         s,
+		c:         c,
+		grid:      generateGrid(),
+		boardSize: 41,
 
 		animation:        []rune("||||////----\\\\\\\\"),
 		animationCounter: 0,
@@ -99,7 +102,9 @@ func newGame() *game {
 		reset: true,
 		pause: false,
 
-		chosenCyclesPerSec: 19,
+		plotHistoricQuantitiesCheckbox: true,
+
+		chosenCyclesPerSec: 3,
 		cyclesPerSecList: [29]int{
 			30,
 			60,
@@ -131,8 +136,7 @@ func newGame() *game {
 			21000,
 			25000,
 		},
-		chartsDrawingSpeed: 0,
-		cyclesPerSec:       0,
+		cyclesPerSec: 0,
 
 		herbs:      []*herb{},
 		herbivores: []*herbivore{},
@@ -213,4 +217,8 @@ func (g *game) resetGame() {
 	g.carnivoresBowelLengths = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
 	g.carnivoresFatLimits = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
 	g.carnivoresLegsLengths = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+
+	spawnHerbs(g, g.s.herbsStartingNr)
+	spawnHerbivore(g, g.s.herbivoresStartingNr)
+	spawnCarnivore(g, g.s.carnivoresStartingNr)
 }

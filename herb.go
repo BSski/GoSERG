@@ -45,10 +45,10 @@ func (h *herb) die() {
 	}
 }
 
-func createHerbs(g *game, nr int) {
+func spawnHerbs(g *game, nr int) {
 	for i := 0; i < nr; i++ {
-		y := rand.Intn(g.s.boardSize-2) + 2
-		x := rand.Intn(g.s.boardSize-2) + 2
+		y := rand.Intn(g.boardSize-2) + 2
+		x := rand.Intn(g.boardSize-2) + 2
 		if len(g.herbsPos[y][x]) == 0 {
 			h := herb{
 				g:      g,

@@ -1,8 +1,6 @@
 package main
 
 type settings struct {
-	boardSize int
-
 	tempo float64
 
 	mutationChance float64
@@ -26,11 +24,10 @@ type settings struct {
 }
 
 var s = settings{
-	boardSize:             41,
-	tempo:                 0.28,
+	tempo:                 0.10,
 	mutationChance:        0.04,
-	herbsSpawnRate:        6,
-	herbsPerSpawn:         7,
+	herbsSpawnRate:        3,
+	herbsPerSpawn:         12,
 	herbsEnergy:           2000,
 	herbsStartingNr:       500,
 	herbivoresStartingNr:  200,

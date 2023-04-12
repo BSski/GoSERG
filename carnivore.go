@@ -138,8 +138,8 @@ func (c *carnivore) eat() {
 
 func spawnCarnivore(g *game, nr int) {
 	for i := 0; i < nr; i++ {
-		y := rand.Intn(g.s.boardSize-2) + 2
-		x := rand.Intn(g.s.boardSize-2) + 2
+		y := rand.Intn(g.boardSize-2) + 2
+		x := rand.Intn(g.boardSize-2) + 2
 		dnaRange := g.c.partialDnaRange
 		c := carnivore{
 			g:      g,
@@ -188,10 +188,10 @@ func (c *carnivore) move() {
 	c.energy -= int(moveCost)
 
 	// Move away from the border.
-	if c.x <= 1 || c.x >= c.g.s.boardSize || c.y <= 1 || c.y >= c.g.s.boardSize {
+	if c.x <= 1 || c.x >= c.g.boardSize || c.y <= 1 || c.y >= c.g.boardSize {
 		if c.x <= 1 {
 			c.x += 1
-		} else if c.x >= c.g.s.boardSize {
+		} else if c.x >= c.g.boardSize {
 			c.x -= 1
 		} else if c.y <= 1 {
 			c.y += 1

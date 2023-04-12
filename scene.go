@@ -260,10 +260,10 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 			values [8]int
 			y      int
 		}{
-			{g.herbivoresSpeeds, 88},
-			{g.herbivoresBowelLengths, 238},
-			{g.herbivoresFatLimits, 388},
-			{g.herbivoresLegsLengths, 538},
+			{g.herbivoresSpeeds, 87},
+			{g.herbivoresBowelLengths, 237},
+			{g.herbivoresFatLimits, 387},
+			{g.herbivoresLegsLengths, 537},
 		}
 		for _, d := range data {
 			drawDistributionBars(screen, 873, d.y, d.values, len(g.herbivores), color.RGBA{R: 0, G: 255, B: 85, A: 255})
@@ -273,10 +273,10 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 			values [8]int
 			y      int
 		}{
-			{g.carnivoresSpeeds, 88},
-			{g.carnivoresBowelLengths, 238},
-			{g.carnivoresFatLimits, 388},
-			{g.carnivoresLegsLengths, 538},
+			{g.carnivoresSpeeds, 87},
+			{g.carnivoresBowelLengths, 237},
+			{g.carnivoresFatLimits, 387},
+			{g.carnivoresLegsLengths, 537},
 		}
 		for _, d := range data {
 			drawDistributionBars(screen, 873, d.y, d.values, len(g.carnivores), color.RGBA{R: 255, G: 112, B: 77, A: 255})
@@ -285,7 +285,7 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 }
 
 func (sc *scene) drawCounters(screen *ebiten.Image, g *game) {
-	text.Draw(screen, "Simulation age: "+strconv.Itoa(g.totalCyclesCounter), mPlus1pRegular12, 35, 83, color.Gray{Y: 50})
+	text.Draw(screen, "Simulation age: "+strconv.Itoa(g.totalCyclesCounter), mPlus1pRegular12, 40, 83, color.Gray{Y: 50})
 
 	// Herbs icon.
 	vector.DrawFilledRect(screen, 719, 15, 5, 5, color.RGBA{R: 34, G: 139, B: 34, A: 255}, false)

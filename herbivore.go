@@ -137,8 +137,8 @@ func (h *herbivore) eat() {
 
 func spawnHerbivore(g *game, nr int) {
 	for i := 0; i < nr; i++ {
-		y := rand.Intn(g.s.boardSize-2) + 2
-		x := rand.Intn(g.s.boardSize-2) + 2
+		y := rand.Intn(g.boardSize-2) + 2
+		x := rand.Intn(g.boardSize-2) + 2
 		dnaRange := g.c.partialDnaRange
 		h := herbivore{
 			g:      g,
@@ -187,10 +187,10 @@ func (h *herbivore) move() {
 	h.energy -= int(moveCost)
 
 	// Move away from the border.
-	if h.x <= 1 || h.x >= h.g.s.boardSize || h.y <= 1 || h.y >= h.g.s.boardSize {
+	if h.x <= 1 || h.x >= h.g.boardSize || h.y <= 1 || h.y >= h.g.boardSize {
 		if h.x <= 1 {
 			h.x += 1
-		} else if h.x >= h.g.s.boardSize {
+		} else if h.x >= h.g.boardSize {
 			h.x -= 1
 		} else if h.y <= 1 {
 			h.y += 1
