@@ -1,7 +1,6 @@
 package main
 
 import (
-	"GoSERG/fonts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
@@ -10,17 +9,17 @@ import (
 )
 
 var (
-	pressStart2P     font.Face
-	mPlus1pRegular11 font.Face
-	mPlus1pRegular12 font.Face
-	mPlus1pRegular13 font.Face
-	mPlus1pRegular14 font.Face
+	pressStart2P      font.Face
+	notoSansRegular11 font.Face
+	notoSansRegular12 font.Face
+	notoSansRegular13 font.Face
+	notoSansRegular14 font.Face
 
 	buttons map[string]*button
 )
 
 func init() {
-	tt, err := opentype.Parse(fonts.PressStart2P_ttf)
+	tt, err := opentype.Parse(PressStart2P_ttf)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,11 +33,12 @@ func init() {
 		log.Fatal(err)
 	}
 
-	tt2, err := opentype.Parse(fonts.MPlus1pRegular_ttf)
+	tt2, err := opentype.Parse(OpenSansRegular_ttf)
 	if err != nil {
 		log.Fatal(err)
 	}
-	mPlus1pRegular11, err = opentype.NewFace(tt2, &opentype.FaceOptions{
+
+	notoSansRegular11, err = opentype.NewFace(tt2, &opentype.FaceOptions{
 		Size:    11,
 		DPI:     dpi,
 		Hinting: font.HintingVertical,
@@ -46,7 +46,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	mPlus1pRegular12, err = opentype.NewFace(tt2, &opentype.FaceOptions{
+	notoSansRegular12, err = opentype.NewFace(tt2, &opentype.FaceOptions{
 		Size:    12,
 		DPI:     dpi,
 		Hinting: font.HintingVertical,
@@ -54,7 +54,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	mPlus1pRegular13, err = opentype.NewFace(tt2, &opentype.FaceOptions{
+	notoSansRegular13, err = opentype.NewFace(tt2, &opentype.FaceOptions{
 		Size:    13,
 		DPI:     dpi,
 		Hinting: font.HintingVertical,
@@ -62,7 +62,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	mPlus1pRegular14, err = opentype.NewFace(tt2, &opentype.FaceOptions{
+	notoSansRegular14, err = opentype.NewFace(tt2, &opentype.FaceOptions{
 		Size:    14,
 		DPI:     dpi,
 		Hinting: font.HintingVertical,
@@ -137,17 +137,17 @@ func (g *game) Update() error {
 	}
 
 	if int(g.counterPrev) != int(g.counter) {
-		if len(g.d.herbivoresQuantities) >= 160 {
-			g.d.herbivoresQuantities = (g.d.herbivoresQuantities)[1:]
-		}
-		g.d.herbivoresQuantities = append(g.d.herbivoresQuantities, len(g.herbivores))
-		g.d.herbivoresTotalQuantities = append(g.d.herbivoresTotalQuantities, len(g.herbivores))
-
-		if len(g.d.carnivoresQuantities) >= 160 {
-			g.d.carnivoresQuantities = (g.d.carnivoresQuantities)[1:]
-		}
-		g.d.carnivoresQuantities = append(g.d.carnivoresQuantities, len(g.carnivores))
-		g.d.carnivoresTotalQuantities = append(g.d.carnivoresTotalQuantities, len(g.carnivores))
+		//if len(g.d.herbivoresQuantities) >= 160 {
+		//	g.d.herbivoresQuantities = (g.d.herbivoresQuantities)[1:]
+		//}
+		//g.d.herbivoresQuantities = append(g.d.herbivoresQuantities, len(g.herbivores))
+		//g.d.herbivoresTotalQuantities = append(g.d.herbivoresTotalQuantities, len(g.herbivores))
+		//
+		//if len(g.d.carnivoresQuantities) >= 160 {
+		//	g.d.carnivoresQuantities = (g.d.carnivoresQuantities)[1:]
+		//}
+		//g.d.carnivoresQuantities = append(g.d.carnivoresQuantities, len(g.carnivores))
+		//g.d.carnivoresTotalQuantities = append(g.d.carnivoresTotalQuantities, len(g.carnivores))
 
 		g.updateAnimalsMeanData(&g.d.herbivoresMeanSpeeds, len(g.herbivores), &g.d.herbivoresSpeeds)
 		g.updateAnimalsMeanData(&g.d.herbivoresMeanBowelLengths, len(g.herbivores), &g.d.herbivoresBowelLengths)
