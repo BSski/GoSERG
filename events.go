@@ -32,207 +32,217 @@ func processEvents(g *game) {
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if 36 <= x && 76 >= x && 96 <= y && 116 >= y {
+		switch {
+		case 36 <= x && 76 >= x && 96 <= y && 116 >= y:
 			g.pause = false
 			buttons["start"].state = 1
-		} else if 85 <= x && 124 >= x && 96 <= y && 116 >= y {
+		case 85 <= x && 124 >= x && 96 <= y && 116 >= y:
 			g.pause = true
 			buttons["pause"].state = 1
-		} else if 136 <= x && 175 >= x && 96 <= y && 116 >= y {
+		case 136 <= x && 175 >= x && 96 <= y && 116 >= y:
 			g.reset = true
 			buttons["reset"].state = 1
-		} else if 826 <= x && 839 >= x && 74 <= y && 87 >= y {
+		case 826 <= x && 839 >= x && 74 <= y && 87 >= y:
 			g.chosenCyclesPerSec += 1
 			if g.chosenCyclesPerSec > 28 {
 				g.chosenCyclesPerSec = 28
 			}
 			g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
 			buttons["cpsPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 74 <= y && 87 >= y {
+		case 811 <= x && 824 >= x && 74 <= y && 87 >= y:
 			g.chosenCyclesPerSec -= 1
 			if g.chosenCyclesPerSec < 0 {
 				g.chosenCyclesPerSec = 0
 			}
 			g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
 			buttons["cpsMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 94 <= y && 107 >= y {
+		case 826 <= x && 839 >= x && 94 <= y && 107 >= y:
 			g.s.tempo += 0.03
 			if g.s.tempo > 1.00 {
 				g.s.tempo = 1.00
 			}
 			buttons["tempoPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 94 <= y && 107 >= y {
+		case 811 <= x && 824 >= x && 94 <= y && 107 >= y:
 			g.s.tempo -= 0.03
 			if g.s.tempo < 0.01 {
 				g.s.tempo = 0.01
 			}
 			buttons["tempoMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 114 <= y && 127 >= y {
+		case 826 <= x && 839 >= x && 114 <= y && 127 >= y:
 			g.s.mutationChance += 0.01
 			if g.s.mutationChance > 1.00 {
 				g.s.mutationChance = 1.00
 			}
 			buttons["mutationPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 114 <= y && 127 >= y {
+		case 811 <= x && 824 >= x && 114 <= y && 127 >= y:
 			g.s.mutationChance -= 0.01
 			if g.s.mutationChance < 0.00 {
 				g.s.mutationChance = 0.00
 			}
 			buttons["mutationMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 154 <= y && 167 >= y {
+		case 826 <= x && 839 >= x && 154 <= y && 167 >= y:
 			g.s.herbsStartingNr += 50
 			if g.s.herbsStartingNr > g.regularTilesQuantity {
 				g.s.herbsStartingNr = g.regularTilesQuantity
 			}
 			buttons["herbsStartingNrPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 154 <= y && 167 >= y {
+		case 811 <= x && 824 >= x && 154 <= y && 167 >= y:
 			g.s.herbsStartingNr -= 50
 			if g.s.herbsStartingNr < 0 {
 				g.s.herbsStartingNr = 0
 			}
 			buttons["herbsStartingNrMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 174 <= y && 187 >= y {
+		case 826 <= x && 839 >= x && 174 <= y && 187 >= y:
 			g.s.herbsEnergy += 50
 			if g.s.herbsEnergy > 9900 {
 				g.s.herbsEnergy = 9900
 			}
 			buttons["herbsEnergyPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 174 <= y && 187 >= y {
+		case 811 <= x && 824 >= x && 174 <= y && 187 >= y:
 			g.s.herbsEnergy -= 50
 			if g.s.herbsEnergy < 0 {
 				g.s.herbsEnergy = 0
 			}
 			buttons["herbsEnergyMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 194 <= y && 207 >= y {
+		case 826 <= x && 839 >= x && 194 <= y && 207 >= y:
 			g.s.herbsPerSpawn += 2
 			if g.s.herbsPerSpawn > 300 {
 				g.s.herbsPerSpawn = 300
 			}
 			buttons["herbsPerSpawnPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 194 <= y && 207 >= y {
+		case 811 <= x && 824 >= x && 194 <= y && 207 >= y:
 			g.s.herbsPerSpawn -= 2
 			if g.s.herbsPerSpawn < 0 {
 				g.s.herbsPerSpawn = 0
 			}
 			buttons["herbsPerSpawnMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 214 <= y && 227 >= y {
+		case 826 <= x && 839 >= x && 214 <= y && 227 >= y:
 			g.s.herbsSpawnRate += 1
 			if g.s.herbsSpawnRate > 7 {
 				g.s.herbsSpawnRate = 7
 			}
 			buttons["herbsSpawnRatePlus"].state = 1
-		} else if 811 <= x && 824 >= x && 214 <= y && 227 >= y {
+		case 811 <= x && 824 >= x && 214 <= y && 227 >= y:
 			g.s.herbsSpawnRate -= 1
 			if g.s.herbsSpawnRate < 0 {
 				g.s.herbsSpawnRate = 0
 			}
 			buttons["herbsSpawnRateMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 254 <= y && 267 >= y {
+		case 826 <= x && 839 >= x && 254 <= y && 267 >= y:
 			g.s.herbivoresStartingNr += 20
 			if g.s.herbivoresStartingNr > g.regularTilesQuantity {
 				g.s.herbivoresStartingNr = g.regularTilesQuantity
 			}
 			buttons["herbivoresStartingNrPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 254 <= y && 267 >= y {
+		case 811 <= x && 824 >= x && 254 <= y && 267 >= y:
 			g.s.herbivoresStartingNr -= 20
 			if g.s.herbivoresStartingNr < 0 {
 				g.s.herbivoresStartingNr = 0
 			}
 			buttons["herbivoresStartingNrMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 274 <= y && 287 >= y {
+		case 826 <= x && 839 >= x && 274 <= y && 287 >= y:
 			g.s.herbivoresSpawnEnergy += 50
 			if g.s.herbivoresSpawnEnergy > 9900 {
 				g.s.herbivoresSpawnEnergy = 9900
 			}
 			buttons["herbivoresSpawnEnergyPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 274 <= y && 287 >= y {
+		case 811 <= x && 824 >= x && 274 <= y && 287 >= y:
 			g.s.herbivoresSpawnEnergy -= 50
 			if g.s.herbivoresSpawnEnergy < 0 {
 				g.s.herbivoresSpawnEnergy = 0
 			}
 			buttons["herbivoresSpawnEnergyMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 294 <= y && 307 >= y {
+		case 826 <= x && 839 >= x && 294 <= y && 307 >= y:
 			g.s.herbivoresBreedLevel += 50
 			if g.s.herbivoresBreedLevel > 9900 {
 				g.s.herbivoresBreedLevel = 9900
 			}
 			buttons["herbivoresBreedLevelPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 294 <= y && 307 >= y {
+		case 811 <= x && 824 >= x && 294 <= y && 307 >= y:
 			g.s.herbivoresBreedLevel -= 50
 			if g.s.herbivoresBreedLevel < 0 {
 				g.s.herbivoresBreedLevel = 0
 			}
 			buttons["herbivoresBreedLevelMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 314 <= y && 327 >= y {
+		case 826 <= x && 839 >= x && 314 <= y && 327 >= y:
 			g.s.herbivoresMoveCost += 5
 			if g.s.herbivoresMoveCost > 1000 {
 				g.s.herbivoresMoveCost = 1000
 			}
 			buttons["herbivoresMoveCostPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 314 <= y && 327 >= y {
+		case 811 <= x && 824 >= x && 314 <= y && 327 >= y:
 			g.s.herbivoresMoveCost -= 5
 			if g.s.herbivoresMoveCost < 0 {
 				g.s.herbivoresMoveCost = 0
 			}
 			buttons["herbivoresMoveCostMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 354 <= y && 367 >= y {
+		case 826 <= x && 839 >= x && 354 <= y && 367 >= y:
 			g.s.carnivoresStartingNr += 5
 			if g.s.carnivoresStartingNr > g.regularTilesQuantity {
 				g.s.carnivoresStartingNr = g.regularTilesQuantity
 			}
 			buttons["carnivoresStartingNrPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 354 <= y && 367 >= y {
+		case 811 <= x && 824 >= x && 354 <= y && 367 >= y:
 			g.s.carnivoresStartingNr -= 5
 			if g.s.carnivoresStartingNr < 0 {
 				g.s.carnivoresStartingNr = 0
 			}
 			buttons["carnivoresStartingNrMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 374 <= y && 387 >= y {
+		case 826 <= x && 839 >= x && 374 <= y && 387 >= y:
 			g.s.carnivoresSpawnEnergy += 50
 			if g.s.carnivoresSpawnEnergy > 9900 {
 				g.s.carnivoresSpawnEnergy = 9900
 			}
 			buttons["carnivoresSpawnEnergyPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 374 <= y && 387 >= y {
+		case 811 <= x && 824 >= x && 374 <= y && 387 >= y:
 			g.s.carnivoresSpawnEnergy -= 50
 			if g.s.carnivoresSpawnEnergy < 0 {
 				g.s.carnivoresSpawnEnergy = 0
 			}
 			buttons["carnivoresSpawnEnergyMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 394 <= y && 407 >= y {
+		case 826 <= x && 839 >= x && 394 <= y && 407 >= y:
 			g.s.carnivoresBreedLevel += 50
 			if g.s.carnivoresBreedLevel > 9900 {
 				g.s.carnivoresBreedLevel = 9900
 			}
 			buttons["carnivoresBreedLevelPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 394 <= y && 407 >= y {
+		case 811 <= x && 824 >= x && 394 <= y && 407 >= y:
 			g.s.carnivoresBreedLevel -= 50
 			if g.s.carnivoresBreedLevel < 0 {
 				g.s.carnivoresBreedLevel = 0
 			}
 			buttons["carnivoresBreedLevelMinus"].state = 1
-		} else if 826 <= x && 839 >= x && 414 <= y && 427 >= y {
+		case 826 <= x && 839 >= x && 414 <= y && 427 >= y:
 			g.s.carnivoresMoveCost += 5
 			if g.s.carnivoresMoveCost > 1000 {
 				g.s.carnivoresMoveCost = 1000
 			}
 			buttons["carnivoresMoveCostPlus"].state = 1
-		} else if 811 <= x && 824 >= x && 414 <= y && 427 >= y {
+		case 811 <= x && 824 >= x && 414 <= y && 427 >= y:
 			g.s.carnivoresMoveCost -= 5
 			if g.s.carnivoresMoveCost < 0 {
 				g.s.carnivoresMoveCost = 0
 			}
 			buttons["carnivoresMoveCostMinus"].state = 1
-		} else if 860 <= x && 918 >= x && 11 <= y && 44 >= y {
+		case 351 <= x && 364 >= x && 653 <= y && 666 >= y:
+			if buttons["totalHistoryOff"].state == 1 {
+				buttons["totalHistoryOff"].state = 0
+			} else {
+				buttons["totalHistoryOff"].state = 1
+			}
+		case 860 <= x && 918 >= x && 11 <= y && 44 >= y:
 			g.rightPanelOption = 0
-		} else if 920 <= x && 978 >= x && 11 <= y && 44 >= y {
+		case 920 <= x && 978 >= x && 11 <= y && 44 >= y:
 			g.rightPanelOption = 1
-		} else if 980 <= x && 1036 >= x && 11 <= y && 44 >= y {
+		case 980 <= x && 1036 >= x && 11 <= y && 44 >= y:
 			g.rightPanelOption = 2
 		}
 	}
 	if !ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		for key := range buttons {
+			if key == "totalHistoryOff" {
+				continue
+			}
 			buttons[key].state = 0
 		}
 	}

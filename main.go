@@ -42,8 +42,11 @@ func run(stdout io.Writer) error {
 // TODO:
 // make sure to mention on GoSERG website that everything was made by you, including charts
 
-// dopisz do konca,
 // postaw to na WASM na github pages
 // opisz ladnie co to jest, co mozna zrobic, co sie klika, nie przesadź
 // opisz ze sam zrobiles wszystko
 // ze to oryginalnie projekt w pythonie i zrefactorowales go w Pythonie i przepisales na Go
+
+// rysuj ikony herbi/carni przy ustawieniach i w right panelu
+
+// do TODOs and FIXMEs

@@ -49,16 +49,7 @@ func spawnHerbs(g *game, nr int) {
 	for i := 0; i < nr; i++ {
 		y := rand.Intn(g.boardSize-2) + 2
 		x := rand.Intn(g.boardSize-2) + 2
-		if len(g.herbsPos[y][x]) == 0 {
-			h := herb{
-				g:      g,
-				x:      x,
-				y:      y,
-				energy: g.s.herbsEnergy,
-			}
-			g.herbs = append(g.herbs, &h)
-			g.herbsPos[y][x] = append(g.herbsPos[y][x], &h)
-		}
+		createHerbOnField(g, x, y)
 	}
 }
 

@@ -56,6 +56,14 @@ func getBtns() map[string]*button {
 	if err != nil {
 		log.Fatal(err)
 	}
+	checkboxOff, _, err := ebitenutil.NewImageFromFile("sprites/checkbox_off.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	checkboxOn, _, err := ebitenutil.NewImageFromFile("sprites/checkbox_on.png")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	var buttons = map[string]*button{
 		"start": {
@@ -255,6 +263,12 @@ func getBtns() map[string]*button {
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       414,
+		},
+		"totalHistoryOff": {
+			state:   0,
+			sprites: [2]*ebiten.Image{checkboxOn, checkboxOff},
+			x:       351,
+			y:       653,
 		},
 	}
 	return buttons

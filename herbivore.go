@@ -358,7 +358,6 @@ func (h *herbivore) runFromXY(xSum, ySum int) (int, int) {
 	return h.y, h.x
 }
 
-// FIXME: make sure that you use [y,x] everywhere, not [x,y].
 func (h *herbivore) runFromX(xSum int) (int, int) {
 	if xSum == 0 {
 		if rand.Float64() >= 0.5 {

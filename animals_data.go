@@ -1,6 +1,6 @@
 package main
 
-type data struct {
+type animalsData struct {
 	herbivoresQuantities []int
 	carnivoresQuantities []int
 
@@ -28,7 +28,7 @@ type data struct {
 	carnivoresLegsLengths  [8]int
 }
 
-var d data
+var d animalsData
 
 func (g *game) updateAnimalsMeanData(
 	meanValues *[]float64,

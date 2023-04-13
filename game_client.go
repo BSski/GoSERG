@@ -9,7 +9,7 @@ import (
 type game struct {
 	s                    settings
 	c                    consts
-	d                    data
+	d                    animalsData
 	grid                 [][][2]float32
 	boardSize            int
 	regularTilesQuantity int
@@ -23,8 +23,6 @@ type game struct {
 
 	reset bool
 	pause bool
-
-	plotHistoricQuantitiesCheckbox bool
 
 	chosenCyclesPerSec int
 	cyclesPerSec       int
@@ -78,9 +76,7 @@ func newGame() *game {
 		reset: true,
 		pause: false,
 
-		plotHistoricQuantitiesCheckbox: true,
-
-		chosenCyclesPerSec: 3,
+		chosenCyclesPerSec: 2,
 		cyclesPerSecList: [29]int{
 			30,
 			60,
@@ -142,7 +138,7 @@ func (g *game) resetGame() {
 	g.herbivores = []*herbivore{}
 	g.carnivores = []*carnivore{}
 
-	d := data{}
+	d := animalsData{}
 	g.d = d
 
 	spawnHerbs(g, g.s.herbsStartingNr)

@@ -312,7 +312,6 @@ func (c *carnivore) chaseDistantSubject(xSum, ySum, xPresent, yPresent int) {
 	c.g.carnivoresPos[c.y][c.x] = append(c.g.carnivoresPos[c.y][c.x], c)
 }
 
-// FIXME: Chase functions can be extracted to animal struct for both carni and herbi.
 func (c *carnivore) chaseXY(xSum, ySum int) (y, x int) {
 	if math.Abs(float64(xSum)) == math.Abs(float64(ySum)) {
 		if xSum == 0 && ySum == 0 {

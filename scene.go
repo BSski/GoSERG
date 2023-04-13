@@ -106,11 +106,11 @@ func (sc *scene) drawHistoricQuantitiesChart(screen *ebiten.Image) {
 	vector.StrokeLine(screen, 37, 650, 837, 650, 1, color.Gray{Y: 130}, false)
 	vector.StrokeLine(screen, 37, 459, 837, 458, 1, color.Gray{Y: 130}, false)
 	vector.StrokeLine(screen, 838, 650, 838, 458, 1, color.Gray{Y: 130}, false)
-	text.Draw(screen, "Total Herbi/Carni quantity", mPlus1pRegular12, 367, 663, color.Gray{Y: 50})
+	text.Draw(screen, "Total Herbi/Carni quantity", mPlus1pRegular12, 367, 664, color.Gray{Y: 50})
 }
 
 func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
-	if !g.plotHistoricQuantitiesCheckbox {
+	if buttons["totalHistoryOff"].state == 1 {
 		return
 	}
 	xHerbiChart := 36
