@@ -4,7 +4,19 @@ import (
 	"bytes"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
 	"log"
+)
+
+var (
+	pressStart2P      font.Face
+	notoSansRegular11 font.Face
+	notoSansRegular12 font.Face
+	notoSansRegular13 font.Face
+	notoSansRegular14 font.Face
+
+	buttons map[string]*button
 )
 
 type game struct {
@@ -44,6 +56,60 @@ type game struct {
 func (g *game) init() {
 	g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
 	g.regularTilesQuantity = (g.boardSize - 2) * (g.boardSize - 2)
+
+	tt, err := opentype.Parse(PressStart2P_ttf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	const dpi = 72
+	pressStart2P, err = opentype.NewFace(tt, &opentype.FaceOptions{
+		Size:    36,
+		DPI:     dpi,
+		Hinting: font.HintingVertical,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tt2, err := opentype.Parse(OpenSansRegular_ttf)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	notoSansRegular11, err = opentype.NewFace(tt2, &opentype.FaceOptions{
+		Size:    11,
+		DPI:     dpi,
+		Hinting: font.HintingVertical,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	notoSansRegular12, err = opentype.NewFace(tt2, &opentype.FaceOptions{
+		Size:    12,
+		DPI:     dpi,
+		Hinting: font.HintingVertical,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	notoSansRegular13, err = opentype.NewFace(tt2, &opentype.FaceOptions{
+		Size:    13,
+		DPI:     dpi,
+		Hinting: font.HintingVertical,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	notoSansRegular14, err = opentype.NewFace(tt2, &opentype.FaceOptions{
+		Size:    14,
+		DPI:     dpi,
+		Hinting: font.HintingVertical,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	buttons = getBtns()
 }
 
 func newGame() *game {
@@ -84,38 +150,8 @@ func newGame() *game {
 		pause: false,
 
 		chosenCyclesPerSec: 2,
-		cyclesPerSecList: [29]int{
-			30,
-			60,
-			90,
-			120,
-			150,
-			180,
-			240,
-			300,
-			360,
-			450,
-			600,
-			720,
-			900,
-			1200,
-			1800,
-			2400,
-			3000,
-			3600,
-			4200,
-			4800,
-			5400,
-			6000,
-			8000,
-			10000,
-			12000,
-			15000,
-			18000,
-			21000,
-			25000,
-		},
-		cyclesPerSec: 0,
+		cyclesPerSecList:   [29]int{30, 60, 90, 120, 150, 180, 240, 300, 360, 450, 600, 720, 900, 1200, 1800, 2400, 3000, 3600, 4200, 4800, 5400, 6000, 8000, 10000, 12000, 15000, 18000, 21000, 25000},
+		cyclesPerSec:       0,
 
 		herbs:      []*herb{},
 		herbivores: []*herbivore{},

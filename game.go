@@ -2,77 +2,8 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"golang.org/x/image/font"
-	"golang.org/x/image/font/opentype"
 	"image/color"
-	"log"
 )
-
-var (
-	pressStart2P      font.Face
-	notoSansRegular11 font.Face
-	notoSansRegular12 font.Face
-	notoSansRegular13 font.Face
-	notoSansRegular14 font.Face
-
-	buttons map[string]*button
-)
-
-func init() {
-	tt, err := opentype.Parse(PressStart2P_ttf)
-	if err != nil {
-		log.Fatal(err)
-	}
-	const dpi = 72
-	pressStart2P, err = opentype.NewFace(tt, &opentype.FaceOptions{
-		Size:    36,
-		DPI:     dpi,
-		Hinting: font.HintingVertical,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tt2, err := opentype.Parse(OpenSansRegular_ttf)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	notoSansRegular11, err = opentype.NewFace(tt2, &opentype.FaceOptions{
-		Size:    11,
-		DPI:     dpi,
-		Hinting: font.HintingVertical,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	notoSansRegular12, err = opentype.NewFace(tt2, &opentype.FaceOptions{
-		Size:    12,
-		DPI:     dpi,
-		Hinting: font.HintingVertical,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	notoSansRegular13, err = opentype.NewFace(tt2, &opentype.FaceOptions{
-		Size:    13,
-		DPI:     dpi,
-		Hinting: font.HintingVertical,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	notoSansRegular14, err = opentype.NewFace(tt2, &opentype.FaceOptions{
-		Size:    14,
-		DPI:     dpi,
-		Hinting: font.HintingVertical,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	buttons = getBtns()
-}
 
 func (g *game) Layout(_, _ int) (int, int) {
 	return 1061, 670
