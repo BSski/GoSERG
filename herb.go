@@ -15,16 +15,50 @@ type herb struct {
 	age    int
 }
 
-func (h *herb) draw(screen *ebiten.Image) {
-	vector.DrawFilledRect(
+func drawHerb(screen *ebiten.Image, x, y float32) {
+	vector.DrawFilledCircle(
 		screen,
-		h.g.grid[h.y][h.x][0]+1,
-		h.g.grid[h.y][h.x][1]+1,
-		5,
-		5,
+		x+2,
+		y+2,
+		2,
 		color.RGBA{R: 34, G: 139, B: 34, A: 255},
 		false,
 	)
+	vector.DrawFilledRect(
+		screen,
+		x+6,
+		y+1,
+		1,
+		1,
+		color.RGBA{R: 34, G: 139, B: 34, A: 255},
+		false,
+	)
+	vector.DrawFilledRect(
+		screen,
+		x+3,
+		y+7,
+		1,
+		1,
+		color.RGBA{R: 34, G: 139, B: 34, A: 255},
+		false,
+	)
+	vector.DrawFilledCircle(
+		screen,
+		x+6,
+		y+5,
+		2,
+		color.RGBA{R: 34, G: 139, B: 34, A: 255},
+		false,
+	)
+	vector.DrawFilledCircle(
+		screen,
+		x+1,
+		y+6,
+		1,
+		color.RGBA{R: 34, G: 139, B: 34, A: 255},
+		false,
+	)
+
 }
 
 func (h *herb) die() {

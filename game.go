@@ -34,15 +34,15 @@ func (g *game) Update() error {
 	}
 
 	g.timeHour += 1
-	if g.timeHour >= 720 {
+	if g.timeHour >= 120 {
 		g.timeHour = 0
 		g.timeDay += 1
 	}
-	if g.timeDay >= 31 {
+	if g.timeDay > 30 {
 		g.timeDay = 1
 		g.timeMonth += 1
 	}
-	if g.timeMonth >= 13 {
+	if g.timeMonth > 12 {
 		g.timeMonth = 1
 		g.timeYear += 1
 	}
@@ -87,7 +87,7 @@ func (g *game) Update() error {
 		g.d.herbivoresQuantities = append(g.d.herbivoresQuantities, len(g.herbivores))
 		g.d.carnivoresQuantities = append(g.d.carnivoresQuantities, len(g.carnivores))
 
-		if int(g.timeDay)%15 == 0 && len(g.d.herbivoresQuantities) >= 30000 {
+		if int(g.timeMonth)%4 == 0 && len(g.d.herbivoresQuantities) >= 30000 {
 			g.d.herbivoresQuantities = g.d.herbivoresQuantities[len(g.d.herbivoresQuantities)-30000:]
 			g.d.carnivoresQuantities = g.d.carnivoresQuantities[len(g.d.carnivoresQuantities)-30000:]
 		}

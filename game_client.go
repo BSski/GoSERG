@@ -45,7 +45,7 @@ type game struct {
 
 	tempo            float64
 	chosenGameSpeed  int
-	cyclesPerSecList [10]int
+	cyclesPerSecList [5]int
 	cyclesPerSec     int
 
 	herbs      []*herb
@@ -165,7 +165,7 @@ func newGame() *game {
 		pauseButtonStatus: false,
 
 		chosenGameSpeed:  2,
-		cyclesPerSecList: [10]int{30, 60, 90, 120, 150, 180, 210, 240, 270, 300},
+		cyclesPerSecList: [5]int{30, 60, 120, 180, 300},
 
 		herbs:      []*herb{},
 		herbivores: []*herbivore{},

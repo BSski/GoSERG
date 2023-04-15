@@ -36,8 +36,8 @@ func (c *carnivore) draw(screen *ebiten.Image) {
 		cColor = color.RGBA{R: 255, G: 112, B: 77, A: 255}
 	}
 
-	vector.DrawFilledRect(screen, c.g.grid[c.y][c.x][0]-1, c.g.grid[c.y][c.x][1]-1, 11, 11, color.Gray{Y: 45}, false)
-	vector.DrawFilledRect(screen, c.g.grid[c.y][c.x][0], c.g.grid[c.y][c.x][1], 9, 9, cColor, false)
+	vector.DrawFilledRect(screen, c.g.grid[c.y][c.x][0]-2, c.g.grid[c.y][c.x][1]-2, 11, 11, color.Gray{Y: 45}, false)
+	vector.DrawFilledRect(screen, c.g.grid[c.y][c.x][0]-1, c.g.grid[c.y][c.x][1]-1, 9, 9, cColor, false)
 }
 
 func (c *carnivore) starve() {

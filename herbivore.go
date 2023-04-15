@@ -35,8 +35,8 @@ func (h *herbivore) draw(screen *ebiten.Image) {
 	} else {
 		hColor = color.RGBA{R: 0, G: 255, B: 85, A: 255}
 	}
-	vector.DrawFilledRect(screen, h.g.grid[h.y][h.x][0]-1, h.g.grid[h.y][h.x][1]-1, 11, 11, color.Gray{Y: 45}, false)
-	vector.DrawFilledRect(screen, h.g.grid[h.y][h.x][0], h.g.grid[h.y][h.x][1], 9, 9, hColor, false)
+	vector.DrawFilledRect(screen, h.g.grid[h.y][h.x][0]-2, h.g.grid[h.y][h.x][1]-2, 11, 11, color.Gray{Y: 45}, false)
+	vector.DrawFilledRect(screen, h.g.grid[h.y][h.x][0]-1, h.g.grid[h.y][h.x][1]-1, 9, 9, hColor, false)
 }
 
 func (h *herbivore) starve() {

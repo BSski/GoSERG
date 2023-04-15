@@ -47,8 +47,8 @@ func processEvents(g *game) {
 			buttons["reset"].state = 1
 		case 826 <= x && 839 >= x && 94 <= y && 107 >= y:
 			g.chosenGameSpeed += 1
-			if g.chosenGameSpeed > 10 {
-				g.chosenGameSpeed = 10
+			if g.chosenGameSpeed > 5 {
+				g.chosenGameSpeed = 5
 			}
 			g.cyclesPerSec = g.cyclesPerSecList[g.chosenGameSpeed-1]
 			g.tempo = 0.1 * float64(g.chosenGameSpeed)

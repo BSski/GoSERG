@@ -58,21 +58,26 @@ func (sc *scene) drawMainUILines(screen *ebiten.Image) {
 func (sc *scene) drawChartsBg(screen *ebiten.Image) {
 	vector.DrawFilledRect(screen, 860, 44, 176, 6, color.Gray{Y: 210}, false)
 	vector.DrawFilledRect(screen, 850, 50, 196, 609, color.Gray{Y: 210}, false)
-	vector.DrawFilledRect(screen, 37, 459, 801, 191, color.White, false)
+	vector.DrawFilledRect(screen, 37, 469, 801, 180, color.White, false)
 }
 
 func (sc *scene) drawHistoricQuantitiesChart(screen *ebiten.Image) {
 	for i := float32(0); i < 19; i++ {
-		if i == 18 {
-			vector.StrokeLine(screen, 37, 469, 837, 469, 1, color.RGBA{R: uint8(178), G: uint8(34), B: uint8(34), A: uint8(255)}, false)
-			continue
-		}
 		vector.StrokeLine(screen, 37, 649-10*i, 837, 649-10*i, 1, color.Gray{Y: 210}, false)
 	}
-	vector.StrokeLine(screen, 37, 650, 37, 458, 1, color.Gray{Y: 130}, false)
+	vector.StrokeLine(screen, 37, 650, 37, 467, 1, color.Gray{Y: 130}, false)
 	vector.StrokeLine(screen, 37, 650, 837, 650, 1, color.Gray{Y: 130}, false)
-	vector.StrokeLine(screen, 37, 459, 837, 458, 1, color.Gray{Y: 130}, false)
-	vector.StrokeLine(screen, 838, 650, 838, 458, 1, color.Gray{Y: 130}, false)
+	vector.StrokeLine(screen, 37, 468, 837, 468, 1, color.Gray{Y: 130}, false)
+	vector.StrokeLine(screen, 838, 650, 838, 467, 1, color.Gray{Y: 130}, false)
+
+	// Translate it to Go to get Y axis labels.
+	//for i in range(15):
+	//if i == 10:
+	//g.screen.blit(F[1].render("1", True, (50, 50, 50)), (17, 417 - 20 * 10))
+	//continue
+	//g.screen.blit(F[1].render(f".{i % 10}", True, (50, 50, 50)), (12, 417 - 20 * i))
+	//g.screen.blit(F[1].render("k", True, (50, 50, 50)), (18, 117))
+
 	text.Draw(screen, "Quantity", openSansRegular12, 412, 664, color.Gray{Y: 50})
 }
 
@@ -254,7 +259,7 @@ func (sc *scene) drawCounters(screen *ebiten.Image, g *game) {
 	text.Draw(screen, "Day: "+strconv.Itoa(g.timeDay), openSansRegular12, 500, 448, color.Gray{Y: 50})
 
 	// Herbs icon.
-	vector.DrawFilledRect(screen, 719, 15, 5, 5, color.RGBA{R: 34, G: 139, B: 34, A: 255}, false)
+	drawHerb(screen, 717, 15)
 	// Herbivores icon.
 	vector.DrawFilledRect(screen, 694-1, 28-1, 11, 11, color.Gray{Y: 45}, false)
 	vector.DrawFilledRect(screen, 694, 28, 9, 9, color.RGBA{R: 0, G: 128, B: 96, A: 255}, false)
@@ -268,26 +273,33 @@ func (sc *scene) drawCounters(screen *ebiten.Image, g *game) {
 }
 
 func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
-	type TextData struct {
-		Text     string
-		Position [2]int
-	}
+	// Herbs icon.
+	drawHerb(screen, 663, 141)
+	// Herbivores icon.
+	vector.DrawFilledRect(screen, 661-1, 239-1, 11, 11, color.Gray{Y: 45}, false)
+	vector.DrawFilledRect(screen, 661, 239, 9, 9, color.RGBA{R: 0, G: 128, B: 96, A: 255}, false)
+	// Carnivores icon.
+	vector.DrawFilledRect(screen, 661-1, 339-1, 11, 11, color.Gray{Y: 45}, false)
+	vector.DrawFilledRect(screen, 661, 339, 9, 9, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
 
-	textData := []TextData{
+	textData := []struct {
+		text     string
+		position [2]int
+	}{
 		{"SETTINGS", [2]int{659, 89}},
 		{"- Simulation speed: " + strconv.Itoa(g.chosenGameSpeed), [2]int{663, 105}},
 		{"- Mutation %: " + strconv.Itoa(int(g.s.mutationChance*100)), [2]int{663, 125}},
-		{"HERBS", [2]int{660, 148}},
+		{"HERBS", [2]int{674, 148}},
 		{"- Start. number: " + strconv.Itoa(g.s.herbsStartingNr), [2]int{663, 165}},
 		{"- Energy: " + strconv.Itoa(g.s.herbsEnergy), [2]int{663, 185}},
 		{"- Per spawn: " + strconv.Itoa(g.s.herbsPerSpawn), [2]int{663, 205}},
 		{"- Spawn rate: " + strconv.Itoa(g.s.herbsSpawnRate), [2]int{663, 225}},
-		{"HERBIVORES", [2]int{660, 248}},
+		{"HERBIVORES", [2]int{674, 248}},
 		{"- Start. number: " + strconv.Itoa(g.s.herbivoresStartingNr), [2]int{663, 265}},
 		{"- Spawn energy: " + strconv.Itoa(g.s.herbivoresSpawnEnergy), [2]int{663, 285}},
 		{"- Breed. level: " + strconv.Itoa(g.s.herbivoresBreedLevel), [2]int{663, 305}},
 		{"- Move cost: " + strconv.Itoa(g.s.herbivoresMoveCost), [2]int{663, 325}},
-		{"CARNIVORES", [2]int{660, 348}},
+		{"CARNIVORES", [2]int{674, 348}},
 		{"- Start. number: " + strconv.Itoa(g.s.carnivoresStartingNr), [2]int{663, 365}},
 		{"- Spawn energy: " + strconv.Itoa(g.s.carnivoresSpawnEnergy), [2]int{663, 385}},
 		{"- Breed. level: " + strconv.Itoa(g.s.carnivoresBreedLevel), [2]int{663, 405}},
@@ -295,7 +307,7 @@ func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
 	}
 
 	for _, td := range textData {
-		text.Draw(screen, td.Text, openSansRegular12, td.Position[0], td.Position[1], color.RGBA{R: 50, G: 50, B: 50, A: 255})
+		text.Draw(screen, td.text, openSansRegular12, td.position[0], td.position[1], color.RGBA{R: 50, G: 50, B: 50, A: 255})
 	}
 }
 
@@ -309,7 +321,8 @@ func (sc *scene) drawButtons(screen *ebiten.Image) {
 
 func (sc *scene) drawHerbs(screen *ebiten.Image, g *game) {
 	for i := 0; i < len(g.herbs); i++ {
-		g.herbs[i].draw(screen)
+		h := g.herbs[i]
+		drawHerb(screen, h.g.grid[h.y][h.x][0], h.g.grid[h.y][h.x][1])
 	}
 }
 
