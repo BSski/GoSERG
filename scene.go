@@ -2,7 +2,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
@@ -20,7 +19,7 @@ var sc scene
 // Animation to prevent Windows from hanging the window when paused.
 // Useful in approximating lag.
 func (sc *scene) drawAnimation(screen *ebiten.Image, g *game) {
-	text.Draw(screen, string(g.animation[g.animationCounter]), notoSansRegular14, 1051, 663, color.Gray{Y: 50})
+	text.Draw(screen, string(g.animation[g.animationCounter]), openSansRegular14, 1051, 663, color.Gray{Y: 50})
 	if g.animationCounter == len(g.animation)-1 {
 		g.animationCounter = 0
 	}
@@ -29,7 +28,7 @@ func (sc *scene) drawAnimation(screen *ebiten.Image, g *game) {
 
 func (sc *scene) drawLogo(screen *ebiten.Image) {
 	text.Draw(screen, "SERG", pressStart2P, 35, 50, color.Gray{Y: 80})
-	text.Draw(screen, "bsski 2023", notoSansRegular11, 77, 61, color.Gray{Y: 200})
+	text.Draw(screen, "bsski 2023", openSansRegular11, 77, 61, color.Gray{Y: 200})
 }
 
 func (sc *scene) drawGrid(screen *ebiten.Image) {
@@ -37,13 +36,14 @@ func (sc *scene) drawGrid(screen *ebiten.Image) {
 	y := float32(19)
 	x := float32(222)
 
-	vector.DrawFilledRect(screen, x, y, 41*squareSize-1, 41*squareSize-1, color.Gray{Y: 210}, false)
+	groundColor := color.RGBA{R: 240, G: 222, B: 180, A: 255}
+	vector.DrawFilledRect(screen, x, y, 41*squareSize-1, 41*squareSize-1, groundColor, false)
 
 	for i := float32(1); i < 41; i++ {
-		vector.StrokeLine(screen, x, y+i*squareSize, x+41*squareSize-1, y+i*squareSize, float32(1), color.Gray{Y: 239}, false)
+		vector.StrokeLine(screen, x, y+i*squareSize, x+41*squareSize-1, y+i*squareSize, float32(1), color.Gray{Y: 240}, false)
 	}
 	for j := float32(1); j < 41; j++ {
-		vector.StrokeLine(screen, x+j*squareSize, y, x+j*squareSize, y+41*squareSize-1, float32(1), color.Gray{Y: 239}, false)
+		vector.StrokeLine(screen, x+j*squareSize, y, x+j*squareSize, y+41*squareSize-1, float32(1), color.Gray{Y: 240}, false)
 	}
 }
 
@@ -56,42 +56,9 @@ func (sc *scene) drawMainUILines(screen *ebiten.Image) {
 }
 
 func (sc *scene) drawChartsBg(screen *ebiten.Image) {
-	vector.DrawFilledRect(screen, 29, 124, 161, 300, color.White, false)
 	vector.DrawFilledRect(screen, 860, 44, 176, 6, color.Gray{Y: 210}, false)
 	vector.DrawFilledRect(screen, 850, 50, 196, 609, color.Gray{Y: 210}, false)
 	vector.DrawFilledRect(screen, 37, 459, 801, 191, color.White, false)
-}
-
-func (sc *scene) drawQuantitiesChart(screen *ebiten.Image) {
-	for i := float32(0); i < 30; i++ {
-		if i == 18 {
-			vector.StrokeLine(screen, 29, 243, 190, 243, 1, color.RGBA{R: uint8(178), G: uint8(34), B: uint8(34), A: uint8(255)}, false)
-			continue
-		}
-		vector.StrokeLine(screen, 29, 423-10*i, 190, 423-10*i, 1, color.Gray{Y: 210}, false)
-	}
-	vector.StrokeLine(screen, 29, 424, 29, 123, 1, color.Gray{Y: 130}, false)
-	vector.StrokeLine(screen, 29, 424, 190, 424, 1, color.Gray{Y: 130}, false)
-	vector.StrokeLine(screen, 28, 124, 190, 124, 1, color.Gray{Y: 130}, false)
-	vector.StrokeLine(screen, 190, 424, 190, 123, 1, color.Gray{Y: 130}, false)
-	for i := 0; i < 15; i++ {
-		if i == 10 {
-			text.Draw(screen, "1.0", notoSansRegular11, 11, 426-20*10, color.Gray{Y: 50})
-			continue
-		}
-		text.Draw(screen, "."+strconv.Itoa(i%10), notoSansRegular11, 17, 426-20*i, color.Gray{Y: 50})
-	}
-	text.Draw(screen, "k", notoSansRegular14, 19, 128, color.Gray{Y: 50})
-	text.Draw(screen, "Herbi/Carni quantity", notoSansRegular12, 49, 437, color.Gray{Y: 50})
-}
-
-func (sc *scene) plotQuantities(screen *ebiten.Image, g *game) {
-	for i := 0; i < len(g.d.herbivoresQuantities); i++ {
-		vector.DrawFilledRect(screen, float32(29+i), float32(422-int(g.d.herbivoresQuantities[i]/5)), 2, 2, color.RGBA{R: 0, G: 230, B: 115, A: 255}, false)
-	}
-	for i := 0; i < len(g.d.carnivoresQuantities); i++ {
-		vector.DrawFilledRect(screen, float32(29+i), float32(422-int(g.d.carnivoresQuantities[i]/5)), 2, 2, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
-	}
 }
 
 func (sc *scene) drawHistoricQuantitiesChart(screen *ebiten.Image) {
@@ -106,24 +73,21 @@ func (sc *scene) drawHistoricQuantitiesChart(screen *ebiten.Image) {
 	vector.StrokeLine(screen, 37, 650, 837, 650, 1, color.Gray{Y: 130}, false)
 	vector.StrokeLine(screen, 37, 459, 837, 458, 1, color.Gray{Y: 130}, false)
 	vector.StrokeLine(screen, 838, 650, 838, 458, 1, color.Gray{Y: 130}, false)
-	text.Draw(screen, "Total Herbi/Carni quantity", notoSansRegular12, 367, 664, color.Gray{Y: 50})
+	text.Draw(screen, "Quantity", openSansRegular12, 412, 664, color.Gray{Y: 50})
 }
 
 func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
-	if buttons["totalHistoryOff"].state == 1 {
-		return
-	}
 	xHerbiChart := 36
-	for i := 0; i < len(g.d.herbivoresTotalQuantities); i++ {
-		if len(g.d.herbivoresTotalQuantities) > 800 {
-			if i%(int(float64(len(g.d.herbivoresTotalQuantities))/float64(800))+1) != 0 {
+	for i := 0; i < len(g.d.herbivoresQuantities); i++ {
+		if len(g.d.herbivoresQuantities) > 800 {
+			if i%(int(float64(len(g.d.herbivoresQuantities))/float64(800))+1) != 0 {
 				continue
 			}
 			xHerbiChart += 1
 			vector.DrawFilledRect(
 				screen,
 				float32(xHerbiChart),
-				float32(648-int(g.d.herbivoresTotalQuantities[i]/5)),
+				float32(648-int(g.d.herbivoresQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 0, G: 230, B: 115, A: 255},
@@ -133,7 +97,7 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 			vector.DrawFilledRect(
 				screen,
 				float32(37+i),
-				float32(648-int(g.d.herbivoresTotalQuantities[i]/5)),
+				float32(648-int(g.d.herbivoresQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 0, G: 230, B: 115, A: 255},
@@ -142,16 +106,16 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 		}
 	}
 	xCarniChart := 36
-	for i := 0; i < len(g.d.carnivoresTotalQuantities); i++ {
-		if len(g.d.carnivoresTotalQuantities) > 800 {
-			if i%(int(float64(len(g.d.carnivoresTotalQuantities))/float64(800))+1) != 0 {
+	for i := 0; i < len(g.d.carnivoresQuantities); i++ {
+		if len(g.d.carnivoresQuantities) > 800 {
+			if i%(int(float64(len(g.d.carnivoresQuantities))/float64(800))+1) != 0 {
 				continue
 			}
 			xCarniChart += 1
 			vector.DrawFilledRect(
 				screen,
 				float32(xCarniChart),
-				float32(648-int(g.d.carnivoresTotalQuantities[i]/5)),
+				float32(648-int(g.d.carnivoresQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 255, G: 77, B: 77, A: 255},
@@ -161,7 +125,7 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 			vector.DrawFilledRect(
 				screen,
 				float32(37+i),
-				float32(648-int(g.d.carnivoresTotalQuantities[i]/5)),
+				float32(648-int(g.d.carnivoresQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 255, G: 77, B: 77, A: 255},
@@ -179,7 +143,7 @@ func (sc *scene) drawRightPanel(screen *ebiten.Image, g *game) {
 	chartInfo := g.c.chartsInfo[g.rightPanelOption]
 
 	if title, ok := chartInfo["title"].(string); ok {
-		text.Draw(screen, title, notoSansRegular13, 909, 58, color.RGBA{R: 50, G: 50, B: 50, A: 255})
+		text.Draw(screen, title, openSansRegular13, 909, 58, color.RGBA{R: 50, G: 50, B: 50, A: 255})
 	}
 
 	for _, chData := range chartInfo["charts"].([]chartData) {
@@ -195,7 +159,7 @@ func (sc *scene) drawRightPanel(screen *ebiten.Image, g *game) {
 		case "distribution":
 			drawDistributionChartBg(screen, x, y)
 		}
-		text.Draw(screen, label, notoSansRegular11, x+offset, y-4, color.Gray{Y: 20})
+		text.Draw(screen, label, openSansRegular11, x+offset, y-4, color.Gray{Y: 20})
 	}
 }
 
@@ -212,7 +176,7 @@ func drawTraitChartBg(screen *ebiten.Image, chartX, chartY int) {
 	vector.StrokeLine(screen, float32(chartX+161+1), float32(chartY-1), float32(chartX+161+1), float32(chartY+106), 1, color.Gray{Y: 130}, false)
 
 	for i := 0; i < 8; i++ {
-		text.Draw(screen, strconv.Itoa(i), notoSansRegular11, chartX-11, chartY+4+15*(7-i), color.Gray{Y: 50})
+		text.Draw(screen, strconv.Itoa(i), openSansRegular11, chartX-11, chartY+4+15*(7-i), color.Gray{Y: 50})
 	}
 }
 
@@ -227,12 +191,12 @@ func drawDistributionChartBg(screen *ebiten.Image, chartX, chartY int) {
 	vector.StrokeLine(screen, float32(chartX-1), float32(chartY), float32(chartX+161+1), float32(chartY), 1, color.Gray{Y: 130}, false)
 	vector.StrokeLine(screen, float32(chartX+161+1), float32(chartY+101), float32(chartX+161+1), float32(chartY), 1, color.Gray{Y: 130}, false)
 
-	text.Draw(screen, "0", notoSansRegular11, chartX-9, chartY+104, color.Gray{Y: 50})
-	text.Draw(screen, "50", notoSansRegular11, chartX-16, chartY+53, color.Gray{Y: 50})
-	text.Draw(screen, "100", notoSansRegular11, chartX-23, chartY+5, color.Gray{Y: 50})
+	text.Draw(screen, "0", openSansRegular11, chartX-9, chartY+104, color.Gray{Y: 50})
+	text.Draw(screen, "50", openSansRegular11, chartX-16, chartY+53, color.Gray{Y: 50})
+	text.Draw(screen, "100", openSansRegular11, chartX-23, chartY+5, color.Gray{Y: 50})
 
 	for i := 0; i < 8; i++ {
-		text.Draw(screen, strconv.Itoa(i), notoSansRegular11, chartX+7+20*i, chartY+110, color.Gray{Y: 50})
+		text.Draw(screen, strconv.Itoa(i), openSansRegular11, chartX+7+20*i, chartY+110, color.Gray{Y: 50})
 	}
 }
 
@@ -285,7 +249,9 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 }
 
 func (sc *scene) drawCounters(screen *ebiten.Image, g *game) {
-	text.Draw(screen, "Simulation age: "+strconv.Itoa(g.totalCyclesCounter), notoSansRegular12, 41, 83, color.Gray{Y: 50})
+	text.Draw(screen, "Year: "+strconv.Itoa(g.timeYear), openSansRegular12, 320, 448, color.Gray{Y: 50})
+	text.Draw(screen, "Month: "+strconv.Itoa(g.timeMonth), openSansRegular12, 406, 448, color.Gray{Y: 50})
+	text.Draw(screen, "Day: "+strconv.Itoa(g.timeDay), openSansRegular12, 500, 448, color.Gray{Y: 50})
 
 	// Herbs icon.
 	vector.DrawFilledRect(screen, 719, 15, 5, 5, color.RGBA{R: 34, G: 139, B: 34, A: 255}, false)
@@ -296,9 +262,9 @@ func (sc *scene) drawCounters(screen *ebiten.Image, g *game) {
 	vector.DrawFilledRect(screen, 694-1, 43-1, 11, 11, color.Gray{Y: 45}, false)
 	vector.DrawFilledRect(screen, 694, 43, 9, 9, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
 
-	text.Draw(screen, "HERBS: "+strconv.Itoa(len(g.herbs)), notoSansRegular12, 727, 22, color.Gray{Y: 50})
-	text.Draw(screen, "HERBIVORES: "+strconv.Itoa(len(g.herbivores)), notoSansRegular12, 707, 37, color.Gray{Y: 50})
-	text.Draw(screen, "CARNIVORES: "+strconv.Itoa(len(g.carnivores)), notoSansRegular12, 707, 52, color.Gray{Y: 50})
+	text.Draw(screen, "HERBS: "+strconv.Itoa(len(g.herbs)), openSansRegular12, 727, 22, color.Gray{Y: 50})
+	text.Draw(screen, "HERBIVORES: "+strconv.Itoa(len(g.herbivores)), openSansRegular12, 707, 37, color.Gray{Y: 50})
+	text.Draw(screen, "CARNIVORES: "+strconv.Itoa(len(g.carnivores)), openSansRegular12, 707, 52, color.Gray{Y: 50})
 }
 
 func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
@@ -308,9 +274,8 @@ func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
 	}
 
 	textData := []TextData{
-		{"SETTINGS", [2]int{659, 69}},
-		{"- Cycles per sec: " + strconv.Itoa(g.cyclesPerSec), [2]int{663, 85}},
-		{"- Tempo: " + fmt.Sprintf("%.2f", g.s.tempo), [2]int{663, 105}},
+		{"SETTINGS", [2]int{659, 89}},
+		{"- Simulation speed: " + strconv.Itoa(g.chosenGameSpeed), [2]int{663, 105}},
 		{"- Mutation %: " + strconv.Itoa(int(g.s.mutationChance*100)), [2]int{663, 125}},
 		{"HERBS", [2]int{660, 148}},
 		{"- Start. number: " + strconv.Itoa(g.s.herbsStartingNr), [2]int{663, 165}},
@@ -330,7 +295,7 @@ func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
 	}
 
 	for _, td := range textData {
-		text.Draw(screen, td.Text, notoSansRegular12, td.Position[0], td.Position[1], color.RGBA{R: 50, G: 50, B: 50, A: 255})
+		text.Draw(screen, td.Text, openSansRegular12, td.Position[0], td.Position[1], color.RGBA{R: 50, G: 50, B: 50, A: 255})
 	}
 }
 

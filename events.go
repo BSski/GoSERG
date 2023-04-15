@@ -28,6 +28,9 @@ func processEvents(g *game) {
 		g.rightPanelOption = 2
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyR) {
 		g.reset = true
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyT) {
+		g.timeTravelCounter = 10000
+		ebiten.SetTPS(100000)
 	}
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
@@ -42,32 +45,24 @@ func processEvents(g *game) {
 		case 136 <= x && 175 >= x && 96 <= y && 116 >= y:
 			g.reset = true
 			buttons["reset"].state = 1
-		case 826 <= x && 839 >= x && 74 <= y && 87 >= y:
-			g.chosenCyclesPerSec += 1
-			if g.chosenCyclesPerSec > 28 {
-				g.chosenCyclesPerSec = 28
-			}
-			g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
-			buttons["cpsPlus"].state = 1
-		case 811 <= x && 824 >= x && 74 <= y && 87 >= y:
-			g.chosenCyclesPerSec -= 1
-			if g.chosenCyclesPerSec < 0 {
-				g.chosenCyclesPerSec = 0
-			}
-			g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
-			buttons["cpsMinus"].state = 1
 		case 826 <= x && 839 >= x && 94 <= y && 107 >= y:
-			g.s.tempo += 0.03
-			if g.s.tempo > 1.00 {
-				g.s.tempo = 1.00
+			g.chosenGameSpeed += 1
+			if g.chosenGameSpeed > 10 {
+				g.chosenGameSpeed = 10
 			}
-			buttons["tempoPlus"].state = 1
+			g.cyclesPerSec = g.cyclesPerSecList[g.chosenGameSpeed-1]
+			g.tempo = 0.1 * float64(g.chosenGameSpeed)
+			ebiten.SetTPS(g.cyclesPerSec)
+			buttons["gameSpeedPlus"].state = 1
 		case 811 <= x && 824 >= x && 94 <= y && 107 >= y:
-			g.s.tempo -= 0.03
-			if g.s.tempo < 0.01 {
-				g.s.tempo = 0.01
+			g.chosenGameSpeed -= 1
+			if g.chosenGameSpeed < 1 {
+				g.chosenGameSpeed = 1
 			}
-			buttons["tempoMinus"].state = 1
+			g.cyclesPerSec = g.cyclesPerSecList[g.chosenGameSpeed-1]
+			g.tempo = 0.1 * float64(g.chosenGameSpeed)
+			ebiten.SetTPS(g.cyclesPerSec)
+			buttons["gameSpeedMinus"].state = 1
 		case 826 <= x && 839 >= x && 114 <= y && 127 >= y:
 			g.s.mutationChance += 0.01
 			if g.s.mutationChance > 1.00 {
@@ -224,12 +219,6 @@ func processEvents(g *game) {
 				g.s.carnivoresMoveCost = 0
 			}
 			buttons["carnivoresMoveCostMinus"].state = 1
-		case 351 <= x && 364 >= x && 653 <= y && 666 >= y:
-			if buttons["totalHistoryOff"].state == 1 {
-				buttons["totalHistoryOff"].state = 0
-			} else {
-				buttons["totalHistoryOff"].state = 1
-			}
 		case 860 <= x && 918 >= x && 11 <= y && 44 >= y:
 			g.rightPanelOption = 0
 		case 920 <= x && 978 >= x && 11 <= y && 44 >= y:
@@ -240,9 +229,6 @@ func processEvents(g *game) {
 	}
 	if !ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		for key := range buttons {
-			if key == "totalHistoryOff" {
-				continue
-			}
 			buttons[key].state = 0
 		}
 	}

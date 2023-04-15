@@ -77,18 +77,6 @@ func getBtns() map[string]*button {
 		log.Fatal(err)
 	}
 
-	checkboxOffReader := bytes.NewReader(checkboxOffBytes)
-	checkboxOff, _, err := ebitenutil.NewImageFromReader(checkboxOffReader)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	checkboxOnReader := bytes.NewReader(checkboxOnBytes)
-	checkboxOn, _, err := ebitenutil.NewImageFromReader(checkboxOnReader)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	var buttons = map[string]*button{
 		"start": {
 			state:   0,
@@ -108,25 +96,13 @@ func getBtns() map[string]*button {
 			x:       136,
 			y:       96,
 		},
-		"cpsPlus": {
-			state:   0,
-			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
-			x:       826,
-			y:       74,
-		},
-		"cpsMinus": {
-			state:   0,
-			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
-			x:       811,
-			y:       74,
-		},
-		"tempoPlus": {
+		"gameSpeedPlus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{plusUpSpr, plusDownSpr},
 			x:       826,
 			y:       94,
 		},
-		"tempoMinus": {
+		"gameSpeedMinus": {
 			state:   0,
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
@@ -287,12 +263,6 @@ func getBtns() map[string]*button {
 			sprites: [2]*ebiten.Image{minusUpSpr, minusDownSpr},
 			x:       811,
 			y:       414,
-		},
-		"totalHistoryOff": {
-			state:   0,
-			sprites: [2]*ebiten.Image{checkboxOn, checkboxOff},
-			x:       351,
-			y:       653,
 		},
 	}
 	return buttons

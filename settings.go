@@ -1,8 +1,6 @@
 package main
 
 type settings struct {
-	tempo float64
-
 	mutationChance float64
 
 	herbsSpawnRate int
@@ -24,7 +22,6 @@ type settings struct {
 }
 
 var s = settings{
-	tempo:                 0.10,
 	mutationChance:        0.04,
 	herbsSpawnRate:        3,
 	herbsPerSpawn:         12,

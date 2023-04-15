@@ -17,19 +17,35 @@ func (g *game) Update() error {
 		g.resetGame()
 	}
 
-	g.cyclesPerSec = g.cyclesPerSecList[g.chosenCyclesPerSec]
-	ebiten.SetTPS(g.cyclesPerSec)
+	if g.timeTravelCounter > 0 {
+		g.timeTravelCounter -= 1
+	} else {
+		ebiten.SetTPS(g.cyclesPerSec)
+	}
 
 	if g.pause {
 		return nil
 	}
 
 	g.counterPrev = g.counter
-	g.counter += g.s.tempo
+	g.counter += g.tempo
 	if int(g.counter) >= 120 {
 		g.counter = 0
 	}
-	g.totalCyclesCounter += 1
+
+	g.timeHour += 1
+	if g.timeHour >= 720 {
+		g.timeHour = 0
+		g.timeDay += 1
+	}
+	if g.timeDay >= 31 {
+		g.timeDay = 1
+		g.timeMonth += 1
+	}
+	if g.timeMonth >= 13 {
+		g.timeMonth = 1
+		g.timeYear += 1
+	}
 
 	if int(g.counterPrev) != int(g.counter) && int(g.counter)%speeds[g.s.herbsSpawnRate] == 0 {
 		spawnHerbs(g, g.s.herbsPerSpawn)
@@ -68,17 +84,13 @@ func (g *game) Update() error {
 	}
 
 	if int(g.counterPrev) != int(g.counter) {
-		//if len(g.d.herbivoresQuantities) >= 160 {
-		//	g.d.herbivoresQuantities = (g.d.herbivoresQuantities)[1:]
-		//}
-		//g.d.herbivoresQuantities = append(g.d.herbivoresQuantities, len(g.herbivores))
-		//g.d.herbivoresTotalQuantities = append(g.d.herbivoresTotalQuantities, len(g.herbivores))
-		//
-		//if len(g.d.carnivoresQuantities) >= 160 {
-		//	g.d.carnivoresQuantities = (g.d.carnivoresQuantities)[1:]
-		//}
-		//g.d.carnivoresQuantities = append(g.d.carnivoresQuantities, len(g.carnivores))
-		//g.d.carnivoresTotalQuantities = append(g.d.carnivoresTotalQuantities, len(g.carnivores))
+		g.d.herbivoresQuantities = append(g.d.herbivoresQuantities, len(g.herbivores))
+		g.d.carnivoresQuantities = append(g.d.carnivoresQuantities, len(g.carnivores))
+
+		if int(g.timeDay)%15 == 0 && len(g.d.herbivoresQuantities) >= 30000 {
+			g.d.herbivoresQuantities = g.d.herbivoresQuantities[len(g.d.herbivoresQuantities)-30000:]
+			g.d.carnivoresQuantities = g.d.carnivoresQuantities[len(g.d.carnivoresQuantities)-30000:]
+		}
 
 		g.updateAnimalsMeanData(&g.d.herbivoresMeanSpeeds, len(g.herbivores), &g.d.herbivoresSpeeds)
 		g.updateAnimalsMeanData(&g.d.herbivoresMeanBowelLengths, len(g.herbivores), &g.d.herbivoresBowelLengths)
@@ -101,8 +113,6 @@ func (g *game) Draw(screen *ebiten.Image) {
 	sc.drawGrid(screen)
 	sc.drawMainUILines(screen)
 	sc.drawChartsBg(screen)
-	sc.drawQuantitiesChart(screen)
-	sc.plotQuantities(screen, g)
 	sc.drawHistoricQuantitiesChart(screen)
 	sc.plotHistoricQuantities(screen, g)
 	sc.drawRightPanel(screen, g)
@@ -113,5 +123,4 @@ func (g *game) Draw(screen *ebiten.Image) {
 	sc.drawHerbs(screen, g)
 	sc.drawHerbivores(screen, g)
 	sc.drawCarnivores(screen, g)
-
 }

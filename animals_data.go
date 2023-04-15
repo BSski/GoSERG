@@ -4,9 +4,6 @@ type animalsData struct {
 	herbivoresQuantities []int
 	carnivoresQuantities []int
 
-	herbivoresTotalQuantities []int
-	carnivoresTotalQuantities []int
-
 	herbivoresMeanSpeeds       []float64
 	herbivoresMeanBowelLengths []float64
 	herbivoresMeanFatLimits    []float64
