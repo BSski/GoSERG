@@ -68,15 +68,15 @@ func processEvents(g *game) {
 			ebiten.SetTPS(g.cyclesPerSec)
 			buttons["gameSpeedMinus"].state = 1
 		case 826 <= x && 839 >= x && 114 <= y && 127 >= y:
-			g.s.mutationChance += 0.01
-			if g.s.mutationChance > 1.00 {
-				g.s.mutationChance = 1.00
+			g.s.mutationChance += 1
+			if g.s.mutationChance > 100 {
+				g.s.mutationChance = 100
 			}
 			buttons["mutationPlus"].state = 1
 		case 811 <= x && 824 >= x && 114 <= y && 127 >= y:
-			g.s.mutationChance -= 0.01
-			if g.s.mutationChance < 0.00 {
-				g.s.mutationChance = 0.00
+			g.s.mutationChance -= 1
+			if g.s.mutationChance < 0 {
+				g.s.mutationChance = 0
 			}
 			buttons["mutationMinus"].state = 1
 		case 826 <= x && 839 >= x && 154 <= y && 167 >= y:

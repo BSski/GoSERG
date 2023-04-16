@@ -23,6 +23,7 @@ type herbivore struct {
 	fatLimit    int
 	legsLength  float64
 	age         int
+	moveCost    float64
 }
 
 func (h *herbivore) init() {
@@ -30,6 +31,13 @@ func (h *herbivore) init() {
 	h.bowelLength = bowelLengths[h.dna[1]]
 	h.fatLimit = fatLimits[h.dna[2]]
 	h.legsLength = legsLengths[h.dna[3]]
+
+	h.moveCost += float64(h.g.s.herbivoresMoveCost)
+	h.moveCost += float64(h.g.s.herbivoresMoveCost) * speedCosts[h.dna[0]]
+	h.moveCost += float64(h.g.s.herbivoresMoveCost) * bowelLengthCosts[h.dna[1]]
+	h.moveCost += float64(h.g.s.herbivoresMoveCost) * fatLimitCosts[h.dna[2]]
+	h.moveCost += float64(h.g.s.herbivoresMoveCost) * legsLengthCosts[h.dna[3]]
+	h.moveCost *= h.legsLength
 }
 
 func init() {
@@ -117,7 +125,7 @@ func (h *herbivore) breed() {
 func (_ *herbivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int) {
 	newDna := [4]int{}
 	for i := 0; i < len(newDna); i++ {
-		if rand.Float64()/100 >= g.s.mutationChance {
+		if rand.Float64() >= float64(g.s.mutationChance)/100 {
 			if rand.Intn(2) >= 1 {
 				newDna[i] = dna1[i]
 			} else {
@@ -194,15 +202,7 @@ func (h *herbivore) move() {
 		}
 	}
 
-	// TODO: this can be calculated once and stored in the herbivore struct
-	var moveCost float64
-	moveCost += float64(h.g.s.herbivoresMoveCost)
-	moveCost += float64(h.g.s.herbivoresMoveCost) * speedCosts[h.dna[0]]
-	moveCost += float64(h.g.s.herbivoresMoveCost) * bowelLengthCosts[h.dna[1]]
-	moveCost += float64(h.g.s.herbivoresMoveCost) * fatLimitCosts[h.dna[2]]
-	moveCost += float64(h.g.s.herbivoresMoveCost) * legsLengthCosts[h.dna[3]]
-	moveCost *= legsLengths[h.dna[3]]
-	h.energy -= int(moveCost)
+	h.energy -= int(h.moveCost)
 
 	// Move away from the border.
 	if h.x <= 1 || h.x >= h.g.boardSize || h.y <= 1 || h.y >= h.g.boardSize {

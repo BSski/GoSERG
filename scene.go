@@ -162,6 +162,16 @@ func (sc *scene) drawRightPanel(screen *ebiten.Image, g *game) {
 			drawTraitChartBg(screen, x, y)
 		case "distribution":
 			drawDistributionChartBg(screen, x, y)
+			if g.rightPanelOption == 1 {
+				// Herbivores icon.
+				vector.DrawFilledRect(screen, 896-1, 49-1, 11, 11, color.Gray{Y: 45}, false)
+				vector.DrawFilledRect(screen, 896, 49, 9, 9, color.RGBA{R: 0, G: 128, B: 96, A: 255}, false)
+			} else if g.rightPanelOption == 2 {
+				// Carnivores icon.
+				vector.DrawFilledRect(screen, 896-1, 49-1, 11, 11, color.Gray{Y: 45}, false)
+				vector.DrawFilledRect(screen, 896, 49, 9, 9, color.RGBA{R: 255, G: 77, B: 77, A: 255}, false)
+			}
+
 		}
 		text.Draw(screen, label, openSansRegular11, x+offset, y-4, color.Gray{Y: 20})
 	}
@@ -258,7 +268,7 @@ func (sc *scene) drawCounters(screen *ebiten.Image, g *game) {
 	text.Draw(screen, "Day: "+strconv.Itoa(g.timeDay), openSansRegular12, 500, 448, color.Gray{Y: 50})
 
 	// Herbs icon.
-	drawHerb(screen, 717, 15)
+	drawSingleHerb(screen, 714, 13)
 	// Herbivores icon.
 	vector.DrawFilledRect(screen, 694-1, 28-1, 11, 11, color.Gray{Y: 45}, false)
 	vector.DrawFilledRect(screen, 694, 28, 9, 9, color.RGBA{R: 0, G: 128, B: 96, A: 255}, false)
@@ -273,7 +283,7 @@ func (sc *scene) drawCounters(screen *ebiten.Image, g *game) {
 
 func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
 	// Herbs icon.
-	drawHerb(screen, 663, 141)
+	drawSingleHerb(screen, 661, 139)
 	// Herbivores icon.
 	vector.DrawFilledRect(screen, 661-1, 239-1, 11, 11, color.Gray{Y: 45}, false)
 	vector.DrawFilledRect(screen, 661, 239, 9, 9, color.RGBA{R: 0, G: 128, B: 96, A: 255}, false)
@@ -287,7 +297,7 @@ func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
 	}{
 		{"SETTINGS", [2]int{659, 89}},
 		{"- Simulation speed: " + strconv.Itoa(g.chosenGameSpeed), [2]int{663, 105}},
-		{"- Mutation %: " + strconv.Itoa(int(g.s.mutationChance*100)), [2]int{663, 125}},
+		{"- Mutation %: " + strconv.Itoa(int(g.s.mutationChance)), [2]int{663, 125}},
 		{"HERBS", [2]int{674, 148}},
 		{"- Start. number: " + strconv.Itoa(g.s.herbsStartingNr), [2]int{663, 165}},
 		{"- Energy: " + strconv.Itoa(g.s.herbsEnergy), [2]int{663, 185}},
@@ -321,7 +331,7 @@ func (sc *scene) drawButtons(screen *ebiten.Image) {
 func (sc *scene) drawHerbs(screen *ebiten.Image, g *game) {
 	for i := 0; i < len(g.herbs); i++ {
 		h := g.herbs[i]
-		drawHerb(screen, h.g.grid[h.y][h.x][0], h.g.grid[h.y][h.x][1])
+		drawSingleHerb(screen, h.g.grid[h.y][h.x][0], h.g.grid[h.y][h.x][1])
 	}
 }
 

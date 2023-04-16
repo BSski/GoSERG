@@ -40,8 +40,6 @@ type game struct {
 
 	pause bool
 
-	pauseButtonStatus bool
-
 	tempo            float64
 	chosenGameSpeed  int
 	cyclesPerSecList [5]int
@@ -149,44 +147,32 @@ func newGame() *game {
 		animation:        []rune("||||////----\\\\\\\\"),
 		animationCounter: 0,
 
-		counter:     0,
-		counterPrev: 0,
-		timeHour:    0,
-		timeDay:     1,
-		timeMonth:   1,
-		timeYear:    0,
-
-		timeTravelCounter: 0,
-
 		pause: false,
-
-		pauseButtonStatus: false,
 
 		chosenGameSpeed:  2,
 		cyclesPerSecList: [5]int{30, 60, 90, 120, 150},
-
-		herbs:      []*herb{},
-		herbivores: []*herbivore{},
-		carnivores: []*carnivore{},
-
-		herbsPos:      generateHerbsPositions(),
-		herbivoresPos: generateHerbivoresPositions(),
-		carnivoresPos: generateCarnivoresPositions(),
 
 		rightPanelSprites: [3]*ebiten.Image{rightPanelOption0, rightPanelOption1, rightPanelOption2},
 		rightPanelOption:  0,
 	}
 	g.init()
+	g.clearGame()
+	g.spawnStartingEntities()
 	return g
 }
 
 func (g *game) clearGame() {
+	d := animalsData{}
+	g.d = d
+
 	g.counter = 0
 	g.counterPrev = 0
 	g.timeHour = 0
 	g.timeDay = 1
 	g.timeMonth = 1
 	g.timeYear = 0
+
+	g.timeTravelCounter = 0
 
 	g.herbsPos = generateHerbsPositions()
 	g.herbivoresPos = generateHerbivoresPositions()
@@ -196,8 +182,6 @@ func (g *game) clearGame() {
 	g.herbivores = []*herbivore{}
 	g.carnivores = []*carnivore{}
 
-	d := animalsData{}
-	g.d = d
 }
 
 func (g *game) spawnStartingEntities() {

@@ -46,14 +46,14 @@ var bowelLengthCosts = map[int]float64{
 }
 
 var fatLimits = map[int]int{
-	0: 1500,
-	1: 2000,
-	2: 2500,
-	3: 3000,
-	4: 3500,
-	5: 4000,
-	6: 4500,
-	7: 5000,
+	0: 200,
+	1: 250,
+	2: 300,
+	3: 350,
+	4: 400,
+	5: 450,
+	6: 500,
+	7: 550,
 }
 
 var fatLimitCosts = map[int]float64{

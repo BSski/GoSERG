@@ -27,7 +27,7 @@ func init() {
 	}
 }
 
-func drawHerb(screen *ebiten.Image, x, y float32) {
+func drawSingleHerb(screen *ebiten.Image, x, y float32) {
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Translate(float64(x), float64(y))
 	screen.DrawImage(herbSpr, options)

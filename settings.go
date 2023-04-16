@@ -1,7 +1,7 @@
 package main
 
 type settings struct {
-	mutationChance float64
+	mutationChance int
 
 	herbsSpawnRate int
 	herbsPerSpawn  int
@@ -22,7 +22,7 @@ type settings struct {
 }
 
 var s = settings{
-	mutationChance:        0.04,
+	mutationChance:        4,
 	herbsSpawnRate:        3,
 	herbsPerSpawn:         12,
 	herbsEnergy:           200,
