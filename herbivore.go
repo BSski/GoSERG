@@ -1,12 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
-	"image/color"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"log"
 	"math"
 	"math/rand"
 )
+
+var herbiHungrySpr *ebiten.Image
+var herbiFullSpr *ebiten.Image
 
 type herbivore struct {
 	g           *game
@@ -28,15 +32,28 @@ func (h *herbivore) init() {
 	h.legsLength = legsLengths[h.dna[3]]
 }
 
-func (h *herbivore) draw(screen *ebiten.Image) {
-	var hColor color.RGBA
-	if h.energy >= h.g.s.herbivoresBreedLevel {
-		hColor = color.RGBA{R: 0, G: 123, B: 51, A: 255}
-	} else {
-		hColor = color.RGBA{R: 0, G: 255, B: 85, A: 255}
+func init() {
+	var err error
+	herbiHungryReader := bytes.NewReader(herbiHungryBytes)
+	herbiHungrySpr, _, err = ebitenutil.NewImageFromReader(herbiHungryReader)
+	if err != nil {
+		log.Fatal(err)
 	}
-	vector.DrawFilledRect(screen, h.g.grid[h.y][h.x][0]-2, h.g.grid[h.y][h.x][1]-2, 11, 11, color.Gray{Y: 45}, false)
-	vector.DrawFilledRect(screen, h.g.grid[h.y][h.x][0]-1, h.g.grid[h.y][h.x][1]-1, 9, 9, hColor, false)
+	herbiFullReader := bytes.NewReader(herbiFullBytes)
+	herbiFullSpr, _, err = ebitenutil.NewImageFromReader(herbiFullReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (h *herbivore) draw(screen *ebiten.Image) {
+	options := &ebiten.DrawImageOptions{}
+	options.GeoM.Translate(float64(h.g.grid[h.y][h.x][0]), float64(h.g.grid[h.y][h.x][1]))
+	if h.energy >= h.g.s.herbivoresBreedLevel {
+		screen.DrawImage(herbiFullSpr, options)
+	} else {
+		screen.DrawImage(herbiHungrySpr, options)
+	}
 }
 
 func (h *herbivore) starve() {
@@ -177,6 +194,7 @@ func (h *herbivore) move() {
 		}
 	}
 
+	// TODO: this can be calculated once and stored in the herbivore struct
 	var moveCost float64
 	moveCost += float64(h.g.s.herbivoresMoveCost)
 	moveCost += float64(h.g.s.herbivoresMoveCost) * speedCosts[h.dna[0]]
@@ -226,7 +244,7 @@ func (h *herbivore) move() {
 				return
 			}
 		}
-		xSum, ySum, xPresent, yPresent := h.scanDistantMates()
+		xSum, ySum, xPresent, yPresent = h.scanDistantMates()
 		if xPresent > 0 || yPresent > 0 {
 			h.chaseDistantSubject(xSum, ySum, xPresent, yPresent)
 			return
@@ -539,4 +557,19 @@ func (h *herbivore) makeRandomMove() {
 		h.y = h.y - 1
 	}
 	h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
+}
+
+func doHerbivoreActions(g *game) {
+	for i := 0; i < len(g.herbivores); i++ {
+		if g.herbivores[i].energy <= 0 {
+			g.herbivores[i].starve()
+		}
+	}
+	for i := 0; i < len(g.herbivores); i++ {
+		g.herbivores[i].action()
+		g.herbivores[i].age += 1
+	}
+	for i := 0; i < len(g.herbivores); i++ {
+		g.herbivores[i].move()
+	}
 }

@@ -2,6 +2,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
@@ -62,21 +63,19 @@ func (sc *scene) drawChartsBg(screen *ebiten.Image) {
 }
 
 func (sc *scene) drawHistoricQuantitiesChart(screen *ebiten.Image) {
-	for i := float32(0); i < 19; i++ {
-		vector.StrokeLine(screen, 37, 649-10*i, 837, 649-10*i, 1, color.Gray{Y: 210}, false)
+	for i := float32(0); i < 10; i++ {
+		vector.StrokeLine(screen, 37, 649-20*i, 837, 649-20*i, 1, color.Gray{Y: 210}, false)
 	}
 	vector.StrokeLine(screen, 37, 650, 37, 467, 1, color.Gray{Y: 130}, false)
 	vector.StrokeLine(screen, 37, 650, 837, 650, 1, color.Gray{Y: 130}, false)
 	vector.StrokeLine(screen, 37, 468, 837, 468, 1, color.Gray{Y: 130}, false)
 	vector.StrokeLine(screen, 838, 650, 838, 467, 1, color.Gray{Y: 130}, false)
 
-	// Translate it to Go to get Y axis labels.
-	//for i in range(15):
-	//if i == 10:
-	//g.screen.blit(F[1].render("1", True, (50, 50, 50)), (17, 417 - 20 * 10))
-	//continue
-	//g.screen.blit(F[1].render(f".{i % 10}", True, (50, 50, 50)), (12, 417 - 20 * i))
-	//g.screen.blit(F[1].render("k", True, (50, 50, 50)), (18, 117))
+	// Y axis labels.
+	text.Draw(screen, fmt.Sprintf("%d", 0), openSansRegular12, 24, 653, color.Gray{Y: 50})
+	for i := 1; i < 10; i++ {
+		text.Draw(screen, fmt.Sprintf("%d", i*100), openSansRegular12, 14, 653-20*i, color.Gray{Y: 50})
+	}
 
 	text.Draw(screen, "Quantity", openSansRegular12, 412, 664, color.Gray{Y: 50})
 }
@@ -293,7 +292,7 @@ func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
 		{"- Start. number: " + strconv.Itoa(g.s.herbsStartingNr), [2]int{663, 165}},
 		{"- Energy: " + strconv.Itoa(g.s.herbsEnergy), [2]int{663, 185}},
 		{"- Per spawn: " + strconv.Itoa(g.s.herbsPerSpawn), [2]int{663, 205}},
-		{"- Spawn rate: " + strconv.Itoa(g.s.herbsSpawnRate), [2]int{663, 225}},
+		{"- Spawn rate: " + strconv.Itoa(g.s.herbsSpawnRate/2+1), [2]int{663, 225}},
 		{"HERBIVORES", [2]int{674, 248}},
 		{"- Start. number: " + strconv.Itoa(g.s.herbivoresStartingNr), [2]int{663, 265}},
 		{"- Spawn energy: " + strconv.Itoa(g.s.herbivoresSpawnEnergy), [2]int{663, 285}},

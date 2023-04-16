@@ -38,7 +38,6 @@ type game struct {
 	timeDay           int
 	timeTravelCounter int
 
-	reset bool
 	pause bool
 
 	pauseButtonStatus bool
@@ -62,7 +61,7 @@ type game struct {
 
 func (g *game) init() {
 	g.cyclesPerSec = g.cyclesPerSecList[g.chosenGameSpeed-1]
-	g.tempo = 0.1 * float64(g.chosenGameSpeed)
+	g.tempo = 0.2 * float64(g.chosenGameSpeed)
 	g.regularTilesQuantity = (g.boardSize - 2) * (g.boardSize - 2)
 
 	tt, err := opentype.Parse(PressStart2P_ttf)
@@ -159,13 +158,12 @@ func newGame() *game {
 
 		timeTravelCounter: 0,
 
-		reset: true,
 		pause: false,
 
 		pauseButtonStatus: false,
 
 		chosenGameSpeed:  2,
-		cyclesPerSecList: [5]int{30, 60, 120, 180, 300},
+		cyclesPerSecList: [5]int{30, 60, 90, 120, 150},
 
 		herbs:      []*herb{},
 		herbivores: []*herbivore{},
@@ -182,7 +180,7 @@ func newGame() *game {
 	return g
 }
 
-func (g *game) resetGame() {
+func (g *game) clearGame() {
 	g.counter = 0
 	g.counterPrev = 0
 	g.timeHour = 0
@@ -200,7 +198,9 @@ func (g *game) resetGame() {
 
 	d := animalsData{}
 	g.d = d
+}
 
+func (g *game) spawnStartingEntities() {
 	spawnHerbs(g, g.s.herbsStartingNr)
 	spawnHerbivore(g, g.s.herbivoresStartingNr)
 	spawnCarnivore(g, g.s.carnivoresStartingNr)

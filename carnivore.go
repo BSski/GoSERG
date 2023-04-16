@@ -1,12 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
-	"image/color"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"log"
 	"math"
 	"math/rand"
 )
+
+var carniHungrySpr *ebiten.Image
+var carniFullSpr *ebiten.Image
 
 type carnivore struct {
 	g           *game
@@ -28,16 +32,29 @@ func (c *carnivore) init() {
 	c.legsLength = legsLengths[c.dna[3]]
 }
 
+func init() {
+	var err error
+	carniHungryReader := bytes.NewReader(carniHungryBytes)
+	carniHungrySpr, _, err = ebitenutil.NewImageFromReader(carniHungryReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	carniFullReader := bytes.NewReader(carniFullBytes)
+	carniFullSpr, _, err = ebitenutil.NewImageFromReader(carniFullReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func (c *carnivore) draw(screen *ebiten.Image) {
-	var cColor color.RGBA
+	options := &ebiten.DrawImageOptions{}
+	options.GeoM.Translate(float64(c.g.grid[c.y][c.x][0]), float64(c.g.grid[c.y][c.x][1]))
 	if c.energy >= c.g.s.carnivoresBreedLevel {
-		cColor = color.RGBA{R: 190, G: 46, B: 0, A: 255}
+		screen.DrawImage(carniFullSpr, options)
 	} else {
-		cColor = color.RGBA{R: 255, G: 112, B: 77, A: 255}
+		screen.DrawImage(carniHungrySpr, options)
 	}
 
-	vector.DrawFilledRect(screen, c.g.grid[c.y][c.x][0]-2, c.g.grid[c.y][c.x][1]-2, 11, 11, color.Gray{Y: 45}, false)
-	vector.DrawFilledRect(screen, c.g.grid[c.y][c.x][0]-1, c.g.grid[c.y][c.x][1]-1, 9, 9, cColor, false)
 }
 
 func (c *carnivore) starve() {
@@ -398,4 +415,19 @@ func (c *carnivore) makeRandomMove() {
 		c.y = c.y - 1
 	}
 	c.g.carnivoresPos[c.y][c.x] = append(c.g.carnivoresPos[c.y][c.x], c)
+}
+
+func doCarnivoreActions(g *game) {
+	for i := 0; i < len(g.carnivores); i++ {
+		if g.carnivores[i].energy <= 0 {
+			g.carnivores[i].starve()
+		}
+	}
+	for i := 0; i < len(g.carnivores); i++ {
+		g.carnivores[i].action()
+		g.carnivores[i].age += 1
+	}
+	for i := 0; i < len(g.carnivores); i++ {
+		g.carnivores[i].move()
+	}
 }

@@ -9,6 +9,7 @@ var speeds = map[int]int{
 	5: 5,
 	6: 3,
 	7: 2,
+	8: 1,
 }
 
 var speedCosts = map[int]float64{
