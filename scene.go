@@ -32,19 +32,26 @@ func (sc *scene) drawLogo(screen *ebiten.Image) {
 	text.Draw(screen, "bsski 2023", openSansRegular11, 77, 61, color.Gray{Y: 200})
 }
 
-func (sc *scene) drawGrid(screen *ebiten.Image) {
+func (sc *scene) drawBoard(screen *ebiten.Image, g *game) {
 	squareSize := float32(10)
 	y := float32(19)
 	x := float32(222)
 
-	groundColor := color.RGBA{R: 240, G: 222, B: 180, A: 255}
-	vector.DrawFilledRect(screen, x, y, 41*squareSize-1, 41*squareSize-1, groundColor, false)
+	boardSize := 41
 
-	for i := float32(1); i < 41; i++ {
-		vector.StrokeLine(screen, x, y+i*squareSize, x+41*squareSize-1, y+i*squareSize, float32(1), color.Gray{Y: 240}, false)
-	}
-	for j := float32(1); j < 41; j++ {
-		vector.StrokeLine(screen, x+j*squareSize, y, x+j*squareSize, y+41*squareSize-1, float32(1), color.Gray{Y: 240}, false)
+	for i := 0; i < boardSize; i++ {
+		for j := 0; j < boardSize; j++ {
+			tileColor := g.boardTilesType[i][j].color
+			vector.DrawFilledRect(
+				screen,
+				x+float32(j)*squareSize,
+				y+float32(i)*squareSize,
+				squareSize,
+				squareSize,
+				tileColor,
+				false,
+			)
+		}
 	}
 }
 
@@ -331,7 +338,7 @@ func (sc *scene) drawButtons(screen *ebiten.Image) {
 func (sc *scene) drawHerbs(screen *ebiten.Image, g *game) {
 	for i := 0; i < len(g.herbs); i++ {
 		h := g.herbs[i]
-		drawSingleHerb(screen, h.g.grid[h.y][h.x][0], h.g.grid[h.y][h.x][1])
+		drawSingleHerb(screen, h.g.board[h.y][h.x][0], h.g.board[h.y][h.x][1])
 	}
 }
 

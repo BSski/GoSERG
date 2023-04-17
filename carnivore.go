@@ -56,7 +56,7 @@ func init() {
 
 func (c *carnivore) draw(screen *ebiten.Image) {
 	options := &ebiten.DrawImageOptions{}
-	options.GeoM.Translate(float64(c.g.grid[c.y][c.x][0]), float64(c.g.grid[c.y][c.x][1]))
+	options.GeoM.Translate(float64(c.g.board[c.y][c.x][0]), float64(c.g.board[c.y][c.x][1]))
 	if c.energy >= c.g.s.carnivoresBreedLevel {
 		screen.DrawImage(carniFullSpr, options)
 	} else {

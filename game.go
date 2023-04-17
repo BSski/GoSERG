@@ -13,7 +13,7 @@ func (g *game) Update() error {
 	processEvents(g)
 
 	updateTimeTravelStatus(g)
-	
+
 	if g.pause {
 		return nil
 	}
@@ -33,7 +33,7 @@ func (g *game) Draw(screen *ebiten.Image) {
 
 	sc.drawAnimation(screen, g)
 	sc.drawLogo(screen)
-	sc.drawGrid(screen)
+	sc.drawBoard(screen, g)
 	sc.drawMainUILines(screen)
 	sc.drawChartsBg(screen)
 	sc.drawHistoricQuantitiesChart(screen)

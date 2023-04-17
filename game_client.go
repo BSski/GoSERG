@@ -6,6 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
+	"image/color"
 	"log"
 )
 
@@ -19,11 +20,17 @@ var (
 	buttons map[string]*button
 )
 
+type tile struct {
+	color    color.RGBA
+	tileType uint8
+}
+
 type game struct {
 	s                    settings
 	c                    consts
 	d                    animalsData
-	grid                 [][][2]float32
+	board                [][][2]float32
+	boardTilesType       [][]tile
 	boardSize            int
 	regularTilesQuantity int
 
@@ -141,7 +148,7 @@ func newGame() *game {
 		s:         s,
 		c:         c,
 		d:         d,
-		grid:      generateGrid(),
+		board:     generateBoard(),
 		boardSize: 41,
 
 		animation:        []rune("||||////----\\\\\\\\"),
@@ -157,35 +164,7 @@ func newGame() *game {
 	}
 	g.init()
 	g.clearGame()
+	g.generateNewTerrain()
 	g.spawnStartingEntities()
 	return g
-}
-
-func (g *game) clearGame() {
-	d := animalsData{}
-	g.d = d
-
-	g.counter = 0
-	g.counterPrev = 0
-	g.timeHour = 0
-	g.timeDay = 1
-	g.timeMonth = 1
-	g.timeYear = 0
-
-	g.timeTravelCounter = 0
-
-	g.herbsPos = generateHerbsPositions()
-	g.herbivoresPos = generateHerbivoresPositions()
-	g.carnivoresPos = generateCarnivoresPositions()
-
-	g.herbs = []*herb{}
-	g.herbivores = []*herbivore{}
-	g.carnivores = []*carnivore{}
-
-}
-
-func (g *game) spawnStartingEntities() {
-	spawnHerbs(g, g.s.herbsStartingNr)
-	spawnHerbivore(g, g.s.herbivoresStartingNr)
-	spawnCarnivore(g, g.s.carnivoresStartingNr)
 }

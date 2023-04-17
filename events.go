@@ -30,6 +30,7 @@ func processEvents(g *game) {
 		g.clearGame()
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyR) {
 		g.clearGame()
+		g.generateNewTerrain()
 		g.spawnStartingEntities()
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyT) {
 		g.timeTravelCounter = 10000
@@ -47,6 +48,7 @@ func processEvents(g *game) {
 			buttons["pause"].state = 1
 		case 136 <= x && 175 >= x && 96 <= y && 116 >= y:
 			g.clearGame()
+			g.generateNewTerrain()
 			g.spawnStartingEntities()
 			buttons["reset"].state = 1
 		case 826 <= x && 839 >= x && 94 <= y && 107 >= y:

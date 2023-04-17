@@ -56,7 +56,7 @@ func init() {
 
 func (h *herbivore) draw(screen *ebiten.Image) {
 	options := &ebiten.DrawImageOptions{}
-	options.GeoM.Translate(float64(h.g.grid[h.y][h.x][0]), float64(h.g.grid[h.y][h.x][1]))
+	options.GeoM.Translate(float64(h.g.board[h.y][h.x][0]), float64(h.g.board[h.y][h.x][1]))
 	if h.energy >= h.g.s.herbivoresBreedLevel {
 		screen.DrawImage(herbiFullSpr, options)
 	} else {
