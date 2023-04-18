@@ -162,6 +162,7 @@ func newGame() *game {
 		rightPanelSprites: [3]*ebiten.Image{rightPanelOption0, rightPanelOption1, rightPanelOption2},
 		rightPanelOption:  0,
 	}
+
 	g.init()
 	g.clearGame()
 	g.generateNewTerrain()

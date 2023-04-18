@@ -62,7 +62,6 @@ func (c *carnivore) draw(screen *ebiten.Image) {
 	} else {
 		screen.DrawImage(carniHungrySpr, options)
 	}
-
 }
 
 func (c *carnivore) starve() {
@@ -196,6 +195,7 @@ func (c *carnivore) move() {
 		return
 	}
 
+	// Remove the carnivore's current position.
 	for i, v := range c.g.carnivoresPos[c.y][c.x] {
 		if v == c {
 			c.g.carnivoresPos[c.y][c.x] = append(c.g.carnivoresPos[c.y][c.x][:i], c.g.carnivoresPos[c.y][c.x][i+1:]...)

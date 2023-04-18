@@ -195,6 +195,7 @@ func (h *herbivore) move() {
 		return
 	}
 
+	// Remove the herbivore's current position.
 	for i, v := range h.g.herbivoresPos[h.y][h.x] {
 		if v == h {
 			h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x][:i], h.g.herbivoresPos[h.y][h.x][i+1:]...)
@@ -221,7 +222,11 @@ func (h *herbivore) move() {
 
 	vectors := h.g.c.vonNeumannPerms[rand.Intn(24)]
 	// Move away from close predators.
-	isPredatorClose := (len(h.g.carnivoresPos[h.y+1][h.x]) != 0 || len(h.g.carnivoresPos[h.y-1][h.x]) != 0 || len(h.g.carnivoresPos[h.y][h.x+1]) != 0 || len(h.g.carnivoresPos[h.y][h.x-1]) != 0)
+	isPredatorClose := len(h.g.carnivoresPos[h.y+1][h.x]) != 0 ||
+		len(h.g.carnivoresPos[h.y-1][h.x]) != 0 ||
+		len(h.g.carnivoresPos[h.y][h.x+1]) != 0 ||
+		len(h.g.carnivoresPos[h.y][h.x-1]) != 0
+
 	if isPredatorClose {
 		h.runFromClosePredator(vectors)
 		return
@@ -273,14 +278,14 @@ func (h *herbivore) move() {
 
 func (h *herbivore) runFromClosePredator(vectors [4][2]int) {
 	for _, v := range vectors {
-		if len(h.g.carnivoresPos[h.y+v[1]][h.x+v[0]]) == 0 {
+		if len(h.g.carnivoresPos[h.y+v[1]][h.x+v[0]]) == 0 && h.g.boardTilesType[h.y+v[1]][h.x+v[0]].tileType != 0 {
 			h.x += v[0]
 			h.y += v[1]
 			h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
 			return
 		}
 	}
-	h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
+	h.g.herbivoresPoJak będzie trzeba sprzedam delfinowi wodęs[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
 }
 
 func (h *herbivore) runFromDistantPredator(xSum, ySum, xPresent, yPresent int) {
@@ -301,22 +306,34 @@ func (h *herbivore) scanForPredators() (xSum, ySum, xPresent, yPresent int) {
 		{0, 2}, {1, -2}, {1, -1}, {1, 1}, {1, 2},
 		{2, -2}, {2, -1}, {2, 0}, {2, 1}, {2, 2},
 	} {
-		if len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]]) == 0 {
+		if len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]]) == 0 && h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
 			continue
 		}
 		if i[0] != 0 {
 			if i[0] < 0 {
 				xSum += -1 * len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]])
+				if h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
+					xSum += -1
+				}
 			} else {
 				xSum += len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]])
+				if h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
+					xSum += 1
+				}
 			}
 			xPresent = 1
 		}
 		if i[1] != 0 {
 			if i[1] < 0 {
 				ySum += -1 * len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]])
+				if h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
+					ySum += -1
+				}
 			} else {
 				ySum += len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]])
+				if h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
+					ySum += 1
+				}
 			}
 			yPresent = 1
 		}

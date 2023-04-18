@@ -2,20 +2,36 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"image/color"
+	"log"
 	"strconv"
 )
 
 type scene struct {
 	// Remove filling entire screen, fill only the areas that are needed.
 	// It will enable you to draw only the changing parts.
+	seabed *ebiten.Image
 }
 
-var sc scene
+var sc = scene{
+	seabed: generateSeabed(),
+}
+
+func generateSeabed() *ebiten.Image {
+	var err error
+	seabedReader := bytes.NewReader(seabedBytes)
+	seabedSpr, _, err := ebitenutil.NewImageFromReader(seabedReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return seabedSpr
+}
 
 // Animation to prevent Windows from hanging the window when paused.
 // Useful in approximating lag.
@@ -34,20 +50,24 @@ func (sc *scene) drawLogo(screen *ebiten.Image) {
 
 func (sc *scene) drawBoard(screen *ebiten.Image, g *game) {
 	squareSize := float32(10)
-	y := float32(19)
-	x := float32(222)
+	y := float32(21)
+	x := float32(224)
 
-	boardSize := 41
+	vector.DrawFilledRect(screen, x-1, y-1, float32(g.boardSize)*squareSize+1, float32(g.boardSize)*squareSize+1, color.Gray{Y: 80}, false)
 
-	for i := 0; i < boardSize; i++ {
-		for j := 0; j < boardSize; j++ {
+	options := &ebiten.DrawImageOptions{}
+	options.GeoM.Translate(float64(x), float64(y))
+	screen.DrawImage(sc.seabed, options)
+
+	for i := 0; i < g.boardSize; i++ {
+		for j := 0; j < g.boardSize; j++ {
 			tileColor := g.boardTilesType[i][j].color
 			vector.DrawFilledRect(
 				screen,
 				x+float32(j)*squareSize,
 				y+float32(i)*squareSize,
-				squareSize,
-				squareSize,
+				squareSize-1,
+				squareSize-1,
 				tileColor,
 				false,
 			)

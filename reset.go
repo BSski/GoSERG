@@ -114,7 +114,7 @@ func generateTile(noise *perlin.Perlin, x int, y int, a float64, o1 float64, o2 
 			R: uint8(240 + (int(height/0.025)+12)*8 + rand.Intn(12) - 24),
 			G: uint8(200 + (int(height/0.025)+12)*8 + rand.Intn(12) - 24),
 			B: uint8(160 + rand.Intn(8) - 16),
-			A: 255,
+			A: 230,
 		}
 		t.tileType = 1
 	default:
@@ -123,7 +123,7 @@ func generateTile(noise *perlin.Perlin, x int, y int, a float64, o1 float64, o2 
 			R: 10,
 			G: 55,
 			B: uint8(240 + int(height/0.15)*25),
-			A: 255,
+			A: 190,
 		}
 		t.tileType = 0
 	}
