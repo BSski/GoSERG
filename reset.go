@@ -82,7 +82,7 @@ func generateCarnivoresPositions() (pos [][][]*carnivore) {
 
 func (g *game) generateNewTerrain() {
 	noise := perlin.NewPerlin(2, 2, 3, int64(rand.Intn(100000)))
-	a := float64(rand.Intn(18)) + 18
+	a := float64(rand.Intn(18)) + 28
 	off1 := float64(rand.Intn(3)) - 6
 	off2 := float64(rand.Intn(3)) - 6
 	var tilesType [][]tile

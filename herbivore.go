@@ -23,7 +23,6 @@ type herbivore struct {
 	fatLimit    int
 	legsLength  float64
 	age         int
-	moveCost    float64
 }
 
 func (h *herbivore) init() {
@@ -31,13 +30,6 @@ func (h *herbivore) init() {
 	h.bowelLength = bowelLengths[h.dna[1]]
 	h.fatLimit = fatLimits[h.dna[2]]
 	h.legsLength = legsLengths[h.dna[3]]
-
-	h.moveCost += float64(h.g.s.herbivoresMoveCost)
-	h.moveCost += float64(h.g.s.herbivoresMoveCost) * speedCosts[h.dna[0]]
-	h.moveCost += float64(h.g.s.herbivoresMoveCost) * bowelLengthCosts[h.dna[1]]
-	h.moveCost += float64(h.g.s.herbivoresMoveCost) * fatLimitCosts[h.dna[2]]
-	h.moveCost += float64(h.g.s.herbivoresMoveCost) * legsLengthCosts[h.dna[3]]
-	h.moveCost *= h.legsLength
 }
 
 func init() {
@@ -164,6 +156,10 @@ func spawnHerbivore(g *game, nr int) {
 	for i := 0; i < nr; i++ {
 		y := rand.Intn(g.boardSize-2) + 2
 		x := rand.Intn(g.boardSize-2) + 2
+		if g.boardTilesType[y][x].tileType == 0 {
+			continue
+		}
+
 		dnaRange := g.c.partialDnaRange
 		h := herbivore{
 			g:      g,
@@ -203,24 +199,16 @@ func (h *herbivore) move() {
 		}
 	}
 
-	h.energy -= int(h.moveCost)
+	h.subtractMoveCostFromEnergy()
 
 	// Move away from the border.
 	if h.x <= 1 || h.x >= h.g.boardSize || h.y <= 1 || h.y >= h.g.boardSize {
-		if h.x <= 1 {
-			h.x += 1
-		} else if h.x >= h.g.boardSize {
-			h.x -= 1
-		} else if h.y <= 1 {
-			h.y += 1
-		} else {
-			h.y -= 1
-		}
-		h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
+		h.moveAwayFromBorder()
 		return
 	}
 
 	vectors := h.g.c.vonNeumannPerms[rand.Intn(24)]
+
 	// Move away from close predators.
 	isPredatorClose := len(h.g.carnivoresPos[h.y+1][h.x]) != 0 ||
 		len(h.g.carnivoresPos[h.y-1][h.x]) != 0 ||
@@ -228,13 +216,18 @@ func (h *herbivore) move() {
 		len(h.g.carnivoresPos[h.y][h.x-1]) != 0
 
 	if isPredatorClose {
-		h.runFromClosePredator(vectors)
+		h.runFromClosePredatorOrForbiddenTiles(vectors)
 		return
 	}
 
 	// Move away from distant predators.
 	xSum, ySum, xPresent, yPresent := h.scanForPredators()
 	if xPresent > 0 || yPresent > 0 {
+		forbiddenXSum, forbiddenYSum, forbiddenXPresent, forbiddenYPresent := h.scanForForbiddenTiles()
+		xSum += forbiddenXSum
+		ySum += forbiddenYSum
+		xPresent += forbiddenXPresent
+		yPresent += forbiddenYPresent
 		h.runFromDistantPredator(xSum, ySum, xPresent, yPresent)
 		return
 	}
@@ -254,8 +247,6 @@ func (h *herbivore) move() {
 			h.chaseDistantSubject(xSum, ySum, xPresent, yPresent)
 			return
 		}
-		h.makeRandomMove()
-		return
 	}
 
 	// Move towards food.
@@ -276,16 +267,43 @@ func (h *herbivore) move() {
 	h.makeRandomMove()
 }
 
-func (h *herbivore) runFromClosePredator(vectors [4][2]int) {
-	for _, v := range vectors {
-		if len(h.g.carnivoresPos[h.y+v[1]][h.x+v[0]]) == 0 && h.g.boardTilesType[h.y+v[1]][h.x+v[0]].tileType != 0 {
-			h.x += v[0]
-			h.y += v[1]
-			h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
-			return
-		}
+func (h *herbivore) subtractMoveCostFromEnergy() {
+	moveCost := float64(h.g.s.herbivoresMoveCost)
+	moveCost += float64(h.g.s.herbivoresMoveCost) * speedCosts[h.dna[0]]
+	moveCost += float64(h.g.s.herbivoresMoveCost) * bowelLengthCosts[h.dna[1]]
+	moveCost += float64(h.g.s.herbivoresMoveCost) * fatLimitCosts[h.dna[2]]
+	moveCost += float64(h.g.s.herbivoresMoveCost) * legsLengthCosts[h.dna[3]]
+	moveCost *= h.legsLength
+	h.energy -= int(moveCost)
+}
+
+func (h *herbivore) moveAwayFromBorder() {
+	if h.x <= 1 {
+		h.x += 1
+	} else if h.x >= h.g.boardSize {
+		h.x -= 1
+	} else if h.y <= 1 {
+		h.y += 1
+	} else {
+		h.y -= 1
 	}
-	h.g.herbivoresPoJak będzie trzeba sprzedam delfinowi wodęs[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
+	h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
+	return
+}
+
+func (h *herbivore) runFromClosePredatorOrForbiddenTiles(vectors [4][2]int) {
+	for _, v := range vectors {
+		if h.g.boardTilesType[h.y+v[1]][h.x+v[0]].tileType == 0 {
+			continue
+		}
+		if len(h.g.carnivoresPos[h.y+v[1]][h.x+v[0]]) != 0 {
+			continue
+		}
+		h.x += v[0]
+		h.y += v[1]
+		break
+	}
+	h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
 }
 
 func (h *herbivore) runFromDistantPredator(xSum, ySum, xPresent, yPresent int) {
@@ -306,38 +324,59 @@ func (h *herbivore) scanForPredators() (xSum, ySum, xPresent, yPresent int) {
 		{0, 2}, {1, -2}, {1, -1}, {1, 1}, {1, 2},
 		{2, -2}, {2, -1}, {2, 0}, {2, 1}, {2, 2},
 	} {
-		if len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]]) == 0 && h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
+		if len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]]) == 0 {
 			continue
 		}
 		if i[0] != 0 {
 			if i[0] < 0 {
 				xSum += -1 * len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]])
-				if h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
-					xSum += -1
-				}
 			} else {
 				xSum += len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]])
-				if h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
-					xSum += 1
-				}
 			}
 			xPresent = 1
 		}
 		if i[1] != 0 {
 			if i[1] < 0 {
 				ySum += -1 * len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]])
-				if h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
-					ySum += -1
-				}
 			} else {
 				ySum += len(h.g.carnivoresPos[h.y+i[1]][h.x+i[0]])
-				if h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType == 0 {
-					ySum += 1
-				}
 			}
 			yPresent = 1
 		}
 	}
+	return xSum, ySum, xPresent, yPresent
+}
+
+func (h *herbivore) scanForForbiddenTiles() (xSum, ySum, xPresent, yPresent int) {
+	tempXSum, tempYSum := 0.0, 0.0
+	for _, i := range [][2]int{
+		{-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2},
+		{-1, -2}, {-1, -1}, {-1, 1}, {-1, 2}, {0, -2},
+		{0, 2}, {1, -2}, {1, -1}, {1, 1}, {1, 2},
+		{2, -2}, {2, -1}, {2, 0}, {2, 1}, {2, 2},
+	} {
+		if h.g.boardTilesType[h.y+i[1]][h.x+i[0]].tileType != 0 {
+			continue
+		}
+		if i[0] != 0 {
+			if i[0] < 0 {
+				tempXSum += -0.3
+			} else {
+				tempXSum += 0.3
+			}
+			xPresent = 1
+		}
+		if i[1] != 0 {
+			if i[1] < 0 {
+				tempYSum += -0.3
+			} else {
+				tempYSum += 0.3
+			}
+			yPresent = 1
+		}
+	}
+	xSum = int(tempXSum)
+	ySum = int(tempYSum)
 	return xSum, ySum, xPresent, yPresent
 }
 
@@ -564,6 +603,9 @@ func (h *herbivore) chaseY(ySum int) int {
 
 func (h *herbivore) makeRandomMove() {
 	r := rand.Float64()
+	originalX := h.x
+	originalY := h.y
+
 	if r >= 0.75 {
 		h.x = h.x + 1
 	} else if 0.75 > r && r >= 0.5 {
@@ -572,6 +614,13 @@ func (h *herbivore) makeRandomMove() {
 		h.y = h.y + 1
 	} else {
 		h.y = h.y - 1
+	}
+
+	if h.g.boardTilesType[h.y][h.x].tileType == 0 {
+		h.x = originalX
+		h.y = originalY
+		h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
+		return
 	}
 	h.g.herbivoresPos[h.y][h.x] = append(h.g.herbivoresPos[h.y][h.x], h)
 }

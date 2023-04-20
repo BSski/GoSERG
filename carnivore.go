@@ -23,7 +23,6 @@ type carnivore struct {
 	fatLimit    int
 	legsLength  float64
 	age         int
-	moveCost    float64
 }
 
 func (c *carnivore) init() {
@@ -31,13 +30,6 @@ func (c *carnivore) init() {
 	c.bowelLength = bowelLengths[c.dna[1]]
 	c.fatLimit = fatLimits[c.dna[2]]
 	c.legsLength = legsLengths[c.dna[3]]
-
-	c.moveCost += float64(c.g.s.carnivoresMoveCost)
-	c.moveCost += float64(c.g.s.carnivoresMoveCost) * speedCosts[c.dna[0]]
-	c.moveCost += float64(c.g.s.carnivoresMoveCost) * bowelLengthCosts[c.dna[1]]
-	c.moveCost += float64(c.g.s.carnivoresMoveCost) * fatLimitCosts[c.dna[2]]
-	c.moveCost += float64(c.g.s.carnivoresMoveCost) * legsLengthCosts[c.dna[3]]
-	c.moveCost *= c.legsLength
 }
 
 func init() {
@@ -164,6 +156,10 @@ func spawnCarnivore(g *game, nr int) {
 	for i := 0; i < nr; i++ {
 		y := rand.Intn(g.boardSize-2) + 2
 		x := rand.Intn(g.boardSize-2) + 2
+		if g.boardTilesType[y][x].tileType == 0 {
+			return
+		}
+
 		dnaRange := g.c.partialDnaRange
 		c := carnivore{
 			g:      g,
@@ -203,20 +199,11 @@ func (c *carnivore) move() {
 		}
 	}
 
-	c.energy -= int(c.moveCost)
+	c.subtractMoveCostFromEnergy()
 
 	// Move away from the border.
 	if c.x <= 1 || c.x >= c.g.boardSize || c.y <= 1 || c.y >= c.g.boardSize {
-		if c.x <= 1 {
-			c.x += 1
-		} else if c.x >= c.g.boardSize {
-			c.x -= 1
-		} else if c.y <= 1 {
-			c.y += 1
-		} else {
-			c.y -= 1
-		}
-		c.g.carnivoresPos[c.y][c.x] = append(c.g.carnivoresPos[c.y][c.x], c)
+		c.moveAwayFromBorder()
 		return
 	}
 
@@ -237,8 +224,6 @@ func (c *carnivore) move() {
 			c.chaseDistantSubject(xSum, ySum, xPresent, yPresent)
 			return
 		}
-		c.makeRandomMove()
-		return
 	}
 
 	// Move towards prey.
@@ -257,6 +242,29 @@ func (c *carnivore) move() {
 	}
 
 	c.makeRandomMove()
+}
+
+func (c *carnivore) moveAwayFromBorder() {
+	if c.x <= 1 {
+		c.x += 1
+	} else if c.x >= c.g.boardSize {
+		c.x -= 1
+	} else if c.y <= 1 {
+		c.y += 1
+	} else {
+		c.y -= 1
+	}
+	c.g.carnivoresPos[c.y][c.x] = append(c.g.carnivoresPos[c.y][c.x], c)
+}
+
+func (c *carnivore) subtractMoveCostFromEnergy() {
+	moveCost := float64(c.g.s.carnivoresMoveCost)
+	moveCost += float64(c.g.s.carnivoresMoveCost) * speedCosts[c.dna[0]]
+	moveCost += float64(c.g.s.carnivoresMoveCost) * bowelLengthCosts[c.dna[1]]
+	moveCost += float64(c.g.s.carnivoresMoveCost) * fatLimitCosts[c.dna[2]]
+	moveCost += float64(c.g.s.carnivoresMoveCost) * legsLengthCosts[c.dna[3]]
+	moveCost *= c.legsLength
+	c.energy -= int(moveCost)
 }
 
 func (c *carnivore) scanDistantMates() (xSum, ySum, xPresent, yPresent int) {
@@ -406,6 +414,9 @@ func (c *carnivore) chaseY(ySum int) int {
 
 func (c *carnivore) makeRandomMove() {
 	r := rand.Float64()
+	originalX := c.x
+	originalY := c.y
+
 	if r >= 0.75 {
 		c.x = c.x + 1
 	} else if 0.75 > r && r >= 0.5 {
@@ -414,6 +425,13 @@ func (c *carnivore) makeRandomMove() {
 		c.y = c.y + 1
 	} else {
 		c.y = c.y - 1
+	}
+
+	if c.g.boardTilesType[c.y][c.x].tileType == 0 {
+		c.x = originalX
+		c.y = originalY
+		c.g.carnivoresPos[c.y][c.x] = append(c.g.carnivoresPos[c.y][c.x], c)
+		return
 	}
 	c.g.carnivoresPos[c.y][c.x] = append(c.g.carnivoresPos[c.y][c.x], c)
 }

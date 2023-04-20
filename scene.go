@@ -61,7 +61,7 @@ func (sc *scene) drawBoard(screen *ebiten.Image, g *game) {
 
 	for i := 0; i < g.boardSize; i++ {
 		for j := 0; j < g.boardSize; j++ {
-			tileColor := g.boardTilesType[i][j].color
+			tileColor := g.boardTilesType[i+1][j+1].color
 			vector.DrawFilledRect(
 				screen,
 				x+float32(j)*squareSize,
@@ -241,7 +241,6 @@ func drawDistributionChartBg(screen *ebiten.Image, chartX, chartY int) {
 	}
 }
 
-// FIXME: make sure it's working.
 func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 	switch g.rightPanelOption {
 	case 0:

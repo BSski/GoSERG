@@ -30,7 +30,7 @@ var s = settings{
 	herbivoresStartingNr:  200,
 	carnivoresStartingNr:  30,
 	herbivoresSpawnEnergy: 200,
-	carnivoresSpawnEnergy: 240,
+	carnivoresSpawnEnergy: 220,
 	herbivoresBreedLevel:  220,
 	carnivoresBreedLevel:  240,
 	herbivoresMoveCost:    7,

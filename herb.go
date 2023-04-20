@@ -60,16 +60,20 @@ func spawnHerbs(g *game, nr int) {
 }
 
 func createHerbOnField(g *game, x, y int) {
-	if len(g.herbsPos[y][x]) == 0 {
-		h := herb{
-			g:      g,
-			x:      x,
-			y:      y,
-			energy: g.s.herbsEnergy,
-		}
-		g.herbs = append(g.herbs, &h)
-		g.herbsPos[y][x] = append(g.herbsPos[y][x], &h)
+	if len(g.herbsPos[y][x]) != 0 {
+		return
 	}
+	if g.boardTilesType[y][x].tileType == 0 {
+		return
+	}
+	h := herb{
+		g:      g,
+		x:      x,
+		y:      y,
+		energy: g.s.herbsEnergy,
+	}
+	g.herbs = append(g.herbs, &h)
+	g.herbsPos[y][x] = append(g.herbsPos[y][x], &h)
 }
 
 func doHerbsActions(g *game) {
