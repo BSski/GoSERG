@@ -20,10 +20,10 @@ type scene struct {
 }
 
 var sc = scene{
-	seabed: generateSeabed(),
+	seabed: getSeabedSpr(),
 }
 
-func generateSeabed() *ebiten.Image {
+func getSeabedSpr() *ebiten.Image {
 	var err error
 	seabedReader := bytes.NewReader(seabedBytes)
 	seabedSpr, _, err := ebitenutil.NewImageFromReader(seabedReader)
@@ -264,10 +264,10 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 			values [8]int
 			y      int
 		}{
-			{g.d.herbivoresSpeeds, 87},
-			{g.d.herbivoresBowelLengths, 237},
-			{g.d.herbivoresFatLimits, 387},
-			{g.d.herbivoresLegsLengths, 537},
+			{g.d.herbivoresSpeeds, 88},
+			{g.d.herbivoresBowelLengths, 238},
+			{g.d.herbivoresFatLimits, 388},
+			{g.d.herbivoresLegsLengths, 538},
 		}
 		for _, d := range data {
 			drawDistributionBars(screen, 873, d.y, d.values, len(g.herbivores), color.RGBA{R: 0, G: 255, B: 85, A: 255})
@@ -277,10 +277,10 @@ func (sc *scene) plotRightPanel(screen *ebiten.Image, g *game) {
 			values [8]int
 			y      int
 		}{
-			{g.d.carnivoresSpeeds, 87},
-			{g.d.carnivoresBowelLengths, 237},
-			{g.d.carnivoresFatLimits, 387},
-			{g.d.carnivoresLegsLengths, 537},
+			{g.d.carnivoresSpeeds, 88},
+			{g.d.carnivoresBowelLengths, 238},
+			{g.d.carnivoresFatLimits, 388},
+			{g.d.carnivoresLegsLengths, 538},
 		}
 		for _, d := range data {
 			drawDistributionBars(screen, 873, d.y, d.values, len(g.carnivores), color.RGBA{R: 255, G: 112, B: 77, A: 255})

@@ -153,7 +153,7 @@ func (h *herbivore) eat() {
 }
 
 func spawnHerbivore(g *game, nr int) {
-	for i := 0; i < nr; i++ {
+	for nr > 0 {
 		y := rand.Intn(g.boardSize-2) + 2
 		x := rand.Intn(g.boardSize-2) + 2
 		if g.boardTilesType[y][x].tileType == 0 {
@@ -180,6 +180,7 @@ func spawnHerbivore(g *game, nr int) {
 		g.d.herbivoresBowelLengths[h.dna[1]] += 1
 		g.d.herbivoresFatLimits[h.dna[2]] += 1
 		g.d.herbivoresLegsLengths[h.dna[3]] += 1
+		nr -= 1
 	}
 }
 

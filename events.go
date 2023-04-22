@@ -33,7 +33,7 @@ func processEvents(g *game) {
 		g.generateNewTerrain()
 		g.spawnStartingEntities()
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyT) {
-		g.timeTravelCounter = 10000
+		g.timeTravelCounter = 3000
 		ebiten.SetTPS(100000)
 	}
 
@@ -71,8 +71,8 @@ func processEvents(g *game) {
 			buttons["gameSpeedMinus"].state = 1
 		case 826 <= x && 839 >= x && 114 <= y && 127 >= y:
 			g.s.mutationChance += 1
-			if g.s.mutationChance > 100 {
-				g.s.mutationChance = 100
+			if g.s.mutationChance > 20 {
+				g.s.mutationChance = 20
 			}
 			buttons["mutationPlus"].state = 1
 		case 811 <= x && 824 >= x && 114 <= y && 127 >= y:
@@ -83,8 +83,8 @@ func processEvents(g *game) {
 			buttons["mutationMinus"].state = 1
 		case 826 <= x && 839 >= x && 154 <= y && 167 >= y:
 			g.s.herbsStartingNr += 50
-			if g.s.herbsStartingNr > g.regularTilesQuantity {
-				g.s.herbsStartingNr = g.regularTilesQuantity
+			if g.s.herbsStartingNr > 750 {
+				g.s.herbsStartingNr = 750
 			}
 			buttons["herbsStartingNrPlus"].state = 1
 		case 811 <= x && 824 >= x && 154 <= y && 167 >= y:
@@ -107,8 +107,8 @@ func processEvents(g *game) {
 			buttons["herbsEnergyMinus"].state = 1
 		case 826 <= x && 839 >= x && 194 <= y && 207 >= y:
 			g.s.herbsPerSpawn += 3
-			if g.s.herbsPerSpawn > 300 {
-				g.s.herbsPerSpawn = 300
+			if g.s.herbsPerSpawn > 15 {
+				g.s.herbsPerSpawn = 15
 			}
 			buttons["herbsPerSpawnPlus"].state = 1
 		case 811 <= x && 824 >= x && 194 <= y && 207 >= y:
@@ -131,8 +131,8 @@ func processEvents(g *game) {
 			buttons["herbsSpawnRateMinus"].state = 1
 		case 826 <= x && 839 >= x && 254 <= y && 267 >= y:
 			g.s.herbivoresStartingNr += 20
-			if g.s.herbivoresStartingNr > g.regularTilesQuantity {
-				g.s.herbivoresStartingNr = g.regularTilesQuantity
+			if g.s.herbivoresStartingNr > 300 {
+				g.s.herbivoresStartingNr = 300
 			}
 			buttons["herbivoresStartingNrPlus"].state = 1
 		case 811 <= x && 824 >= x && 254 <= y && 267 >= y:
@@ -143,8 +143,8 @@ func processEvents(g *game) {
 			buttons["herbivoresStartingNrMinus"].state = 1
 		case 826 <= x && 839 >= x && 274 <= y && 287 >= y:
 			g.s.herbivoresSpawnEnergy += 20
-			if g.s.herbivoresSpawnEnergy > 980 {
-				g.s.herbivoresSpawnEnergy = 980
+			if g.s.herbivoresSpawnEnergy > 300 {
+				g.s.herbivoresSpawnEnergy = 300
 			}
 			buttons["herbivoresSpawnEnergyPlus"].state = 1
 		case 811 <= x && 824 >= x && 274 <= y && 287 >= y:
@@ -155,8 +155,8 @@ func processEvents(g *game) {
 			buttons["herbivoresSpawnEnergyMinus"].state = 1
 		case 826 <= x && 839 >= x && 294 <= y && 307 >= y:
 			g.s.herbivoresBreedLevel += 20
-			if g.s.herbivoresBreedLevel > 980 {
-				g.s.herbivoresBreedLevel = 980
+			if g.s.herbivoresBreedLevel > 300 {
+				g.s.herbivoresBreedLevel = 300
 			}
 			buttons["herbivoresBreedLevelPlus"].state = 1
 		case 811 <= x && 824 >= x && 294 <= y && 307 >= y:
@@ -167,8 +167,8 @@ func processEvents(g *game) {
 			buttons["herbivoresBreedLevelMinus"].state = 1
 		case 826 <= x && 839 >= x && 314 <= y && 327 >= y:
 			g.s.herbivoresMoveCost += 1
-			if g.s.herbivoresMoveCost > 50 {
-				g.s.herbivoresMoveCost = 50
+			if g.s.herbivoresMoveCost > 12 {
+				g.s.herbivoresMoveCost = 12
 			}
 			buttons["herbivoresMoveCostPlus"].state = 1
 		case 811 <= x && 824 >= x && 314 <= y && 327 >= y:
@@ -179,8 +179,8 @@ func processEvents(g *game) {
 			buttons["herbivoresMoveCostMinus"].state = 1
 		case 826 <= x && 839 >= x && 354 <= y && 367 >= y:
 			g.s.carnivoresStartingNr += 5
-			if g.s.carnivoresStartingNr > g.regularTilesQuantity {
-				g.s.carnivoresStartingNr = g.regularTilesQuantity
+			if g.s.carnivoresStartingNr > 75 {
+				g.s.carnivoresStartingNr = 75
 			}
 			buttons["carnivoresStartingNrPlus"].state = 1
 		case 811 <= x && 824 >= x && 354 <= y && 367 >= y:
@@ -191,8 +191,8 @@ func processEvents(g *game) {
 			buttons["carnivoresStartingNrMinus"].state = 1
 		case 826 <= x && 839 >= x && 374 <= y && 387 >= y:
 			g.s.carnivoresSpawnEnergy += 20
-			if g.s.carnivoresSpawnEnergy > 980 {
-				g.s.carnivoresSpawnEnergy = 980
+			if g.s.carnivoresSpawnEnergy > 300 {
+				g.s.carnivoresSpawnEnergy = 300
 			}
 			buttons["carnivoresSpawnEnergyPlus"].state = 1
 		case 811 <= x && 824 >= x && 374 <= y && 387 >= y:
@@ -203,8 +203,8 @@ func processEvents(g *game) {
 			buttons["carnivoresSpawnEnergyMinus"].state = 1
 		case 826 <= x && 839 >= x && 394 <= y && 407 >= y:
 			g.s.carnivoresBreedLevel += 20
-			if g.s.carnivoresBreedLevel > 980 {
-				g.s.carnivoresBreedLevel = 980
+			if g.s.carnivoresBreedLevel > 300 {
+				g.s.carnivoresBreedLevel = 300
 			}
 			buttons["carnivoresBreedLevelPlus"].state = 1
 		case 811 <= x && 824 >= x && 394 <= y && 407 >= y:
@@ -215,8 +215,8 @@ func processEvents(g *game) {
 			buttons["carnivoresBreedLevelMinus"].state = 1
 		case 826 <= x && 839 >= x && 414 <= y && 427 >= y:
 			g.s.carnivoresMoveCost += 1
-			if g.s.carnivoresMoveCost > 50 {
-				g.s.carnivoresMoveCost = 50
+			if g.s.carnivoresMoveCost > 12 {
+				g.s.carnivoresMoveCost = 12
 			}
 			buttons["carnivoresMoveCostPlus"].state = 1
 		case 811 <= x && 824 >= x && 414 <= y && 427 >= y:

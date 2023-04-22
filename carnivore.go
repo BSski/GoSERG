@@ -153,11 +153,11 @@ func (c *carnivore) eat() {
 }
 
 func spawnCarnivore(g *game, nr int) {
-	for i := 0; i < nr; i++ {
+	for nr > 0 {
 		y := rand.Intn(g.boardSize-2) + 2
 		x := rand.Intn(g.boardSize-2) + 2
 		if g.boardTilesType[y][x].tileType == 0 {
-			return
+			continue
 		}
 
 		dnaRange := g.c.partialDnaRange
@@ -180,6 +180,7 @@ func spawnCarnivore(g *game, nr int) {
 		g.d.carnivoresBowelLengths[c.dna[1]] += 1
 		g.d.carnivoresFatLimits[c.dna[2]] += 1
 		g.d.carnivoresLegsLengths[c.dna[3]] += 1
+		nr -= 1
 	}
 }
 

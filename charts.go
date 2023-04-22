@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"image/color"
@@ -16,11 +17,12 @@ func drawCharts(screen *ebiten.Image, data [][]float64, startY []int, color colo
 
 func drawDistributionBars(screen *ebiten.Image, x, y int, traitValues [8]int, animalsLen int, color color.RGBA) {
 	for k := 0; k < 8; k++ {
-		height := float64(traitValues[k]) * 100.0 / float64(animalsLen)
+		height := int(float64(traitValues[k]) * 100.0 / float64(animalsLen))
 		if height < 1 {
 			height = 1
 		}
 
+		fmt.Println("k:", k, "y:", float32(y+100-int(height)), "h:", float32(height))
 		vector.DrawFilledRect(
 			screen,
 			float32(x)+4.0+20.0*float32(k),

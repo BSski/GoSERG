@@ -30,7 +30,7 @@ func (g *game) clearGame() {
 }
 
 func (g *game) spawnStartingEntities() {
-	spawnHerbs(g, g.s.herbsStartingNr)
+	spawnHerbsOnRandomTiles(g, g.s.herbsStartingNr)
 	spawnHerbivore(g, g.s.herbivoresStartingNr)
 	spawnCarnivore(g, g.s.carnivoresStartingNr)
 }
@@ -82,9 +82,9 @@ func generateCarnivoresPositions() (pos [][][]*carnivore) {
 
 func (g *game) generateNewTerrain() {
 	noise := perlin.NewPerlin(2, 2, 3, int64(rand.Intn(100000)))
-	a := float64(rand.Intn(18)) + 28
-	off1 := float64(rand.Intn(3)) - 6
-	off2 := float64(rand.Intn(3)) - 6
+	a := float64(rand.Intn(18)) + 36
+	off1 := float64(rand.Intn(2)) - 4
+	off2 := float64(rand.Intn(2)) - 4
 	var tilesType [][]tile
 	for i := 0; i < 43; i++ {
 		tilesType = append(tilesType, []tile{})
@@ -99,7 +99,7 @@ func (g *game) generateNewTerrain() {
 func generateTile(noise *perlin.Perlin, x int, y int, a float64, o1 float64, o2 float64) (t tile) {
 	height := noise.Noise2D(float64(x)/a+o1, float64(y)/a+o2)
 	switch {
-	case height > -0.30:
+	case height > -0.20:
 		// Grass.
 		t.color = color.RGBA{
 			R: 20,
@@ -108,13 +108,13 @@ func generateTile(noise *perlin.Perlin, x int, y int, a float64, o1 float64, o2 
 			A: 255,
 		}
 		t.tileType = 1
-	case height <= -0.30 && height > -0.40:
+	case height <= -0.20 && height > -0.30:
 		// Sand.
 		t.color = color.RGBA{
-			R: uint8(240 + (int(height/0.025)+12)*8 + rand.Intn(12) - 24),
-			G: uint8(200 + (int(height/0.025)+12)*8 + rand.Intn(12) - 24),
-			B: uint8(160 + rand.Intn(8) - 16),
-			A: 230,
+			R: uint8(246 + (int(height/0.025)+15)*3 + rand.Intn(24) - 48),
+			G: uint8(210 + (int(height/0.025)+15)*3 + rand.Intn(24) - 48),
+			B: uint8(165 + rand.Intn(6) - 12),
+			A: 255,
 		}
 		t.tileType = 1
 	default:

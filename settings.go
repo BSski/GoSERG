@@ -24,7 +24,7 @@ type settings struct {
 var s = settings{
 	mutationChance:        4,
 	herbsSpawnRate:        3,
-	herbsPerSpawn:         12,
+	herbsPerSpawn:         9,
 	herbsEnergy:           200,
 	herbsStartingNr:       500,
 	herbivoresStartingNr:  200,

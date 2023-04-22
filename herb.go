@@ -51,20 +51,27 @@ func (h *herb) die() {
 	}
 }
 
-func spawnHerbs(g *game, nr int) {
-	for i := 0; i < nr; i++ {
+func spawnHerbsOnRandomTiles(g *game, nr int) {
+	maxTriesCounter := 200
+	for nr > 0 && maxTriesCounter > 0 {
 		y := rand.Intn(g.boardSize-2) + 2
 		x := rand.Intn(g.boardSize-2) + 2
-		createHerbOnField(g, x, y)
+
+		created := createHerbOnField(g, x, y)
+
+		if created {
+			nr -= 1
+		}
+		maxTriesCounter -= 1
 	}
 }
 
-func createHerbOnField(g *game, x, y int) {
+func createHerbOnField(g *game, x, y int) (created bool) {
 	if len(g.herbsPos[y][x]) != 0 {
-		return
+		return false
 	}
 	if g.boardTilesType[y][x].tileType == 0 {
-		return
+		return false
 	}
 	h := herb{
 		g:      g,
@@ -74,11 +81,12 @@ func createHerbOnField(g *game, x, y int) {
 	}
 	g.herbs = append(g.herbs, &h)
 	g.herbsPos[y][x] = append(g.herbsPos[y][x], &h)
+	return true
 }
 
 func doHerbsActions(g *game) {
 	if int(g.counterPrev) != int(g.counter) && int(g.counter)%speeds[g.s.herbsSpawnRate] == 0 {
-		spawnHerbs(g, g.s.herbsPerSpawn)
+		spawnHerbsOnRandomTiles(g, g.s.herbsPerSpawn)
 	}
 
 	for i := 0; i < len(g.herbs); i++ {
