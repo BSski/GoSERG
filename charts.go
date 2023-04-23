@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"image/color"
@@ -22,7 +21,6 @@ func drawDistributionBars(screen *ebiten.Image, x, y int, traitValues [8]int, an
 			height = 1
 		}
 
-		fmt.Println("k:", k, "y:", float32(y+100-int(height)), "h:", float32(height))
 		vector.DrawFilledRect(
 			screen,
 			float32(x)+4.0+20.0*float32(k),

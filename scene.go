@@ -237,7 +237,7 @@ func drawDistributionChartBg(screen *ebiten.Image, chartX, chartY int) {
 	text.Draw(screen, "100", openSansRegular11, chartX-23, chartY+5, color.Gray{Y: 50})
 
 	for i := 0; i < 8; i++ {
-		text.Draw(screen, strconv.Itoa(i), openSansRegular11, chartX+7+20*i, chartY+110, color.Gray{Y: 50})
+		text.Draw(screen, strconv.Itoa(i), openSansRegular11, chartX+7+20*i, chartY+111, color.Gray{Y: 50})
 	}
 }
 
@@ -323,21 +323,21 @@ func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
 	}{
 		{"SETTINGS", [2]int{659, 89}},
 		{"- Simulation speed: " + strconv.Itoa(g.chosenGameSpeed), [2]int{663, 105}},
-		{"- Mutation %: " + strconv.Itoa(int(g.s.mutationChance)), [2]int{663, 125}},
+		{"- Mutation % chance: " + strconv.Itoa(int(g.s.mutationChance)), [2]int{663, 125}},
 		{"HERBS", [2]int{674, 148}},
-		{"- Start. number: " + strconv.Itoa(g.s.herbsStartingNr), [2]int{663, 165}},
+		{"- Starting number: " + strconv.Itoa(g.s.herbsStartingNr), [2]int{663, 165}},
 		{"- Energy: " + strconv.Itoa(g.s.herbsEnergy), [2]int{663, 185}},
 		{"- Per spawn: " + strconv.Itoa(g.s.herbsPerSpawn), [2]int{663, 205}},
 		{"- Spawn rate: " + strconv.Itoa(g.s.herbsSpawnRate/2+1), [2]int{663, 225}},
 		{"HERBIVORES", [2]int{674, 248}},
-		{"- Start. number: " + strconv.Itoa(g.s.herbivoresStartingNr), [2]int{663, 265}},
+		{"- Starting number: " + strconv.Itoa(g.s.herbivoresStartingNr), [2]int{663, 265}},
 		{"- Spawn energy: " + strconv.Itoa(g.s.herbivoresSpawnEnergy), [2]int{663, 285}},
-		{"- Breed. level: " + strconv.Itoa(g.s.herbivoresBreedLevel), [2]int{663, 305}},
+		{"- Breeding level: " + strconv.Itoa(g.s.herbivoresBreedLevel), [2]int{663, 305}},
 		{"- Move cost: " + strconv.Itoa(g.s.herbivoresMoveCost), [2]int{663, 325}},
 		{"CARNIVORES", [2]int{674, 348}},
-		{"- Start. number: " + strconv.Itoa(g.s.carnivoresStartingNr), [2]int{663, 365}},
+		{"- Starting number: " + strconv.Itoa(g.s.carnivoresStartingNr), [2]int{663, 365}},
 		{"- Spawn energy: " + strconv.Itoa(g.s.carnivoresSpawnEnergy), [2]int{663, 385}},
-		{"- Breed. level: " + strconv.Itoa(g.s.carnivoresBreedLevel), [2]int{663, 405}},
+		{"- Breeding level: " + strconv.Itoa(g.s.carnivoresBreedLevel), [2]int{663, 405}},
 		{"- Move cost: " + strconv.Itoa(g.s.carnivoresMoveCost), [2]int{663, 425}},
 	}
 

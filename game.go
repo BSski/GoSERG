@@ -12,7 +12,7 @@ func (g *game) Layout(_, _ int) (int, int) {
 func (g *game) Update() error {
 	processEvents(g)
 
-	updateTimeTravelStatus(g)
+	updateGameTimeVars(g)
 
 	if g.pause {
 		return nil
