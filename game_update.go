@@ -52,6 +52,9 @@ func updateTimeCounters(g *game) {
 }
 
 func updateTimeTravelStatus(g *game) {
+	if buttons["slowMode"].state == 1 {
+		return
+	}
 	if g.timeTravelCounter > 0 {
 		g.timeTravelCounter -= 1
 	} else {

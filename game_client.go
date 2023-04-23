@@ -48,6 +48,7 @@ type game struct {
 	pause bool
 
 	tempo            float64
+	prevTempo        float64
 	chosenGameSpeed  int
 	cyclesPerSecList [5]int
 	cyclesPerSec     int

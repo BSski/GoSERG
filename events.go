@@ -6,52 +6,68 @@ import (
 )
 
 func processEvents(g *game) {
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
-		spawnHerbivore(g, 50)
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
+	switch {
+	case inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft):
+		spawnHerbivore(g, 30)
+	case inpututil.IsKeyJustPressed(ebiten.KeyArrowRight):
 		spawnCarnivore(g, 10)
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
+	case inpututil.IsKeyJustPressed(ebiten.KeyArrowUp):
 		spawnHerbivore(g, 1)
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+	case inpututil.IsKeyJustPressed(ebiten.KeyArrowDown):
 		spawnCarnivore(g, 1)
-	} else if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
 		if g.pause == false {
 			g.pause = true
 		} else {
 			g.pause = false
 		}
-	} else if inpututil.IsKeyJustPressed(ebiten.Key1) {
+	case inpututil.IsKeyJustPressed(ebiten.Key1):
 		g.rightPanelOption = 0
-	} else if inpututil.IsKeyJustPressed(ebiten.Key2) {
+	case inpututil.IsKeyJustPressed(ebiten.Key2):
 		g.rightPanelOption = 1
-	} else if inpututil.IsKeyJustPressed(ebiten.Key3) {
+	case inpututil.IsKeyJustPressed(ebiten.Key3):
 		g.rightPanelOption = 2
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyC) {
+	case inpututil.IsKeyJustPressed(ebiten.KeyC):
 		g.clearGame()
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyR) {
+	case inpututil.IsKeyJustPressed(ebiten.KeyR):
 		g.clearGame()
 		g.generateNewTerrain()
 		g.spawnStartingEntities()
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyT) {
+	case inpututil.IsKeyJustPressed(ebiten.KeyT):
 		g.timeTravelCounter = 3000
 		ebiten.SetTPS(100000)
 	}
-
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+		if 36 <= x && 74 >= x && 146 <= y && 185 >= y {
+			buttons["slowMode"].state = 1
+			g.timeTravelCounter = 0
+			ebiten.SetTPS(15)
+		}
+	}
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
 		switch {
-		case 36 <= x && 76 >= x && 96 <= y && 116 >= y:
-			g.pause = false
+		case 36 <= x && 74 >= x && 96 <= y && 135 >= y:
 			buttons["start"].state = 1
-		case 85 <= x && 124 >= x && 96 <= y && 116 >= y:
-			g.pause = true
+			g.pause = false
+		case 85 <= x && 123 >= x && 96 <= y && 135 >= y:
 			buttons["pause"].state = 1
-		case 136 <= x && 175 >= x && 96 <= y && 116 >= y:
+			g.pause = true
+		case 136 <= x && 174 >= x && 96 <= y && 135 >= y:
+			buttons["reset"].state = 1
 			g.clearGame()
 			g.generateNewTerrain()
 			g.spawnStartingEntities()
-			buttons["reset"].state = 1
+		case 85 <= x && 123 >= x && 146 <= y && 185 >= y:
+			buttons["timeTravel"].state = 1
+			g.timeTravelCounter = 3000
+			ebiten.SetTPS(100000)
+		case 136 <= x && 174 >= x && 146 <= y && 185 >= y:
+			buttons["clean"].state = 1
+			g.clearGame()
 		case 826 <= x && 839 >= x && 94 <= y && 107 >= y:
+			buttons["gameSpeedPlus"].state = 1
 			g.chosenGameSpeed += 1
 			if g.chosenGameSpeed > 5 {
 				g.chosenGameSpeed = 5
@@ -59,8 +75,8 @@ func processEvents(g *game) {
 			g.cyclesPerSec = g.cyclesPerSecList[g.chosenGameSpeed-1]
 			g.tempo = 0.2 * float64(g.chosenGameSpeed)
 			ebiten.SetTPS(g.cyclesPerSec)
-			buttons["gameSpeedPlus"].state = 1
 		case 811 <= x && 824 >= x && 94 <= y && 107 >= y:
+			buttons["gameSpeedMinus"].state = 1
 			g.chosenGameSpeed -= 1
 			if g.chosenGameSpeed < 1 {
 				g.chosenGameSpeed = 1
@@ -68,163 +84,162 @@ func processEvents(g *game) {
 			g.cyclesPerSec = g.cyclesPerSecList[g.chosenGameSpeed-1]
 			g.tempo = 0.2 * float64(g.chosenGameSpeed)
 			ebiten.SetTPS(g.cyclesPerSec)
-			buttons["gameSpeedMinus"].state = 1
 		case 826 <= x && 839 >= x && 114 <= y && 127 >= y:
-			g.s.mutationChance += 1
-			if g.s.mutationChance > 20 {
-				g.s.mutationChance = 20
-			}
 			buttons["mutationPlus"].state = 1
+			g.s.mutationChance += 2
+			if g.s.mutationChance > 30 {
+				g.s.mutationChance = 30
+			}
 		case 811 <= x && 824 >= x && 114 <= y && 127 >= y:
-			g.s.mutationChance -= 1
+			buttons["mutationMinus"].state = 1
+			g.s.mutationChance -= 2
 			if g.s.mutationChance < 0 {
 				g.s.mutationChance = 0
 			}
-			buttons["mutationMinus"].state = 1
 		case 826 <= x && 839 >= x && 154 <= y && 167 >= y:
-			g.s.herbsStartingNr += 50
-			if g.s.herbsStartingNr > 750 {
-				g.s.herbsStartingNr = 750
-			}
 			buttons["herbsStartingNrPlus"].state = 1
+			g.s.herbsStartingNr += 30
+			if g.s.herbsStartingNr > 300 {
+				g.s.herbsStartingNr = 300
+			}
 		case 811 <= x && 824 >= x && 154 <= y && 167 >= y:
-			g.s.herbsStartingNr -= 50
+			buttons["herbsStartingNrMinus"].state = 1
+			g.s.herbsStartingNr -= 30
 			if g.s.herbsStartingNr < 0 {
 				g.s.herbsStartingNr = 0
 			}
-			buttons["herbsStartingNrMinus"].state = 1
 		case 826 <= x && 839 >= x && 174 <= y && 187 >= y:
-			g.s.herbsEnergy += 20
-			if g.s.herbsEnergy > 980 {
-				g.s.herbsEnergy = 980
-			}
 			buttons["herbsEnergyPlus"].state = 1
+			g.s.herbsEnergy += 30
+			if g.s.herbsEnergy > 450 {
+				g.s.herbsEnergy = 450
+			}
 		case 811 <= x && 824 >= x && 174 <= y && 187 >= y:
+			buttons["herbsEnergyMinus"].state = 1
 			g.s.herbsEnergy -= 20
 			if g.s.herbsEnergy < 0 {
 				g.s.herbsEnergy = 0
 			}
-			buttons["herbsEnergyMinus"].state = 1
 		case 826 <= x && 839 >= x && 194 <= y && 207 >= y:
+			buttons["herbsPerSpawnPlus"].state = 1
 			g.s.herbsPerSpawn += 3
 			if g.s.herbsPerSpawn > 15 {
 				g.s.herbsPerSpawn = 15
 			}
-			buttons["herbsPerSpawnPlus"].state = 1
 		case 811 <= x && 824 >= x && 194 <= y && 207 >= y:
+			buttons["herbsPerSpawnMinus"].state = 1
 			g.s.herbsPerSpawn -= 3
 			if g.s.herbsPerSpawn < 0 {
 				g.s.herbsPerSpawn = 0
 			}
-			buttons["herbsPerSpawnMinus"].state = 1
 		case 826 <= x && 839 >= x && 214 <= y && 227 >= y:
+			buttons["herbsSpawnRatePlus"].state = 1
 			g.s.herbsSpawnRate += 2
 			if g.s.herbsSpawnRate > 8 {
 				g.s.herbsSpawnRate = 8
 			}
-			buttons["herbsSpawnRatePlus"].state = 1
 		case 811 <= x && 824 >= x && 214 <= y && 227 >= y:
+			buttons["herbsSpawnRateMinus"].state = 1
 			g.s.herbsSpawnRate -= 2
 			if g.s.herbsSpawnRate < 0 {
 				g.s.herbsSpawnRate = 0
 			}
-			buttons["herbsSpawnRateMinus"].state = 1
 		case 826 <= x && 839 >= x && 254 <= y && 267 >= y:
+			buttons["herbivoresStartingNrPlus"].state = 1
 			g.s.herbivoresStartingNr += 20
 			if g.s.herbivoresStartingNr > 300 {
 				g.s.herbivoresStartingNr = 300
 			}
-			buttons["herbivoresStartingNrPlus"].state = 1
 		case 811 <= x && 824 >= x && 254 <= y && 267 >= y:
+			buttons["herbivoresStartingNrMinus"].state = 1
 			g.s.herbivoresStartingNr -= 20
 			if g.s.herbivoresStartingNr < 0 {
 				g.s.herbivoresStartingNr = 0
 			}
-			buttons["herbivoresStartingNrMinus"].state = 1
 		case 826 <= x && 839 >= x && 274 <= y && 287 >= y:
+			buttons["herbivoresSpawnEnergyPlus"].state = 1
 			g.s.herbivoresSpawnEnergy += 20
 			if g.s.herbivoresSpawnEnergy > 300 {
 				g.s.herbivoresSpawnEnergy = 300
 			}
-			buttons["herbivoresSpawnEnergyPlus"].state = 1
 		case 811 <= x && 824 >= x && 274 <= y && 287 >= y:
+			buttons["herbivoresSpawnEnergyMinus"].state = 1
 			g.s.herbivoresSpawnEnergy -= 20
 			if g.s.herbivoresSpawnEnergy < 0 {
 				g.s.herbivoresSpawnEnergy = 0
 			}
-			buttons["herbivoresSpawnEnergyMinus"].state = 1
 		case 826 <= x && 839 >= x && 294 <= y && 307 >= y:
+			buttons["herbivoresBreedLevelPlus"].state = 1
 			g.s.herbivoresBreedLevel += 20
 			if g.s.herbivoresBreedLevel > 300 {
 				g.s.herbivoresBreedLevel = 300
 			}
-			buttons["herbivoresBreedLevelPlus"].state = 1
 		case 811 <= x && 824 >= x && 294 <= y && 307 >= y:
+			buttons["herbivoresBreedLevelMinus"].state = 1
 			g.s.herbivoresBreedLevel -= 20
 			if g.s.herbivoresBreedLevel < 0 {
 				g.s.herbivoresBreedLevel = 0
 			}
-			buttons["herbivoresBreedLevelMinus"].state = 1
 		case 826 <= x && 839 >= x && 314 <= y && 327 >= y:
-			g.s.herbivoresMoveCost += 1
-			if g.s.herbivoresMoveCost > 12 {
-				g.s.herbivoresMoveCost = 12
-			}
 			buttons["herbivoresMoveCostPlus"].state = 1
+			g.s.herbivoresMoveCost += 2
+			if g.s.herbivoresMoveCost > 20 {
+				g.s.herbivoresMoveCost = 20
+			}
 		case 811 <= x && 824 >= x && 314 <= y && 327 >= y:
-			g.s.herbivoresMoveCost -= 1
+			buttons["herbivoresMoveCostMinus"].state = 1
+			g.s.herbivoresMoveCost -= 2
 			if g.s.herbivoresMoveCost < 0 {
 				g.s.herbivoresMoveCost = 0
 			}
-			buttons["herbivoresMoveCostMinus"].state = 1
 		case 826 <= x && 839 >= x && 354 <= y && 367 >= y:
+			buttons["carnivoresStartingNrPlus"].state = 1
 			g.s.carnivoresStartingNr += 5
 			if g.s.carnivoresStartingNr > 75 {
 				g.s.carnivoresStartingNr = 75
 			}
-			buttons["carnivoresStartingNrPlus"].state = 1
 		case 811 <= x && 824 >= x && 354 <= y && 367 >= y:
+			buttons["carnivoresStartingNrMinus"].state = 1
 			g.s.carnivoresStartingNr -= 5
 			if g.s.carnivoresStartingNr < 0 {
 				g.s.carnivoresStartingNr = 0
 			}
-			buttons["carnivoresStartingNrMinus"].state = 1
 		case 826 <= x && 839 >= x && 374 <= y && 387 >= y:
+			buttons["carnivoresSpawnEnergyPlus"].state = 1
 			g.s.carnivoresSpawnEnergy += 20
 			if g.s.carnivoresSpawnEnergy > 300 {
 				g.s.carnivoresSpawnEnergy = 300
 			}
-			buttons["carnivoresSpawnEnergyPlus"].state = 1
 		case 811 <= x && 824 >= x && 374 <= y && 387 >= y:
+			buttons["carnivoresSpawnEnergyMinus"].state = 1
 			g.s.carnivoresSpawnEnergy -= 20
 			if g.s.carnivoresSpawnEnergy < 0 {
 				g.s.carnivoresSpawnEnergy = 0
 			}
-			buttons["carnivoresSpawnEnergyMinus"].state = 1
 		case 826 <= x && 839 >= x && 394 <= y && 407 >= y:
+			buttons["carnivoresBreedLevelPlus"].state = 1
 			g.s.carnivoresBreedLevel += 20
 			if g.s.carnivoresBreedLevel > 300 {
 				g.s.carnivoresBreedLevel = 300
 			}
-			buttons["carnivoresBreedLevelPlus"].state = 1
 		case 811 <= x && 824 >= x && 394 <= y && 407 >= y:
+			buttons["carnivoresBreedLevelMinus"].state = 1
 			g.s.carnivoresBreedLevel -= 20
 			if g.s.carnivoresBreedLevel < 0 {
 				g.s.carnivoresBreedLevel = 0
 			}
-			buttons["carnivoresBreedLevelMinus"].state = 1
 		case 826 <= x && 839 >= x && 414 <= y && 427 >= y:
-			g.s.carnivoresMoveCost += 1
-			if g.s.carnivoresMoveCost > 12 {
-				g.s.carnivoresMoveCost = 12
-			}
 			buttons["carnivoresMoveCostPlus"].state = 1
+			g.s.carnivoresMoveCost += 2
+			if g.s.carnivoresMoveCost > 20 {
+				g.s.carnivoresMoveCost = 20
+			}
 		case 811 <= x && 824 >= x && 414 <= y && 427 >= y:
-			g.s.carnivoresMoveCost -= 1
+			buttons["carnivoresMoveCostMinus"].state = 1
+			g.s.carnivoresMoveCost -= 2
 			if g.s.carnivoresMoveCost < 0 {
 				g.s.carnivoresMoveCost = 0
 			}
-			buttons["carnivoresMoveCostMinus"].state = 1
 		case 860 <= x && 918 >= x && 11 <= y && 44 >= y:
 			g.rightPanelOption = 0
 		case 920 <= x && 978 >= x && 11 <= y && 44 >= y:

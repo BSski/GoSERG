@@ -77,6 +77,40 @@ func getBtns() map[string]*button {
 		log.Fatal(err)
 	}
 
+	slowModeUpReader := bytes.NewReader(slowModeUpBytes)
+	slowModeUpSpr, _, err := ebitenutil.NewImageFromReader(slowModeUpReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	slowModeDownReader := bytes.NewReader(slowModeDownBytes)
+	slowModeDownSpr, _, err := ebitenutil.NewImageFromReader(slowModeDownReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	timeTravelUpReader := bytes.NewReader(timeTravelUpBytes)
+	timeTravelUpSpr, _, err := ebitenutil.NewImageFromReader(timeTravelUpReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	timeTravelDownReader := bytes.NewReader(timeTravelDownBytes)
+	timeTravelDownSpr, _, err := ebitenutil.NewImageFromReader(timeTravelDownReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cleanUpReader := bytes.NewReader(cleanUpBytes)
+	cleanUpSpr, _, err := ebitenutil.NewImageFromReader(cleanUpReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cleanDownReader := bytes.NewReader(cleanDownBytes)
+	cleanDownSpr, _, err := ebitenutil.NewImageFromReader(cleanDownReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	var buttons = map[string]*button{
 		"start": {
 			state:   0,
@@ -95,6 +129,24 @@ func getBtns() map[string]*button {
 			sprites: [2]*ebiten.Image{resetUpSpr, resetDownSpr},
 			x:       136,
 			y:       96,
+		},
+		"slowMode": {
+			state:   0,
+			sprites: [2]*ebiten.Image{slowModeUpSpr, slowModeDownSpr},
+			x:       36,
+			y:       145,
+		},
+		"timeTravel": {
+			state:   0,
+			sprites: [2]*ebiten.Image{timeTravelUpSpr, timeTravelDownSpr},
+			x:       85,
+			y:       145,
+		},
+		"clean": {
+			state:   0,
+			sprites: [2]*ebiten.Image{cleanUpSpr, cleanDownSpr},
+			x:       136,
+			y:       145,
 		},
 		"gameSpeedPlus": {
 			state:   0,

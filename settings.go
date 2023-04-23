@@ -33,6 +33,6 @@ var s = settings{
 	carnivoresSpawnEnergy: 220,
 	herbivoresBreedLevel:  220,
 	carnivoresBreedLevel:  240,
-	herbivoresMoveCost:    7,
-	carnivoresMoveCost:    3,
+	herbivoresMoveCost:    8,
+	carnivoresMoveCost:    4,
 }
