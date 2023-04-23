@@ -34,36 +34,39 @@ func processEvents(g *game) {
 		g.generateNewTerrain()
 		g.spawnStartingEntities()
 	case inpututil.IsKeyJustPressed(ebiten.KeyT):
-		g.timeTravelCounter = 3000
-		ebiten.SetTPS(100000)
+		g.timeTravelCounter = 3600
+		g.tempo = 1
+		ebiten.SetTPS(5000)
 	}
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if 36 <= x && 74 >= x && 146 <= y && 185 >= y {
+		if 36 <= x && 74 >= x && 146 <= y && 184 >= y {
 			buttons["slowMode"].state = 1
 			g.timeTravelCounter = 0
-			ebiten.SetTPS(15)
+			g.tempo = 0.05
+			ebiten.SetTPS(10)
 		}
 	}
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
 		switch {
-		case 36 <= x && 74 >= x && 96 <= y && 135 >= y:
+		case 36 <= x && 74 >= x && 96 <= y && 134 >= y:
 			buttons["start"].state = 1
 			g.pause = false
-		case 85 <= x && 123 >= x && 96 <= y && 135 >= y:
+		case 85 <= x && 123 >= x && 96 <= y && 134 >= y:
 			buttons["pause"].state = 1
 			g.pause = true
-		case 136 <= x && 174 >= x && 96 <= y && 135 >= y:
+		case 136 <= x && 174 >= x && 96 <= y && 134 >= y:
+			buttons["timeTravel"].state = 1
+			g.timeTravelCounter = 3600
+			g.tempo = 1
+			ebiten.SetTPS(5000)
+		case 85 <= x && 123 >= x && 146 <= y && 184 >= y:
 			buttons["reset"].state = 1
 			g.clearGame()
 			g.generateNewTerrain()
 			g.spawnStartingEntities()
-		case 85 <= x && 123 >= x && 146 <= y && 185 >= y:
-			buttons["timeTravel"].state = 1
-			g.timeTravelCounter = 3000
-			ebiten.SetTPS(100000)
-		case 136 <= x && 174 >= x && 146 <= y && 185 >= y:
+		case 136 <= x && 174 >= x && 146 <= y && 184 >= y:
 			buttons["clean"].state = 1
 			g.clearGame()
 		case 826 <= x && 839 >= x && 94 <= y && 107 >= y:

@@ -127,8 +127,8 @@ func getBtns() map[string]*button {
 		"reset": {
 			state:   0,
 			sprites: [2]*ebiten.Image{resetUpSpr, resetDownSpr},
-			x:       136,
-			y:       96,
+			x:       85,
+			y:       145,
 		},
 		"slowMode": {
 			state:   0,
@@ -139,8 +139,8 @@ func getBtns() map[string]*button {
 		"timeTravel": {
 			state:   0,
 			sprites: [2]*ebiten.Image{timeTravelUpSpr, timeTravelDownSpr},
-			x:       85,
-			y:       145,
+			x:       136,
+			y:       96,
 		},
 		"clean": {
 			state:   0,
