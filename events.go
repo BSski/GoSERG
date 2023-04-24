@@ -43,8 +43,8 @@ func processEvents(g *game) {
 		if 36 <= x && 74 >= x && 146 <= y && 184 >= y {
 			buttons["slowMode"].state = 1
 			g.timeTravelCounter = 0
-			g.tempo = 0.05
-			ebiten.SetTPS(10)
+			g.tempo = 0.1
+			ebiten.SetTPS(30)
 		}
 	}
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {

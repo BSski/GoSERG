@@ -9,20 +9,10 @@ import (
 	"math/rand"
 )
 
-var carniFull0Spr *ebiten.Image
-var carniFullNew0Spr *ebiten.Image
-var carniHungry0Spr *ebiten.Image
-var carniHungryNew0Spr *ebiten.Image
-
-var carniFull1Spr *ebiten.Image
-var carniFullNew1Spr *ebiten.Image
-var carniHungry1Spr *ebiten.Image
-var carniHungryNew1Spr *ebiten.Image
-
-var carniFull2Spr *ebiten.Image
-var carniFullNew2Spr *ebiten.Image
-var carniHungry2Spr *ebiten.Image
-var carniHungryNew2Spr *ebiten.Image
+var carniFullSpr *ebiten.Image
+var carniFullNewSpr *ebiten.Image
+var carniHungrySpr *ebiten.Image
+var carniHungryNewSpr *ebiten.Image
 
 type carnivore struct {
 	g           *game
@@ -35,12 +25,6 @@ type carnivore struct {
 	fatLimit    int
 	legsLength  float64
 	age         int
-
-	sprNr        int
-	sprFull      *ebiten.Image
-	sprFullNew   *ebiten.Image
-	sprHungry    *ebiten.Image
-	sprHungryNew *ebiten.Image
 }
 
 func (c *carnivore) init() {
@@ -48,87 +32,27 @@ func (c *carnivore) init() {
 	c.bowelLength = bowelLengths[c.dna[1]]
 	c.fatLimit = fatLimits[c.dna[2]]
 	c.legsLength = legsLengths[c.dna[3]]
-
-	switch c.sprNr {
-	case 0:
-		c.sprFull = carniFull0Spr
-		c.sprFullNew = carniFullNew0Spr
-		c.sprHungry = carniHungry0Spr
-		c.sprHungryNew = carniHungryNew0Spr
-	case 1:
-		c.sprFull = carniFull1Spr
-		c.sprFullNew = carniFullNew1Spr
-		c.sprHungry = carniHungry1Spr
-		c.sprHungryNew = carniHungryNew1Spr
-	case 2:
-		c.sprFull = carniFull2Spr
-		c.sprFullNew = carniFullNew2Spr
-		c.sprHungry = carniHungry2Spr
-		c.sprHungryNew = carniHungryNew2Spr
-	}
 }
 
 func init() {
 	var err error
-	carniFull0Reader := bytes.NewReader(spr.carniFull0Bytes)
-	carniFull0Spr, _, err = ebitenutil.NewImageFromReader(carniFull0Reader)
+	carniFullReader := bytes.NewReader(spr.carniFullBytes)
+	carniFullSpr, _, err = ebitenutil.NewImageFromReader(carniFullReader)
 	if err != nil {
 		log.Fatal(err)
 	}
-	carniFullNew0Reader := bytes.NewReader(spr.carniFullNew0Bytes)
-	carniFullNew0Spr, _, err = ebitenutil.NewImageFromReader(carniFullNew0Reader)
+	carniFullNewReader := bytes.NewReader(spr.carniFullNewBytes)
+	carniFullNewSpr, _, err = ebitenutil.NewImageFromReader(carniFullNewReader)
 	if err != nil {
 		log.Fatal(err)
 	}
-	carniHungry0Reader := bytes.NewReader(spr.carniHungry0Bytes)
-	carniHungry0Spr, _, err = ebitenutil.NewImageFromReader(carniHungry0Reader)
+	carniHungryReader := bytes.NewReader(spr.carniHungryBytes)
+	carniHungrySpr, _, err = ebitenutil.NewImageFromReader(carniHungryReader)
 	if err != nil {
 		log.Fatal(err)
 	}
-	carniHungryNew0Reader := bytes.NewReader(spr.carniHungryNew0Bytes)
-	carniHungryNew0Spr, _, err = ebitenutil.NewImageFromReader(carniHungryNew0Reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	carniFull1Reader := bytes.NewReader(spr.carniFull1Bytes)
-	carniFull1Spr, _, err = ebitenutil.NewImageFromReader(carniFull1Reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-	carniFullNew1Reader := bytes.NewReader(spr.carniFullNew1Bytes)
-	carniFullNew1Spr, _, err = ebitenutil.NewImageFromReader(carniFullNew1Reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-	carniHungry1Reader := bytes.NewReader(spr.carniHungry1Bytes)
-	carniHungry1Spr, _, err = ebitenutil.NewImageFromReader(carniHungry1Reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-	carniHungryNew1Reader := bytes.NewReader(spr.carniHungryNew1Bytes)
-	carniHungryNew1Spr, _, err = ebitenutil.NewImageFromReader(carniHungryNew1Reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	carniFull2Reader := bytes.NewReader(spr.carniFull2Bytes)
-	carniFull2Spr, _, err = ebitenutil.NewImageFromReader(carniFull2Reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-	carniFullNew2Reader := bytes.NewReader(spr.carniFullNew2Bytes)
-	carniFullNew2Spr, _, err = ebitenutil.NewImageFromReader(carniFullNew2Reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-	carniHungry2Reader := bytes.NewReader(spr.carniHungry2Bytes)
-	carniHungry2Spr, _, err = ebitenutil.NewImageFromReader(carniHungry2Reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-	carniHungryNew2Reader := bytes.NewReader(spr.carniHungryNew2Bytes)
-	carniHungryNew2Spr, _, err = ebitenutil.NewImageFromReader(carniHungryNew2Reader)
+	carniHungryNewReader := bytes.NewReader(spr.carniHungryNewBytes)
+	carniHungryNewSpr, _, err = ebitenutil.NewImageFromReader(carniHungryNewReader)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -137,10 +61,19 @@ func init() {
 func (c *carnivore) draw(screen *ebiten.Image) {
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Translate(float64(c.g.board[c.y][c.x][0]), float64(c.g.board[c.y][c.x][1]))
-	if c.energy >= c.g.s.carnivoresBreedLevel {
-		screen.DrawImage(c.sprFull, options)
+
+	if c.age <= 20 {
+		if c.energy >= c.g.s.carnivoresBreedLevel {
+			screen.DrawImage(carniFullNewSpr, options)
+		} else {
+			screen.DrawImage(carniHungryNewSpr, options)
+		}
 	} else {
-		screen.DrawImage(c.sprHungry, options)
+		if c.energy >= c.g.s.carnivoresBreedLevel {
+			screen.DrawImage(carniFullSpr, options)
+		} else {
+			screen.DrawImage(carniHungrySpr, options)
+		}
 	}
 }
 
@@ -190,13 +123,13 @@ func (c *carnivore) breed() {
 		if v.energy >= c.g.s.carnivoresBreedLevel {
 			c.energy = c.energy / 2
 			v.energy = v.energy / 2
-			c.giveBirth(c.g, c.x, c.y, c.dna, v.dna, c.sprNr, v.sprNr)
+			c.giveBirth(c.g, c.x, c.y, c.dna, v.dna)
 			break
 		}
 	}
 }
 
-func (_ *carnivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int, spr1, spr2 int) {
+func (_ *carnivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int) {
 	newDna := [4]int{}
 	for i := 0; i < len(newDna); i++ {
 		if rand.Float64() >= float64(g.s.mutationChance)/100 {
@@ -210,20 +143,12 @@ func (_ *carnivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int, spr1, spr2 i
 		}
 	}
 
-	var newSpr int
-	if rand.Intn(2) == 1 {
-		newSpr = spr1
-	} else {
-		newSpr = spr2
-	}
-
 	c := carnivore{
 		g:      g,
 		x:      x,
 		y:      y,
 		energy: g.s.carnivoresSpawnEnergy,
 		dna:    newDna,
-		sprNr:  newSpr,
 	}
 	c.init()
 	g.carnivores = append(g.carnivores, &c)
@@ -263,7 +188,6 @@ func spawnCarnivore(g *game, nr int) {
 				dnaRange[rand.Intn(len(dnaRange))],
 				dnaRange[rand.Intn(len(dnaRange))],
 			},
-			sprNr: rand.Intn(3),
 		}
 		c.init()
 		g.carnivores = append(g.carnivores, &c)
@@ -535,10 +459,17 @@ func doCarnivoreActions(g *game) {
 			g.carnivores[i].starve()
 		}
 	}
+
 	for i := 0; i < len(g.carnivores); i++ {
 		g.carnivores[i].action()
-		g.carnivores[i].age += 1
 	}
+
+	if int(g.counterPrev) != int(g.counter) {
+		for i := 0; i < len(g.carnivores); i++ {
+			g.carnivores[i].age += 1
+		}
+	}
+
 	for i := 0; i < len(g.carnivores); i++ {
 		g.carnivores[i].move()
 	}

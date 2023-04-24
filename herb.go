@@ -11,7 +11,6 @@ import (
 var herb0Spr *ebiten.Image
 var herb1Spr *ebiten.Image
 var herb2Spr *ebiten.Image
-var herb3Spr *ebiten.Image
 
 type herb struct {
 	g      *game
@@ -31,8 +30,6 @@ func (h *herb) init() {
 		h.spr = herb1Spr
 	case 2:
 		h.spr = herb2Spr
-	case 3:
-		h.spr = herb3Spr
 	}
 }
 
@@ -50,11 +47,6 @@ func init() {
 	}
 	herb2Reader := bytes.NewReader(spr.herb2Bytes)
 	herb2Spr, _, err = ebitenutil.NewImageFromReader(herb2Reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-	herb3Reader := bytes.NewReader(spr.herb3Bytes)
-	herb3Spr, _, err = ebitenutil.NewImageFromReader(herb3Reader)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -111,7 +103,7 @@ func createHerbOnField(g *game, x, y int) (created bool) {
 		x:      x,
 		y:      y,
 		energy: g.s.herbsEnergy,
-		sprNr:  rand.Intn(4),
+		sprNr:  rand.Intn(3),
 	}
 	h.init()
 	g.herbs = append(g.herbs, &h)
@@ -124,7 +116,9 @@ func doHerbsActions(g *game) {
 		spawnHerbsOnRandomTiles(g, g.s.herbsPerSpawn)
 	}
 
-	for i := 0; i < len(g.herbs); i++ {
-		g.herbs[i].age += 1
+	if int(g.counterPrev) != int(g.counter) {
+		for i := 0; i < len(g.herbs); i++ {
+			g.herbs[i].age += 1
+		}
 	}
 }
