@@ -26,9 +26,11 @@ type tile struct {
 }
 
 type game struct {
-	s                    settings
-	c                    consts
-	d                    animalsData
+	s   settings
+	c   consts
+	d   animalsData
+	spr sprites
+
 	board                [][][2]float32
 	boardTilesType       [][]tile
 	boardSize            int
@@ -148,6 +150,7 @@ func newGame() *game {
 		s:         s,
 		c:         c,
 		d:         d,
+		spr:       spr,
 		board:     generateBoard(),
 		boardSize: 41,
 

@@ -9,8 +9,20 @@ import (
 	"math/rand"
 )
 
-var herbiHungrySpr *ebiten.Image
-var herbiFullSpr *ebiten.Image
+var herbiFull0Spr *ebiten.Image
+var herbiFullNew0Spr *ebiten.Image
+var herbiHungry0Spr *ebiten.Image
+var herbiHungryNew0Spr *ebiten.Image
+
+var herbiFull1Spr *ebiten.Image
+var herbiFullNew1Spr *ebiten.Image
+var herbiHungry1Spr *ebiten.Image
+var herbiHungryNew1Spr *ebiten.Image
+
+var herbiFull2Spr *ebiten.Image
+var herbiFullNew2Spr *ebiten.Image
+var herbiHungry2Spr *ebiten.Image
+var herbiHungryNew2Spr *ebiten.Image
 
 type herbivore struct {
 	g           *game
@@ -23,6 +35,12 @@ type herbivore struct {
 	fatLimit    int
 	legsLength  float64
 	age         int
+
+	sprNr        int
+	sprFull      *ebiten.Image
+	sprFullNew   *ebiten.Image
+	sprHungry    *ebiten.Image
+	sprHungryNew *ebiten.Image
 }
 
 func (h *herbivore) init() {
@@ -30,17 +48,87 @@ func (h *herbivore) init() {
 	h.bowelLength = bowelLengths[h.dna[1]]
 	h.fatLimit = fatLimits[h.dna[2]]
 	h.legsLength = legsLengths[h.dna[3]]
+
+	switch h.sprNr {
+	case 0:
+		h.sprFull = herbiFull0Spr
+		h.sprFullNew = herbiFullNew0Spr
+		h.sprHungry = herbiHungry0Spr
+		h.sprHungryNew = herbiHungryNew0Spr
+	case 1:
+		h.sprFull = herbiFull1Spr
+		h.sprFullNew = herbiFullNew1Spr
+		h.sprHungry = herbiHungry1Spr
+		h.sprHungryNew = herbiHungryNew1Spr
+	case 2:
+		h.sprFull = herbiFull2Spr
+		h.sprFullNew = herbiFullNew2Spr
+		h.sprHungry = herbiHungry2Spr
+		h.sprHungryNew = herbiHungryNew2Spr
+	}
 }
 
 func init() {
 	var err error
-	herbiHungryReader := bytes.NewReader(herbiHungryBytes)
-	herbiHungrySpr, _, err = ebitenutil.NewImageFromReader(herbiHungryReader)
+	herbiFull0Reader := bytes.NewReader(spr.herbiFull0Bytes)
+	herbiFull0Spr, _, err = ebitenutil.NewImageFromReader(herbiFull0Reader)
 	if err != nil {
 		log.Fatal(err)
 	}
-	herbiFullReader := bytes.NewReader(herbiFullBytes)
-	herbiFullSpr, _, err = ebitenutil.NewImageFromReader(herbiFullReader)
+	herbiFullNew0Reader := bytes.NewReader(spr.herbiFullNew0Bytes)
+	herbiFullNew0Spr, _, err = ebitenutil.NewImageFromReader(herbiFullNew0Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herbiHungry0Reader := bytes.NewReader(spr.herbiHungry0Bytes)
+	herbiHungry0Spr, _, err = ebitenutil.NewImageFromReader(herbiHungry0Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herbiHungryNew0Reader := bytes.NewReader(spr.herbiHungryNew0Bytes)
+	herbiHungryNew0Spr, _, err = ebitenutil.NewImageFromReader(herbiHungryNew0Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	herbiFull1Reader := bytes.NewReader(spr.herbiFull1Bytes)
+	herbiFull1Spr, _, err = ebitenutil.NewImageFromReader(herbiFull1Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herbiFullNew1Reader := bytes.NewReader(spr.herbiFullNew1Bytes)
+	herbiFullNew1Spr, _, err = ebitenutil.NewImageFromReader(herbiFullNew1Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herbiHungry1Reader := bytes.NewReader(spr.herbiHungry1Bytes)
+	herbiHungry1Spr, _, err = ebitenutil.NewImageFromReader(herbiHungry1Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herbiHungryNew1Reader := bytes.NewReader(spr.herbiHungryNew1Bytes)
+	herbiHungryNew1Spr, _, err = ebitenutil.NewImageFromReader(herbiHungryNew1Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	herbiFull2Reader := bytes.NewReader(spr.herbiFull2Bytes)
+	herbiFull2Spr, _, err = ebitenutil.NewImageFromReader(herbiFull2Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herbiFullNew2Reader := bytes.NewReader(spr.herbiFullNew2Bytes)
+	herbiFullNew2Spr, _, err = ebitenutil.NewImageFromReader(herbiFullNew2Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herbiHungry2Reader := bytes.NewReader(spr.herbiHungry2Bytes)
+	herbiHungry2Spr, _, err = ebitenutil.NewImageFromReader(herbiHungry2Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herbiHungryNew2Reader := bytes.NewReader(spr.herbiHungryNew2Bytes)
+	herbiHungryNew2Spr, _, err = ebitenutil.NewImageFromReader(herbiHungryNew2Reader)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,9 +138,9 @@ func (h *herbivore) draw(screen *ebiten.Image) {
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Translate(float64(h.g.board[h.y][h.x][0]), float64(h.g.board[h.y][h.x][1]))
 	if h.energy >= h.g.s.herbivoresBreedLevel {
-		screen.DrawImage(herbiFullSpr, options)
+		screen.DrawImage(h.sprFull, options)
 	} else {
-		screen.DrawImage(herbiHungrySpr, options)
+		screen.DrawImage(h.sprHungry, options)
 	}
 }
 
@@ -102,19 +190,13 @@ func (h *herbivore) breed() {
 		if v.energy >= h.g.s.herbivoresBreedLevel {
 			h.energy = h.energy / 2
 			v.energy = v.energy / 2
-			h.giveBirth(
-				h.g,
-				h.x,
-				h.y,
-				h.dna,
-				v.dna,
-			)
+			h.giveBirth(h.g, h.x, h.y, h.dna, v.dna, h.sprNr, v.sprNr)
 			break
 		}
 	}
 }
 
-func (_ *herbivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int) {
+func (_ *herbivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int, spr1, spr2 int) {
 	newDna := [4]int{}
 	for i := 0; i < len(newDna); i++ {
 		if rand.Float64() >= float64(g.s.mutationChance)/100 {
@@ -127,12 +209,21 @@ func (_ *herbivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int) {
 			newDna[i] = rand.Intn(8)
 		}
 	}
+
+	var newSpr int
+	if rand.Intn(2) == 1 {
+		newSpr = spr1
+	} else {
+		newSpr = spr2
+	}
+
 	h := herbivore{
 		g:      g,
 		x:      x,
 		y:      y,
 		energy: g.s.herbivoresSpawnEnergy,
 		dna:    newDna,
+		sprNr:  newSpr,
 	}
 	h.init()
 	g.herbivores = append(g.herbivores, &h)
@@ -172,6 +263,7 @@ func spawnHerbivore(g *game, nr int) {
 				dnaRange[rand.Intn(len(dnaRange))],
 				dnaRange[rand.Intn(len(dnaRange))],
 			},
+			sprNr: rand.Intn(3),
 		}
 		h.init()
 		g.herbivores = append(g.herbivores, &h)

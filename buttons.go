@@ -17,95 +17,95 @@ type button struct {
 }
 
 func getBtns() map[string]*button {
-	minusDownReader := bytes.NewReader(minusDownBytes)
+	minusDownReader := bytes.NewReader(spr.minusDownBytes)
 	minusDownSpr, _, err := ebitenutil.NewImageFromReader(minusDownReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	minusUpReader := bytes.NewReader(minusUpBytes)
+	minusUpReader := bytes.NewReader(spr.minusUpBytes)
 	minusUpSpr, _, err := ebitenutil.NewImageFromReader(minusUpReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	plusDownReader := bytes.NewReader(plusDownBytes)
+	plusDownReader := bytes.NewReader(spr.plusDownBytes)
 	plusDownSpr, _, err := ebitenutil.NewImageFromReader(plusDownReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	plusUpReader := bytes.NewReader(plusUpBytes)
+	plusUpReader := bytes.NewReader(spr.plusUpBytes)
 	plusUpSpr, _, err := ebitenutil.NewImageFromReader(plusUpReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	startDownReader := bytes.NewReader(startDownBytes)
+	startDownReader := bytes.NewReader(spr.startDownBytes)
 	startDownSpr, _, err := ebitenutil.NewImageFromReader(startDownReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	startUpReader := bytes.NewReader(startUpBytes)
+	startUpReader := bytes.NewReader(spr.startUpBytes)
 	startUpSpr, _, err := ebitenutil.NewImageFromReader(startUpReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pauseDownReader := bytes.NewReader(pauseDownBytes)
+	pauseDownReader := bytes.NewReader(spr.pauseDownBytes)
 	pauseDownSpr, _, err := ebitenutil.NewImageFromReader(pauseDownReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pauseUpReader := bytes.NewReader(pauseUpBytes)
+	pauseUpReader := bytes.NewReader(spr.pauseUpBytes)
 	pauseUpSpr, _, err := ebitenutil.NewImageFromReader(pauseUpReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	resetDownReader := bytes.NewReader(resetDownBytes)
+	resetDownReader := bytes.NewReader(spr.resetDownBytes)
 	resetDownSpr, _, err := ebitenutil.NewImageFromReader(resetDownReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	resetUpReader := bytes.NewReader(resetUpBytes)
+	resetUpReader := bytes.NewReader(spr.resetUpBytes)
 	resetUpSpr, _, err := ebitenutil.NewImageFromReader(resetUpReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	slowModeUpReader := bytes.NewReader(slowModeUpBytes)
+	slowModeUpReader := bytes.NewReader(spr.slowModeUpBytes)
 	slowModeUpSpr, _, err := ebitenutil.NewImageFromReader(slowModeUpReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	slowModeDownReader := bytes.NewReader(slowModeDownBytes)
+	slowModeDownReader := bytes.NewReader(spr.slowModeDownBytes)
 	slowModeDownSpr, _, err := ebitenutil.NewImageFromReader(slowModeDownReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	timeTravelUpReader := bytes.NewReader(timeTravelUpBytes)
+	timeTravelUpReader := bytes.NewReader(spr.timeTravelUpBytes)
 	timeTravelUpSpr, _, err := ebitenutil.NewImageFromReader(timeTravelUpReader)
 	if err != nil {
 		log.Fatal(err)
 	}
-	timeTravelDownReader := bytes.NewReader(timeTravelDownBytes)
+	timeTravelDownReader := bytes.NewReader(spr.timeTravelDownBytes)
 	timeTravelDownSpr, _, err := ebitenutil.NewImageFromReader(timeTravelDownReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	cleanUpReader := bytes.NewReader(cleanUpBytes)
+	cleanUpReader := bytes.NewReader(spr.cleanUpBytes)
 	cleanUpSpr, _, err := ebitenutil.NewImageFromReader(cleanUpReader)
 	if err != nil {
 		log.Fatal(err)
 	}
-	cleanDownReader := bytes.NewReader(cleanDownBytes)
+	cleanDownReader := bytes.NewReader(spr.cleanDownBytes)
 	cleanDownSpr, _, err := ebitenutil.NewImageFromReader(cleanDownReader)
 	if err != nil {
 		log.Fatal(err)

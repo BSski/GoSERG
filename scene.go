@@ -25,7 +25,7 @@ var sc = scene{
 
 func getSeabedSpr() *ebiten.Image {
 	var err error
-	seabedReader := bytes.NewReader(seabedBytes)
+	seabedReader := bytes.NewReader(spr.seabedBytes)
 	seabedSpr, _, err := ebitenutil.NewImageFromReader(seabedReader)
 	if err != nil {
 		log.Fatal(err)
@@ -294,7 +294,7 @@ func (sc *scene) drawCounters(screen *ebiten.Image, g *game) {
 	text.Draw(screen, "Day: "+strconv.Itoa(g.timeDay), openSansRegular12, 500, 448, color.Gray{Y: 50})
 
 	// Herbs icon.
-	drawSingleHerb(screen, 714, 13)
+	drawSingleHerb(screen, 714, 13, herb0Spr)
 	// Herbivores icon.
 	vector.DrawFilledRect(screen, 694-1, 28-1, 11, 11, color.Gray{Y: 45}, false)
 	vector.DrawFilledRect(screen, 694, 28, 9, 9, color.RGBA{R: 0, G: 128, B: 96, A: 255}, false)
@@ -309,7 +309,7 @@ func (sc *scene) drawCounters(screen *ebiten.Image, g *game) {
 
 func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
 	// Herbs icon.
-	drawSingleHerb(screen, 661, 139)
+	drawSingleHerb(screen, 661, 139, herb0Spr)
 	// Herbivores icon.
 	vector.DrawFilledRect(screen, 661-1, 239-1, 11, 11, color.Gray{Y: 45}, false)
 	vector.DrawFilledRect(screen, 661, 239, 9, 9, color.RGBA{R: 0, G: 128, B: 96, A: 255}, false)
@@ -357,7 +357,7 @@ func (sc *scene) drawButtons(screen *ebiten.Image) {
 func (sc *scene) drawHerbs(screen *ebiten.Image, g *game) {
 	for i := 0; i < len(g.herbs); i++ {
 		h := g.herbs[i]
-		drawSingleHerb(screen, h.g.board[h.y][h.x][0], h.g.board[h.y][h.x][1])
+		drawSingleHerb(screen, h.g.board[h.y][h.x][0], h.g.board[h.y][h.x][1], h.spr)
 	}
 }
 

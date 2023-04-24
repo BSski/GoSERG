@@ -8,7 +8,10 @@ import (
 	"math/rand"
 )
 
-var herbSpr *ebiten.Image
+var herb0Spr *ebiten.Image
+var herb1Spr *ebiten.Image
+var herb2Spr *ebiten.Image
+var herb3Spr *ebiten.Image
 
 type herb struct {
 	g      *game
@@ -16,21 +19,51 @@ type herb struct {
 	y      int
 	energy int
 	age    int
+	sprNr  int
+	spr    *ebiten.Image
+}
+
+func (h *herb) init() {
+	switch h.sprNr {
+	case 0:
+		h.spr = herb0Spr
+	case 1:
+		h.spr = herb1Spr
+	case 2:
+		h.spr = herb2Spr
+	case 3:
+		h.spr = herb3Spr
+	}
 }
 
 func init() {
 	var err error
-	herbReader := bytes.NewReader(herbBytes)
-	herbSpr, _, err = ebitenutil.NewImageFromReader(herbReader)
+	herb0Reader := bytes.NewReader(spr.herb0Bytes)
+	herb0Spr, _, err = ebitenutil.NewImageFromReader(herb0Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herb1Reader := bytes.NewReader(spr.herb1Bytes)
+	herb1Spr, _, err = ebitenutil.NewImageFromReader(herb1Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herb2Reader := bytes.NewReader(spr.herb2Bytes)
+	herb2Spr, _, err = ebitenutil.NewImageFromReader(herb2Reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	herb3Reader := bytes.NewReader(spr.herb3Bytes)
+	herb3Spr, _, err = ebitenutil.NewImageFromReader(herb3Reader)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func drawSingleHerb(screen *ebiten.Image, x, y float32) {
+func drawSingleHerb(screen *ebiten.Image, x, y float32, sprite *ebiten.Image) {
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Translate(float64(x), float64(y))
-	screen.DrawImage(herbSpr, options)
+	screen.DrawImage(sprite, options)
 }
 
 func (h *herb) die() {
@@ -78,7 +111,9 @@ func createHerbOnField(g *game, x, y int) (created bool) {
 		x:      x,
 		y:      y,
 		energy: g.s.herbsEnergy,
+		sprNr:  rand.Intn(4),
 	}
+	h.init()
 	g.herbs = append(g.herbs, &h)
 	g.herbsPos[y][x] = append(g.herbsPos[y][x], &h)
 	return true
