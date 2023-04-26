@@ -1,4 +1,3 @@
-// Functions that draw entire GUI.
 package main
 
 import (
@@ -14,8 +13,6 @@ import (
 )
 
 type scene struct {
-	// Remove filling entire screen, fill only the areas that are needed.
-	// It will enable you to draw only the changing parts.
 	seabed *ebiten.Image
 }
 
@@ -53,7 +50,16 @@ func (sc *scene) drawBoard(screen *ebiten.Image, g *game) {
 	y := float32(21)
 	x := float32(224)
 
-	vector.DrawFilledRect(screen, x-1, y-1, float32(g.boardSize)*squareSize+1, float32(g.boardSize)*squareSize+1, color.Gray{Y: 80}, false)
+	// Draw board background, which ends up as spaces between tiles.
+	//vector.DrawFilledRect(
+	//	screen,
+	//	x-1,
+	//	y-1,
+	//	float32(g.boardSize)*squareSize+1,
+	//	float32(g.boardSize)*squareSize+1,
+	//	color.Gray{Y: 100},
+	//	false,
+	//)
 
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Translate(float64(x), float64(y))
@@ -77,8 +83,8 @@ func (sc *scene) drawBoard(screen *ebiten.Image, g *game) {
 
 func (sc *scene) drawMainUILines(screen *ebiten.Image) {
 	vector.StrokeLine(screen, 12, 12, 12, 657, float32(1), color.Gray{Y: 210}, false)
-	vector.StrokeLine(screen, 198, 12, 198, 436, float32(1), color.Gray{Y: 210}, false)
-	vector.StrokeLine(screen, 656, 12, 656, 436, float32(1), color.Gray{Y: 210}, false)
+	vector.StrokeLine(screen, 198, 12, 198, 450, float32(1), color.Gray{Y: 210}, false)
+	vector.StrokeLine(screen, 656, 12, 656, 450, float32(1), color.Gray{Y: 210}, false)
 	vector.StrokeLine(screen, 848, 12, 848, 657, float32(1), color.Gray{Y: 210}, false)
 	vector.StrokeLine(screen, 1049, 12, 1049, 646, float32(1), color.Gray{Y: 210}, false)
 }
@@ -118,7 +124,7 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 			vector.DrawFilledRect(
 				screen,
 				float32(xHerbiChart),
-				float32(648-int(g.d.herbivoresQuantities[i]/5)),
+				float32(647-int(g.d.herbivoresQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 0, G: 230, B: 115, A: 255},
@@ -128,7 +134,7 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 			vector.DrawFilledRect(
 				screen,
 				float32(37+i),
-				float32(648-int(g.d.herbivoresQuantities[i]/5)),
+				float32(647-int(g.d.herbivoresQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 0, G: 230, B: 115, A: 255},
@@ -146,7 +152,7 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 			vector.DrawFilledRect(
 				screen,
 				float32(xCarniChart),
-				float32(648-int(g.d.carnivoresQuantities[i]/5)),
+				float32(647-int(g.d.carnivoresQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 255, G: 77, B: 77, A: 255},
@@ -156,7 +162,7 @@ func (sc *scene) plotHistoricQuantities(screen *ebiten.Image, g *game) {
 			vector.DrawFilledRect(
 				screen,
 				float32(37+i),
-				float32(648-int(g.d.carnivoresQuantities[i]/5)),
+				float32(647-int(g.d.carnivoresQuantities[i]/5)),
 				2,
 				2,
 				color.RGBA{R: 255, G: 77, B: 77, A: 255},
@@ -370,5 +376,52 @@ func (sc *scene) drawHerbivores(screen *ebiten.Image, g *game) {
 func (sc *scene) drawCarnivores(screen *ebiten.Image, g *game) {
 	for i := 0; i < len(g.carnivores); i++ {
 		g.carnivores[i].draw(screen)
+	}
+}
+
+func (sc *scene) drawAchievements(screen *ebiten.Image, g *game) {
+	sc.drawAchievementsUI(screen, g)
+	//
+	//yOffset := 0
+	//for _, name := range achievementsList {
+	//	text.Draw(
+	//		screen,
+	//		fmt.Sprintf("%s: %v", name, g.a[name]),
+	//		openSansRegular12,
+	//		17,
+	//		250+yOffset,
+	//		color.RGBA{R: 50, G: 50, B: 50, A: 255},
+	//	)
+	//	yOffset += 17
+	//}
+}
+
+func (sc *scene) drawAchievementsUI(screen *ebiten.Image, g *game) {
+	text.Draw(screen, "ACHIEVEMENTS", openSansRegular12, 19, 195, color.RGBA{R: 50, G: 50, B: 50, A: 255})
+
+	vector.DrawFilledRect(screen, 17, 200, 175, 240, color.Gray{Y: 218}, false)
+
+	vector.DrawFilledRect(screen, 18, 201, 173, 238, color.Gray{Y: 230}, false)
+
+	vector.DrawFilledRect(screen, 19, 395, 171, 43, color.Gray{Y: 218}, false)
+
+	vector.DrawFilledRect(screen, 20, 396, 169, 41, color.Gray{Y: 210}, false)
+
+	vector.DrawFilledRect(screen, 21, 397, 167, 39, color.Gray{Y: 242}, false)
+
+	yOffset := 0.0
+	x := 19.0
+	y := 202.0
+	for i := 0; i < len(achievementsList); i++ {
+		if i == g.chosenAchievement {
+			options := &ebiten.DrawImageOptions{}
+			options.GeoM.Translate(x, y+yOffset)
+			screen.DrawImage(achievementBarChosenSpr, options)
+		} else {
+			options := &ebiten.DrawImageOptions{}
+			options.GeoM.Translate(x, y+yOffset)
+			screen.DrawImage(achievementBarSpr, options)
+		}
+		yOffset += 17
 	}
 }

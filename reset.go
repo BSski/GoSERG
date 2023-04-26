@@ -102,9 +102,9 @@ func generateTile(noise *perlin.Perlin, x int, y int, a float64, o1 float64, o2 
 	case height > -0.20:
 		// Grass.
 		t.color = color.RGBA{
-			R: 20,
-			G: uint8(135 + int(height/0.1)*10),
-			B: 45,
+			R: 30,
+			G: uint8(125 + int(height/0.11)*9),
+			B: 55,
 			A: 255,
 		}
 		t.tileType = 1

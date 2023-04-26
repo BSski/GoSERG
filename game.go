@@ -25,6 +25,11 @@ func (g *game) Update() error {
 	doHerbivoreActions(g)
 
 	updateAnimalsData(g)
+
+	chosenAchievementName := achievementsList[g.chosenAchievement]
+	checkAchievement = achievements[chosenAchievementName].checkFunc
+	checkAchievement(g)
+
 	return nil
 }
 
@@ -46,4 +51,5 @@ func (g *game) Draw(screen *ebiten.Image) {
 	sc.drawHerbs(screen, g)
 	sc.drawHerbivores(screen, g)
 	sc.drawCarnivores(screen, g)
+	sc.drawAchievements(screen, g)
 }

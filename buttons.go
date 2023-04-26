@@ -17,6 +17,30 @@ type button struct {
 }
 
 func getBtns() map[string]*button {
+	arrowDownDownReader := bytes.NewReader(spr.arrowDownDownBytes)
+	arrowDownDownSpr, _, err := ebitenutil.NewImageFromReader(arrowDownDownReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	arrowDownUpReader := bytes.NewReader(spr.arrowDownUpBytes)
+	arrowDownUpSpr, _, err := ebitenutil.NewImageFromReader(arrowDownUpReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	arrowUpDownReader := bytes.NewReader(spr.arrowUpDownBytes)
+	arrowUpDownSpr, _, err := ebitenutil.NewImageFromReader(arrowUpDownReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	arrowUpUpReader := bytes.NewReader(spr.arrowUpUpBytes)
+	arrowUpUpSpr, _, err := ebitenutil.NewImageFromReader(arrowUpUpReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	minusDownReader := bytes.NewReader(spr.minusDownBytes)
 	minusDownSpr, _, err := ebitenutil.NewImageFromReader(minusDownReader)
 	if err != nil {
@@ -116,37 +140,49 @@ func getBtns() map[string]*button {
 			state:   0,
 			sprites: [2]*ebiten.Image{startUpSpr, startDownSpr},
 			x:       36,
-			y:       96,
+			y:       71,
 		},
 		"pause": {
 			state:   0,
 			sprites: [2]*ebiten.Image{pauseUpSpr, pauseDownSpr},
 			x:       85,
-			y:       96,
+			y:       71,
 		},
 		"reset": {
 			state:   0,
 			sprites: [2]*ebiten.Image{resetUpSpr, resetDownSpr},
 			x:       85,
-			y:       145,
+			y:       120,
 		},
 		"slowMode": {
 			state:   0,
 			sprites: [2]*ebiten.Image{slowModeUpSpr, slowModeDownSpr},
 			x:       36,
-			y:       145,
+			y:       120,
 		},
 		"timeTravel": {
 			state:   0,
 			sprites: [2]*ebiten.Image{timeTravelUpSpr, timeTravelDownSpr},
 			x:       136,
-			y:       96,
+			y:       71,
 		},
 		"clean": {
 			state:   0,
 			sprites: [2]*ebiten.Image{cleanUpSpr, cleanDownSpr},
 			x:       136,
-			y:       145,
+			y:       120,
+		},
+		"chosenAchievementUp": {
+			state:   0,
+			sprites: [2]*ebiten.Image{arrowUpUpSpr, arrowUpDownSpr},
+			x:       164,
+			y:       185,
+		},
+		"chosenAchievementDown": {
+			state:   0,
+			sprites: [2]*ebiten.Image{arrowDownUpSpr, arrowDownDownSpr},
+			x:       179,
+			y:       185,
 		},
 		"gameSpeedPlus": {
 			state:   0,

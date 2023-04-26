@@ -67,7 +67,7 @@ func (h *herbivore) draw(screen *ebiten.Image) {
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Translate(float64(h.g.board[h.y][h.x][0]), float64(h.g.board[h.y][h.x][1]))
 
-	if h.age < 20 {
+	if h.age < 35 {
 		if h.energy >= h.g.s.herbivoresBreedLevel {
 			screen.DrawImage(herbiFullNewSpr, options)
 		} else {
@@ -296,6 +296,11 @@ func (h *herbivore) subtractMoveCostFromEnergy() {
 	moveCost += float64(h.g.s.herbivoresMoveCost) * fatLimitCosts[h.dna[2]]
 	moveCost += float64(h.g.s.herbivoresMoveCost) * legsLengthCosts[h.dna[3]]
 	moveCost *= h.legsLength
+
+	if h.g.boardTilesType[h.y][h.x].tileType == 0 {
+		moveCost *= 3
+	}
+
 	h.energy -= int(moveCost)
 }
 

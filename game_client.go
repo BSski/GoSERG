@@ -29,6 +29,7 @@ type game struct {
 	s   settings
 	c   consts
 	d   animalsData
+	a   map[string]*achievement
 	spr sprites
 
 	board                [][][2]float32
@@ -61,6 +62,8 @@ type game struct {
 	herbsPos      [][][]*herb
 	herbivoresPos [][][]*herbivore
 	carnivoresPos [][][]*carnivore
+
+	chosenAchievement int
 
 	rightPanelSprites [3]*ebiten.Image
 	rightPanelOption  int
@@ -150,6 +153,7 @@ func newGame() *game {
 		s:         s,
 		c:         c,
 		d:         d,
+		a:         achievements,
 		spr:       spr,
 		board:     generateBoard(),
 		boardSize: 41,
@@ -161,6 +165,8 @@ func newGame() *game {
 
 		chosenGameSpeed:  2,
 		cyclesPerSecList: [5]int{30, 60, 90, 120, 150},
+
+		chosenAchievement: 0,
 
 		rightPanelSprites: [3]*ebiten.Image{rightPanelOption0, rightPanelOption1, rightPanelOption2},
 		rightPanelOption:  0,

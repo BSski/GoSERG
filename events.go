@@ -12,10 +12,17 @@ func processEvents(g *game) {
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowRight):
 		spawnCarnivore(g, 10)
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowUp):
-		spawnHerbivore(g, 1)
+		g.chosenAchievement -= 1
+		if g.chosenAchievement <= 0 {
+			g.chosenAchievement = 0
+		}
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowDown):
-		spawnCarnivore(g, 1)
+		g.chosenAchievement += 1
+		if g.chosenAchievement > 10 {
+			g.chosenAchievement = 10
+		}
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
+		g.timeTravelCounter = 0
 		if g.pause == false {
 			g.pause = true
 		} else {
@@ -34,13 +41,13 @@ func processEvents(g *game) {
 		g.generateNewTerrain()
 		g.spawnStartingEntities()
 	case inpututil.IsKeyJustPressed(ebiten.KeyT):
-		g.timeTravelCounter = 3600
+		g.timeTravelCounter = 960
 		g.tempo = 1
-		ebiten.SetTPS(5000)
+		ebiten.SetTPS(1000)
 	}
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if 36 <= x && 74 >= x && 146 <= y && 184 >= y {
+		if 36 <= x && 74 >= x && 121 <= y && 159 >= y {
 			buttons["slowMode"].state = 1
 			g.timeTravelCounter = 0
 			g.tempo = 0.1
@@ -50,25 +57,38 @@ func processEvents(g *game) {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
 		switch {
-		case 36 <= x && 74 >= x && 96 <= y && 134 >= y:
+		case 36 <= x && 74 >= x && 71 <= y && 109 >= y:
 			buttons["start"].state = 1
 			g.pause = false
-		case 85 <= x && 123 >= x && 96 <= y && 134 >= y:
+		case 85 <= x && 123 >= x && 71 <= y && 109 >= y:
 			buttons["pause"].state = 1
+			g.timeTravelCounter = 0
 			g.pause = true
-		case 136 <= x && 174 >= x && 96 <= y && 134 >= y:
+		case 136 <= x && 174 >= x && 71 <= y && 109 >= y:
 			buttons["timeTravel"].state = 1
-			g.timeTravelCounter = 3600
+			g.timeTravelCounter = 960
 			g.tempo = 1
-			ebiten.SetTPS(5000)
-		case 85 <= x && 123 >= x && 146 <= y && 184 >= y:
+			ebiten.SetTPS(1000)
+		case 85 <= x && 123 >= x && 121 <= y && 159 >= y:
 			buttons["reset"].state = 1
 			g.clearGame()
 			g.generateNewTerrain()
 			g.spawnStartingEntities()
-		case 136 <= x && 174 >= x && 146 <= y && 184 >= y:
+		case 136 <= x && 174 >= x && 121 <= y && 159 >= y:
 			buttons["clean"].state = 1
 			g.clearGame()
+		case 164 <= x && 177 >= x && 185 <= y && 198 >= y:
+			buttons["chosenAchievementUp"].state = 1
+			g.chosenAchievement -= 1
+			if g.chosenAchievement < 0 {
+				g.chosenAchievement = 0
+			}
+		case 179 <= x && 192 >= x && 185 <= y && 198 >= y:
+			buttons["chosenAchievementDown"].state = 1
+			g.chosenAchievement += 1
+			if g.chosenAchievement > 10 {
+				g.chosenAchievement = 10
+			}
 		case 826 <= x && 839 >= x && 94 <= y && 107 >= y:
 			buttons["gameSpeedPlus"].state = 1
 			g.chosenGameSpeed += 1
@@ -119,7 +139,7 @@ func processEvents(g *game) {
 			}
 		case 811 <= x && 824 >= x && 174 <= y && 187 >= y:
 			buttons["herbsEnergyMinus"].state = 1
-			g.s.herbsEnergy -= 20
+			g.s.herbsEnergy -= 30
 			if g.s.herbsEnergy < 0 {
 				g.s.herbsEnergy = 0
 			}
