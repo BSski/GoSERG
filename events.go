@@ -46,7 +46,15 @@ func processEvents(g *game) {
 		g.timeTravelCounter = 960
 		g.tempo = 1
 		ebiten.SetTPS(1000)
+
+	case ebiten.IsKeyPressed(ebiten.KeyBackspace):
+		// FIXME: why doesn't it work?
+		buttons["slowMode"].state = 1
+		g.timeTravelCounter = 0
+		g.tempo = 0.1
+		ebiten.SetTPS(30)
 	}
+
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
 		if 36 <= x && 74 >= x && 121 <= y && 159 >= y {

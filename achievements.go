@@ -20,30 +20,37 @@ type achievement struct {
 	description string
 }
 
+//// ACHIEVEMENTY:
+//- Looks stable... yet: symulacja miala carnivores i herbivores powyzej 5 przez rok~?
+//- Long ride: max out all settings
+//- Small values: min out all settings
+//- Mass starvation: get mean speed 0 of herbivores or carnivores
+//- Get all achievements: get all achievements
+
 var achievements = map[string]*achievement{
 	"allDead": {
 		false,
 		"The board is empty!",
 		achievementAllDead,
-		"Get no animals on the board",
-	},
-	"allOver200": {
-		false,
-		"Getting a bit crowdy",
-		achievementAllOver200,
-		"Get over 200 animals of each type",
+		"Get no animals on the board.",
 	},
 	"allOver300": {
 		false,
-		"Even more crowdy",
+		"Getting a bit crowdy",
 		achievementAllOver300,
-		"Get over 300 animals of each type",
+		"Get over 300 animals of each\ntype.",
 	},
-	"placeholder1": {
+	"massStarvation": {
 		false,
-		"Placeholder 1",
-		achievementAllDead,
-		"placeholder1desc",
+		"Mass starvation",
+		achievementMassStarvation,
+		"All carnivores have speed 0.",
+	},
+	"brokenChart": {
+		false,
+		"Hey! You broke the chart!",
+		achievementBrokenChart,
+		"Get over 900 carnivores\nor herbivores.",
 	},
 	"placeholder2": {
 		false,
@@ -91,9 +98,9 @@ var achievements = map[string]*achievement{
 
 var achievementNames = []string{
 	"allDead",
-	"allOver200",
 	"allOver300",
-	"placeholder1",
+	"massStarvation",
+	"brokenChart",
 	"placeholder2",
 	"placeholder3",
 	"placeholder4",
@@ -134,14 +141,29 @@ func achievementAllDead(g *game) {
 	}
 }
 
-func achievementAllOver200(g *game) {
-	if len(g.herbivores) >= 200 && len(g.carnivores) >= 200 {
-		g.a["allOver200"].completed = true
-	}
-}
-
 func achievementAllOver300(g *game) {
 	if len(g.herbivores) >= 300 && len(g.carnivores) >= 300 {
 		g.a["allOver300"].completed = true
+	}
+}
+
+func achievementBrokenChart(g *game) {
+	if len(g.herbivores) > 900 || len(g.carnivores) > 900 {
+		g.a["brokenChart"].completed = true
+	}
+}
+
+func achievementMassStarvation(g *game) {
+	if len(g.carnivores) == 0 {
+		return
+	}
+
+	var sumC int
+	for i := 0; i < len(g.d.carnivoresSpeeds); i++ {
+		sumC += g.d.carnivoresSpeeds[i]
+	}
+
+	if int(sumC/len(g.d.carnivoresSpeeds)) == 0 {
+		g.a["massStarvation"].completed = true
 	}
 }

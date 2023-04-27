@@ -329,7 +329,7 @@ func (sc *scene) drawSettings(screen *ebiten.Image, g *game) {
 	}{
 		{"SETTINGS", [2]int{659, 89}},
 		{"- Simulation speed: " + strconv.Itoa(g.chosenGameSpeed), [2]int{663, 105}},
-		{"- Mutation % chance: " + strconv.Itoa(int(g.s.mutationChance)), [2]int{663, 125}},
+		{"- Mutation % chance: " + strconv.Itoa(g.s.mutationChance), [2]int{663, 125}},
 		{"HERBS", [2]int{674, 148}},
 		{"- Starting number: " + strconv.Itoa(g.s.herbsStartingNr), [2]int{663, 165}},
 		{"- Energy: " + strconv.Itoa(g.s.herbsEnergy), [2]int{663, 185}},
@@ -386,19 +386,18 @@ func (sc *scene) drawAchievements(screen *ebiten.Image, g *game) {
 	x := 36
 	y := 214
 	for i, name := range achievementNames {
-		xOffset := 0
+		chosenOffset := 0
 		if i == g.chosenAchievement {
-			xOffset = 1
+			chosenOffset = 1
 		}
 
 		if g.a[name].completed == true {
 			options := &ebiten.DrawImageOptions{}
-			options.GeoM.Translate(float64(21+xOffset), float64(202+yOffset+1))
-
+			options.GeoM.Translate(float64(21+chosenOffset), float64(203+yOffset+chosenOffset))
 			screen.DrawImage(starUnlockedSpr, options)
 		} else {
 			options := &ebiten.DrawImageOptions{}
-			options.GeoM.Translate(float64(21+xOffset), float64(202+yOffset+1))
+			options.GeoM.Translate(float64(21+chosenOffset), float64(203+yOffset+chosenOffset))
 			screen.DrawImage(starLockedSpr, options)
 		}
 
@@ -408,18 +407,27 @@ func (sc *scene) drawAchievements(screen *ebiten.Image, g *game) {
 		} else {
 			clr = color.RGBA{R: 50, G: 50, B: 50, A: 255}
 		}
-
 		text.Draw(
 			screen,
 			g.a[name].fullName,
 			openSansRegular12,
-			x+xOffset,
-			y+yOffset+xOffset,
+			x+chosenOffset,
+			y+yOffset+chosenOffset,
 			clr,
 		)
 
 		yOffset += 17
 	}
+
+	chosenAchievementName := achievementNames[g.chosenAchievement]
+	text.Draw(
+		screen,
+		g.a[chosenAchievementName].description,
+		openSansRegular12,
+		23,
+		411,
+		color.RGBA{R: 50, G: 50, B: 50, A: 255},
+	)
 }
 
 func (sc *scene) drawAchievementsUI(screen *ebiten.Image, g *game) {
@@ -438,7 +446,7 @@ func (sc *scene) drawAchievementsUI(screen *ebiten.Image, g *game) {
 	yOffset := 0.0
 	x := 19.0
 	y := 202.0
-	for i, _ := range achievementNames {
+	for i := range achievementNames {
 		if i == g.chosenAchievement {
 			options := &ebiten.DrawImageOptions{}
 			options.GeoM.Translate(x, y+yOffset)
