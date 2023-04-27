@@ -381,19 +381,45 @@ func (sc *scene) drawCarnivores(screen *ebiten.Image, g *game) {
 
 func (sc *scene) drawAchievements(screen *ebiten.Image, g *game) {
 	sc.drawAchievementsUI(screen, g)
-	//
-	//yOffset := 0
-	//for _, name := range achievementsList {
-	//	text.Draw(
-	//		screen,
-	//		fmt.Sprintf("%s: %v", name, g.a[name]),
-	//		openSansRegular12,
-	//		17,
-	//		250+yOffset,
-	//		color.RGBA{R: 50, G: 50, B: 50, A: 255},
-	//	)
-	//	yOffset += 17
-	//}
+
+	yOffset := 0
+	x := 36
+	y := 214
+	for i, name := range achievementNames {
+		xOffset := 0
+		if i == g.chosenAchievement {
+			xOffset = 1
+		}
+
+		if g.a[name].completed == true {
+			options := &ebiten.DrawImageOptions{}
+			options.GeoM.Translate(float64(21+xOffset), float64(202+yOffset+1))
+
+			screen.DrawImage(starUnlockedSpr, options)
+		} else {
+			options := &ebiten.DrawImageOptions{}
+			options.GeoM.Translate(float64(21+xOffset), float64(202+yOffset+1))
+			screen.DrawImage(starLockedSpr, options)
+		}
+
+		var clr color.RGBA
+		if g.a[name].completed {
+			clr = color.RGBA{R: 35, G: 135, B: 35, A: 255}
+		} else {
+			clr = color.RGBA{R: 50, G: 50, B: 50, A: 255}
+		}
+
+		text.Draw(
+			screen,
+			g.a[name].fullName,
+			openSansRegular12,
+			x+xOffset,
+			y+yOffset+xOffset,
+			clr,
+		)
+
+		yOffset += 17
+	}
 }
 
 func (sc *scene) drawAchievementsUI(screen *ebiten.Image, g *game) {
@@ -412,7 +438,7 @@ func (sc *scene) drawAchievementsUI(screen *ebiten.Image, g *game) {
 	yOffset := 0.0
 	x := 19.0
 	y := 202.0
-	for i := 0; i < len(achievementsList); i++ {
+	for i, _ := range achievementNames {
 		if i == g.chosenAchievement {
 			options := &ebiten.DrawImageOptions{}
 			options.GeoM.Translate(x, y+yOffset)
@@ -422,6 +448,7 @@ func (sc *scene) drawAchievementsUI(screen *ebiten.Image, g *game) {
 			options.GeoM.Translate(x, y+yOffset)
 			screen.DrawImage(achievementBarSpr, options)
 		}
+
 		yOffset += 17
 	}
 }

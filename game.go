@@ -26,7 +26,7 @@ func (g *game) Update() error {
 
 	updateAnimalsData(g)
 
-	chosenAchievementName := achievementsList[g.chosenAchievement]
+	chosenAchievementName := achievementNames[g.chosenAchievement]
 	checkAchievement = achievements[chosenAchievementName].checkFunc
 	checkAchievement(g)
 

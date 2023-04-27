@@ -10,42 +10,86 @@ import (
 var checkAchievement func(g *game)
 var achievementBarSpr *ebiten.Image
 var achievementBarChosenSpr *ebiten.Image
-
-//var achievements = map[string]bool{
-//	"allDead":      false,
-//	"allOver200":   false,
-//	"allOver300":   false,
-//	"placeholder1": false,
-//	"placeholder2": false,
-//	"placeholder3": false,
-//	"placeholder4": false,
-//	"placeholder5": false,
-//	"placeholder6": false,
-//	"placeholder7": false,
-//	"placeholder8": false,
-//	"placeholder9": false,
-//}
+var starUnlockedSpr *ebiten.Image
+var starLockedSpr *ebiten.Image
 
 type achievement struct {
-	state     bool
-	checkFunc func(g *game)
+	completed   bool
+	fullName    string
+	checkFunc   func(g *game)
+	description string
 }
 
 var achievements = map[string]*achievement{
-	"allDead":      {false, achievementAllDead},
-	"allOver200":   {false, achievementAllOver200},
-	"allOver300":   {false, achievementAllOver300},
-	"placeholder1": {false, achievementAllDead},
-	"placeholder2": {false, achievementAllDead},
-	"placeholder3": {false, achievementAllDead},
-	"placeholder4": {false, achievementAllDead},
-	"placeholder5": {false, achievementAllDead},
-	"placeholder6": {false, achievementAllDead},
-	"placeholder7": {false, achievementAllDead},
-	"placeholder8": {false, achievementAllDead},
+	"allDead": {
+		false,
+		"The board is empty!",
+		achievementAllDead,
+		"Get no animals on the board",
+	},
+	"allOver200": {
+		false,
+		"Getting a bit crowdy",
+		achievementAllOver200,
+		"Get over 200 animals of each type",
+	},
+	"allOver300": {
+		false,
+		"Even more crowdy",
+		achievementAllOver300,
+		"Get over 300 animals of each type",
+	},
+	"placeholder1": {
+		false,
+		"Placeholder 1",
+		achievementAllDead,
+		"placeholder1desc",
+	},
+	"placeholder2": {
+		false,
+		"Placeholder 2",
+		achievementAllDead,
+		"placeholder2desc",
+	},
+	"placeholder3": {
+		false,
+		"Placeholder 3",
+		achievementAllDead,
+		"placeholder3desc",
+	},
+	"placeholder4": {
+		false,
+		"Placeholder 4",
+		achievementAllDead,
+		"placeholder4desc",
+	},
+	"placeholder5": {
+		false,
+		"Placeholder 5",
+		achievementAllDead,
+		"placeholder5desc",
+	},
+	"placeholder6": {
+		false,
+		"Placeholder 6",
+		achievementAllDead,
+		"placeholder6desc",
+	},
+	"placeholder7": {
+		false,
+		"Placeholder 7",
+		achievementAllDead,
+		"placeholder7desc",
+	},
+	"placeholder8": {
+		false,
+		"Complete all achievements",
+		achievementAllDead,
+		"Complete all achievements!",
+	},
 }
 
-var achievementsList = []string{
+var achievementNames = []string{
 	"allDead",
 	"allOver200",
 	"allOver300",
@@ -71,23 +115,33 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	starUnlockedReader := bytes.NewReader(spr.starUnlockedBytes)
+	starUnlockedSpr, _, err = ebitenutil.NewImageFromReader(starUnlockedReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	starLockedReader := bytes.NewReader(spr.starLockedBytes)
+	starLockedSpr, _, err = ebitenutil.NewImageFromReader(starLockedReader)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func achievementAllDead(g *game) {
 	if len(g.herbivores) == 0 && len(g.carnivores) == 0 {
-		g.a["allDead"].state = true
+		g.a["allDead"].completed = true
 
 	}
 }
 
 func achievementAllOver200(g *game) {
 	if len(g.herbivores) >= 200 && len(g.carnivores) >= 200 {
-		g.a["allOver200"].state = true
+		g.a["allOver200"].completed = true
 	}
 }
 
 func achievementAllOver300(g *game) {
 	if len(g.herbivores) >= 300 && len(g.carnivores) >= 300 {
-		g.a["allOver300"].state = true
+		g.a["allOver300"].completed = true
 	}
 }
