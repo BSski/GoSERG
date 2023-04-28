@@ -21,13 +21,20 @@ type achievement struct {
 }
 
 //// ACHIEVEMENTY:
-//- Looks stable... yet: symulacja miala carnivores i herbivores powyzej 5 przez rok~?
+//- Looks stable... yet: symulacja miala carnivores i herbivores powyzej 5 przez 2 miesiace~? have above 5 animals of each type for the first 3 months
+//  - ten zrob na samym koncu, i wgl pierwsze achievementy niech dotyczą rzeczy, ktore nie wymagaja przyspieszenia
+//- They can drown?! - herbivore or carnivore drowned
 //- Long ride: max out all settings
 //- Small values: min out all settings
-//- Mass starvation: get mean speed 0 of herbivores or carnivores
 //- Get all achievements: get all achievements
 
 var achievements = map[string]*achievement{
+	"allAchievements": {
+		false,
+		"All achievements",
+		achievementAllAchievements,
+		"Complete all achievements!",
+	},
 	"allDead": {
 		false,
 		"The board is empty!",
@@ -88,15 +95,10 @@ var achievements = map[string]*achievement{
 		achievementAllDead,
 		"placeholder7desc",
 	},
-	"placeholder8": {
-		false,
-		"Complete all achievements",
-		achievementAllDead,
-		"Complete all achievements!",
-	},
 }
 
 var achievementNames = []string{
+	"allAchievements",
 	"allDead",
 	"allOver300",
 	"massStarvation",
@@ -107,7 +109,6 @@ var achievementNames = []string{
 	"placeholder5",
 	"placeholder6",
 	"placeholder7",
-	"placeholder8",
 }
 
 func init() {
@@ -166,4 +167,17 @@ func achievementMassStarvation(g *game) {
 	if int(sumC/len(g.d.carnivoresSpeeds)) == 0 {
 		g.a["massStarvation"].completed = true
 	}
+}
+
+// TODO: check if it works.
+func achievementAllAchievements(g *game) {
+	for i := range g.a {
+		if i == "allAchievements" {
+			continue
+		}
+		if !g.a[i].completed {
+			return
+		}
+	}
+	g.a["allAchievements"].completed = true
 }

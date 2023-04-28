@@ -283,7 +283,7 @@ func (c *carnivore) subtractMoveCostFromEnergy() {
 	moveCost *= c.legsLength
 
 	if c.g.boardTilesType[c.y][c.x].tileType == 0 {
-		moveCost *= 3
+		moveCost *= 2
 	}
 
 	c.energy -= int(moveCost)

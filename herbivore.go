@@ -298,7 +298,7 @@ func (h *herbivore) subtractMoveCostFromEnergy() {
 	moveCost *= h.legsLength
 
 	if h.g.boardTilesType[h.y][h.x].tileType == 0 {
-		moveCost *= 3
+		moveCost *= 2
 	}
 
 	h.energy -= int(moveCost)
