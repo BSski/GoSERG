@@ -36,7 +36,7 @@ func processEvents(g *game) {
 		g.rightPanelOption = 1
 	case inpututil.IsKeyJustPressed(ebiten.Key3):
 		g.rightPanelOption = 2
-	case inpututil.IsKeyJustPressed(ebiten.KeyC):
+	case inpututil.IsKeyJustPressed(ebiten.KeyC) && ebiten.IsKeyPressed(ebiten.KeyControl):
 		g.clearGame()
 	case inpututil.IsKeyJustPressed(ebiten.KeyR):
 		g.clearGame()
@@ -84,9 +84,6 @@ func processEvents(g *game) {
 			g.clearGame()
 			g.generateNewTerrain()
 			g.spawnStartingEntities()
-		case 136 <= x && 174 >= x && 121 <= y && 159 >= y:
-			buttons["clean"].state = 1
-			g.clearGame()
 		case 164 <= x && 177 >= x && 185 <= y && 198 >= y:
 			buttons["chosenAchievementUp"].state = 1
 			g.chosenAchievement -= 1
