@@ -26,7 +26,6 @@ type achievement struct {
 //- They can drown?! - herbivore or carnivore drowned
 //- Long ride: max out all settings
 //- Small values: min out all settings
-//- Get all achievements: get all achievements
 
 var achievements = map[string]*achievement{
 	"allAchievements": {
