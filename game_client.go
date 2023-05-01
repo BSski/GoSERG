@@ -37,6 +37,9 @@ type game struct {
 	boardSize            int
 	regularTilesQuantity int
 
+	currentEvents []string
+	eventsHistory []string
+
 	animation        []rune
 	animationCounter int
 

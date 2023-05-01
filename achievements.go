@@ -23,7 +23,6 @@ type achievement struct {
 //// ACHIEVEMENTY:
 //- Looks stable... yet: symulacja miala carnivores i herbivores powyzej 5 przez 2 miesiace~? have above 5 animals of each type for the first 3 months
 //  - ten zrob na samym koncu, i wgl pierwsze achievementy niech dotyczą rzeczy, ktore nie wymagaja przyspieszenia
-//- They can drown?! - herbivore or carnivore drowned
 //- Long ride: max out all settings
 //- Small values: min out all settings
 
@@ -33,6 +32,12 @@ var achievements = map[string]*achievement{
 		"All achievements",
 		achievementAllAchievements,
 		"Complete all achievements!",
+	},
+	"resettedSimulation": {
+		false,
+		"Reset it",
+		achievementResettedSimulation,
+		"Reset the simulation.",
 	},
 	"allDead": {
 		false,
@@ -46,68 +51,62 @@ var achievements = map[string]*achievement{
 		achievementAllOver300,
 		"Get over 300 animals of each\ntype.",
 	},
-	"massStarvation": {
-		false,
-		"Mass starvation",
-		achievementMassStarvation,
-		"All carnivores have speed 0.",
-	},
 	"brokenChart": {
 		false,
 		"Hey! You broke the chart!",
 		achievementBrokenChart,
 		"Get over 900 carnivores\nor herbivores.",
 	},
-	"placeholder2": {
+	"theyCanDrown": {
 		false,
-		"Placeholder 2",
-		achievementAllDead,
-		"placeholder2desc",
+		"They can drown?!",
+		achievementTheyCanDrown,
+		"A herbivore or a carnivore\nhas drowned",
 	},
-	"placeholder3": {
+	"massStarvation": {
 		false,
-		"Placeholder 3",
-		achievementAllDead,
-		"placeholder3desc",
+		"Mass starvation",
+		achievementMassStarvation,
+		"All carnivores have speed\nequal to 0.",
 	},
-	"placeholder4": {
+	"fromHeroToZeroHerbi": {
 		false,
-		"Placeholder 4",
-		achievementAllDead,
-		"placeholder4desc",
+		"From hero to zero",
+		achievementFromHeroToZeroHerbi,
+		"Get a herbivore with all\ngenes equal to 0.",
 	},
-	"placeholder5": {
+	"fromZeroToHeroCarni": {
 		false,
-		"Placeholder 5",
-		achievementAllDead,
-		"placeholder5desc",
+		"From zero to hero",
+		achievementFromZeroToHeroCarni,
+		"Get a carnivore with all\ngenes equal to 7.",
 	},
-	"placeholder6": {
+	"theFastestWillPrevail": {
 		false,
-		"Placeholder 6",
-		achievementAllDead,
-		"placeholder6desc",
+		"The fastest will prevail",
+		achievementTheFastestWillPrevail,
+		"Herbivores have average\nspeed equal to 6.9 or more.",
 	},
-	"placeholder7": {
+	"armsRace": {
 		false,
-		"Placeholder 7",
-		achievementAllDead,
-		"placeholder7desc",
+		"Arms race",
+		achievementArmsRace,
+		"Carnivores have average\nspeed equal to 6.5 or more.",
 	},
 }
 
 var achievementNames = []string{
 	"allAchievements",
+	"resettedSimulation",
 	"allDead",
 	"allOver300",
-	"massStarvation",
+	"theyCanDrown",
 	"brokenChart",
-	"placeholder2",
-	"placeholder3",
-	"placeholder4",
-	"placeholder5",
-	"placeholder6",
-	"placeholder7",
+	"massStarvation",
+	"fromHeroToZeroHerbi",
+	"fromZeroToHeroCarni",
+	"theFastestWillPrevail",
+	"armsRace",
 }
 
 func init() {
@@ -134,6 +133,28 @@ func init() {
 	}
 }
 
+// TODO: check if it works.
+func achievementAllAchievements(g *game) {
+	for i := range g.a {
+		if i == "allAchievements" {
+			continue
+		}
+		if !g.a[i].completed {
+			return
+		}
+	}
+	g.a["allAchievements"].completed = true
+}
+
+func achievementResettedSimulation(g *game) {
+	for _, event := range g.currentEvents {
+		if event == "simulation reset" {
+			g.a["resettedSimulation"].completed = true
+			return
+		}
+	}
+}
+
 func achievementAllDead(g *game) {
 	if len(g.herbivores) == 0 && len(g.carnivores) == 0 {
 		g.a["allDead"].completed = true
@@ -153,30 +174,71 @@ func achievementBrokenChart(g *game) {
 	}
 }
 
-func achievementMassStarvation(g *game) {
-	if len(g.carnivores) == 0 {
-		return
-	}
-
-	var sumC int
-	for i := 0; i < len(g.d.carnivoresSpeeds); i++ {
-		sumC += g.d.carnivoresSpeeds[i]
-	}
-
-	if int(sumC/len(g.d.carnivoresSpeeds)) == 0 {
-		g.a["massStarvation"].completed = true
-	}
-}
-
-// TODO: check if it works.
-func achievementAllAchievements(g *game) {
-	for i := range g.a {
-		if i == "allAchievements" {
-			continue
-		}
-		if !g.a[i].completed {
+func achievementTheyCanDrown(g *game) {
+	for _, event := range g.currentEvents {
+		if event == "herbivore drowned" || event == "carnivore drowned" {
+			g.a["theyCanDrown"].completed = true
 			return
 		}
 	}
-	g.a["allAchievements"].completed = true
+}
+
+func achievementMassStarvation(g *game) {
+	if g.d.carnivoresSpeedsCounters[0] == 0 {
+		return
+	}
+
+	for i := 1; i < len(g.d.carnivoresSpeedsCounters); i++ {
+		if g.d.carnivoresSpeedsCounters[i] != 0 {
+			return
+		}
+	}
+
+	g.a["massStarvation"].completed = true
+}
+
+func achievementFromHeroToZeroHerbi(g *game) {
+	for _, h := range g.herbivores {
+		if h.dna[0] == 0 && h.dna[1] == 0 && h.dna[2] == 0 && h.dna[3] == 0 {
+			g.a["fromHeroToZeroHerbi"].completed = true
+		}
+	}
+}
+
+func achievementFromZeroToHeroCarni(g *game) {
+	for _, c := range g.carnivores {
+		if c.dna[0] == 7 && c.dna[1] == 7 && c.dna[2] == 7 && c.dna[3] == 7 {
+			g.a["fromZeroToHeroCarni"].completed = true
+		}
+	}
+}
+
+func achievementTheFastestWillPrevail(g *game) {
+	if g.d.herbivoresSpeedsCounters[7] == 0 {
+		return
+	}
+
+	sum := 0
+	for i := 0; i < len(g.d.herbivoresSpeedsCounters); i++ {
+		sum += g.d.herbivoresSpeedsCounters[i] * i
+	}
+
+	if float64(sum)/float64(len(g.herbivores)) >= 6.9 {
+		g.a["theFastestWillPrevail"].completed = true
+	}
+}
+
+func achievementArmsRace(g *game) {
+	if g.d.carnivoresSpeedsCounters[7] == 0 {
+		return
+	}
+
+	sum := 0
+	for i := 0; i < len(g.d.carnivoresSpeedsCounters); i++ {
+		sum += g.d.carnivoresSpeedsCounters[i] * i
+	}
+
+	if float64(sum)/float64(len(g.carnivores)) >= 6.5 {
+		g.a["armsRace"].completed = true
+	}
 }

@@ -15,25 +15,20 @@ var herbiHungrySpr *ebiten.Image
 var herbiHungryNewSpr *ebiten.Image
 
 type herbivore struct {
-	g           *game
-	x           int
-	y           int
-	energy      int
-	dna         [4]int
-	speed       int
-	bowelLength float64
-	fatLimit    int
-	legsLength  float64
-	age         int
-
-	sprFull      *ebiten.Image
-	sprFullNew   *ebiten.Image
-	sprHungry    *ebiten.Image
-	sprHungryNew *ebiten.Image
+	g            *game
+	x            int
+	y            int
+	energy       int
+	dna          [4]int
+	speedDivider int
+	bowelLength  float64
+	fatLimit     int
+	legsLength   float64
+	age          int
 }
 
 func (h *herbivore) init() {
-	h.speed = speeds[h.dna[0]]
+	h.speedDivider = speeds[h.dna[0]]
 	h.bowelLength = bowelLengths[h.dna[1]]
 	h.fatLimit = fatLimits[h.dna[2]]
 	h.legsLength = legsLengths[h.dna[3]]
@@ -88,6 +83,10 @@ func (h *herbivore) starve() {
 }
 
 func (h *herbivore) die() {
+	if h.g.boardTilesType[h.y][h.x].tileType == 0 {
+		h.g.addEvent("herbivore drowned")
+	}
+
 	for i, v := range h.g.herbivores {
 		if v == h {
 			h.g.herbivores = append(h.g.herbivores[:i], h.g.herbivores[i+1:]...)
@@ -100,10 +99,10 @@ func (h *herbivore) die() {
 			break
 		}
 	}
-	h.g.d.herbivoresSpeeds[h.dna[0]] -= 1
-	h.g.d.herbivoresBowelLengths[h.dna[1]] -= 1
-	h.g.d.herbivoresFatLimits[h.dna[2]] -= 1
-	h.g.d.herbivoresLegsLengths[h.dna[3]] -= 1
+	h.g.d.herbivoresSpeedsCounters[h.dna[0]] -= 1
+	h.g.d.herbivoresBowelLengthsCounters[h.dna[1]] -= 1
+	h.g.d.herbivoresFatLimitsCounters[h.dna[2]] -= 1
+	h.g.d.herbivoresLegsLengthsCounters[h.dna[3]] -= 1
 }
 
 func (h *herbivore) action() {
@@ -158,10 +157,10 @@ func (_ *herbivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int) {
 	h.init()
 	g.herbivores = append(g.herbivores, &h)
 	g.herbivoresPos[y][x] = append(g.herbivoresPos[y][x], &h)
-	g.d.herbivoresSpeeds[h.dna[0]] += 1
-	g.d.herbivoresBowelLengths[h.dna[1]] += 1
-	g.d.herbivoresFatLimits[h.dna[2]] += 1
-	g.d.herbivoresLegsLengths[h.dna[3]] += 1
+	g.d.herbivoresSpeedsCounters[h.dna[0]] += 1
+	g.d.herbivoresBowelLengthsCounters[h.dna[1]] += 1
+	g.d.herbivoresFatLimitsCounters[h.dna[2]] += 1
+	g.d.herbivoresLegsLengthsCounters[h.dna[3]] += 1
 }
 
 func (h *herbivore) eat() {
@@ -197,10 +196,10 @@ func spawnHerbivore(g *game, nr int) {
 		h.init()
 		g.herbivores = append(g.herbivores, &h)
 		g.herbivoresPos[y][x] = append(g.herbivoresPos[y][x], &h)
-		g.d.herbivoresSpeeds[h.dna[0]] += 1
-		g.d.herbivoresBowelLengths[h.dna[1]] += 1
-		g.d.herbivoresFatLimits[h.dna[2]] += 1
-		g.d.herbivoresLegsLengths[h.dna[3]] += 1
+		g.d.herbivoresSpeedsCounters[h.dna[0]] += 1
+		g.d.herbivoresBowelLengthsCounters[h.dna[1]] += 1
+		g.d.herbivoresFatLimitsCounters[h.dna[2]] += 1
+		g.d.herbivoresLegsLengthsCounters[h.dna[3]] += 1
 		nr -= 1
 	}
 }
@@ -209,7 +208,7 @@ func (h *herbivore) move() {
 	if int(h.g.counterPrev) == int(h.g.counter) {
 		return
 	}
-	if int(h.g.counter)%h.speed != 0 {
+	if int(h.g.counter)%h.speedDivider != 0 {
 		return
 	}
 

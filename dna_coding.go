@@ -35,7 +35,7 @@ var bowelLengths = map[int]float64{
 }
 
 var bowelLengthCosts = map[int]float64{
-	0: 0.00,
+	0: 0.000,
 	1: 0.018,
 	2: 0.036,
 	3: 0.054,
@@ -57,7 +57,7 @@ var fatLimits = map[int]int{
 }
 
 var fatLimitCosts = map[int]float64{
-	0: 0.00,
+	0: 0.000,
 	1: 0.018,
 	2: 0.036,
 	3: 0.054,
@@ -68,7 +68,7 @@ var fatLimitCosts = map[int]float64{
 }
 
 var legsLengths = map[int]float64{
-	0: 1.00,
+	0: 1.000,
 	1: 0.965,
 	2: 0.930,
 	3: 0.895,
@@ -79,7 +79,7 @@ var legsLengths = map[int]float64{
 }
 
 var legsLengthCosts = map[int]float64{
-	0: 0.00,
+	0: 0.000,
 	1: 0.018,
 	2: 0.036,
 	3: 0.054,

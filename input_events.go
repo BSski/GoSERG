@@ -15,13 +15,13 @@ func processEvents(g *game) {
 		spawnCarnivore(g, 10)
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowUp):
 		g.chosenAchievement -= 1
-		if g.chosenAchievement <= 0 {
-			g.chosenAchievement = 0
+		if g.chosenAchievement < 0 {
+			g.chosenAchievement = 10
 		}
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowDown):
 		g.chosenAchievement += 1
 		if g.chosenAchievement > 10 {
-			g.chosenAchievement = 10
+			g.chosenAchievement = 0
 		}
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
 		g.timeTravelCounter = 0
@@ -36,9 +36,15 @@ func processEvents(g *game) {
 		g.rightPanelOption = 1
 	case inpututil.IsKeyJustPressed(ebiten.Key3):
 		g.rightPanelOption = 2
-	case inpututil.IsKeyJustPressed(ebiten.KeyC) && ebiten.IsKeyPressed(ebiten.KeyControl):
+	case ebiten.IsKeyPressed(ebiten.KeyC):
 		g.clearGame()
+	case ebiten.IsKeyPressed(ebiten.KeyA):
+		for i := range g.a {
+			g.a[i].completed = false
+		}
+
 	case inpututil.IsKeyJustPressed(ebiten.KeyR):
+		g.addEvent("simulation reset")
 		g.clearGame()
 		g.generateNewTerrain()
 		g.spawnStartingEntities()
@@ -81,6 +87,7 @@ func processEvents(g *game) {
 			ebiten.SetTPS(1000)
 		case 85 <= x && 123 >= x && 121 <= y && 159 >= y:
 			buttons["reset"].state = 1
+			g.addEvent("simulation reset")
 			g.clearGame()
 			g.generateNewTerrain()
 			g.spawnStartingEntities()

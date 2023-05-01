@@ -28,8 +28,12 @@ func (g *game) Update() error {
 
 	chosenAchievementName := achievementNames[g.chosenAchievement]
 	checkAchievement = achievements[chosenAchievementName].checkFunc
-	checkAchievement(g)
 
+	if !achievements[chosenAchievementName].completed {
+		checkAchievement(g)
+	}
+
+	g.cleanCurrentEvents()
 	return nil
 }
 

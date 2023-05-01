@@ -15,20 +15,20 @@ var carniHungrySpr *ebiten.Image
 var carniHungryNewSpr *ebiten.Image
 
 type carnivore struct {
-	g           *game
-	x           int
-	y           int
-	energy      int
-	dna         [4]int
-	speed       int
-	bowelLength float64
-	fatLimit    int
-	legsLength  float64
-	age         int
+	g            *game
+	x            int
+	y            int
+	energy       int
+	dna          [4]int
+	speedDivider int
+	bowelLength  float64
+	fatLimit     int
+	legsLength   float64
+	age          int
 }
 
 func (c *carnivore) init() {
-	c.speed = speeds[c.dna[0]]
+	c.speedDivider = speeds[c.dna[0]]
 	c.bowelLength = bowelLengths[c.dna[1]]
 	c.fatLimit = fatLimits[c.dna[2]]
 	c.legsLength = legsLengths[c.dna[3]]
@@ -83,6 +83,10 @@ func (c *carnivore) starve() {
 }
 
 func (c *carnivore) die() {
+	if c.g.boardTilesType[c.y][c.x].tileType == 0 {
+		c.g.addEvent("carnivore drowned")
+	}
+
 	for i, v := range c.g.carnivores {
 		if v == c {
 			c.g.carnivores = append(c.g.carnivores[:i], c.g.carnivores[i+1:]...)
@@ -95,10 +99,10 @@ func (c *carnivore) die() {
 			break
 		}
 	}
-	c.g.d.carnivoresSpeeds[c.dna[0]] -= 1
-	c.g.d.carnivoresBowelLengths[c.dna[1]] -= 1
-	c.g.d.carnivoresFatLimits[c.dna[2]] -= 1
-	c.g.d.carnivoresLegsLengths[c.dna[3]] -= 1
+	c.g.d.carnivoresSpeedsCounters[c.dna[0]] -= 1
+	c.g.d.carnivoresBowelLengthsCounters[c.dna[1]] -= 1
+	c.g.d.carnivoresFatLimitsCounters[c.dna[2]] -= 1
+	c.g.d.carnivoresLegsLengthsCounters[c.dna[3]] -= 1
 }
 
 func (c *carnivore) action() {
@@ -153,10 +157,10 @@ func (_ *carnivore) giveBirth(g *game, x, y int, dna1, dna2 [4]int) {
 	c.init()
 	g.carnivores = append(g.carnivores, &c)
 	g.carnivoresPos[y][x] = append(g.carnivoresPos[y][x], &c)
-	g.d.carnivoresSpeeds[c.dna[0]] += 1
-	g.d.carnivoresBowelLengths[c.dna[1]] += 1
-	g.d.carnivoresFatLimits[c.dna[2]] += 1
-	g.d.carnivoresLegsLengths[c.dna[3]] += 1
+	g.d.carnivoresSpeedsCounters[c.dna[0]] += 1
+	g.d.carnivoresBowelLengthsCounters[c.dna[1]] += 1
+	g.d.carnivoresFatLimitsCounters[c.dna[2]] += 1
+	g.d.carnivoresLegsLengthsCounters[c.dna[3]] += 1
 }
 
 func (c *carnivore) eat() {
@@ -192,10 +196,10 @@ func spawnCarnivore(g *game, nr int) {
 		c.init()
 		g.carnivores = append(g.carnivores, &c)
 		g.carnivoresPos[y][x] = append(g.carnivoresPos[y][x], &c)
-		g.d.carnivoresSpeeds[c.dna[0]] += 1
-		g.d.carnivoresBowelLengths[c.dna[1]] += 1
-		g.d.carnivoresFatLimits[c.dna[2]] += 1
-		g.d.carnivoresLegsLengths[c.dna[3]] += 1
+		g.d.carnivoresSpeedsCounters[c.dna[0]] += 1
+		g.d.carnivoresBowelLengthsCounters[c.dna[1]] += 1
+		g.d.carnivoresFatLimitsCounters[c.dna[2]] += 1
+		g.d.carnivoresLegsLengthsCounters[c.dna[3]] += 1
 		nr -= 1
 	}
 }
@@ -204,7 +208,7 @@ func (c *carnivore) move() {
 	if int(c.g.counterPrev) == int(c.g.counter) {
 		return
 	}
-	if int(c.g.counter)%c.speed != 0 {
+	if int(c.g.counter)%c.speedDivider != 0 {
 		return
 	}
 
