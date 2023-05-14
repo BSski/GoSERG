@@ -12,7 +12,7 @@ func processEvents(g *game) {
 		spawnHerbivore(g, 30)
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowRight):
 		// FIXME: disable this in release
-		spawnCarnivore(g, 10)
+		spawnCarnivore(g, 2)
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowUp):
 		g.chosenAchievement -= 1
 		if g.chosenAchievement < 0 {
