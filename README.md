@@ -50,11 +50,11 @@ Dive right into the world of EcoSim! Adjust the simulation parameters to steer t
 
 ## :keyboard: Keybinds
 
-Space: Toggle pause
-Up arrow/Down arrow: Cycle through achievements
-R: Reset simulation (new terrain & animals)
-T: Skip 8 days
-123: Change right panel option in the UI.
+- Space: Toggle pause
+- Up arrow/Down arrow: Cycle through achievements
+- R: Reset simulation (new terrain & animals)
+- T: Skip 8 days
+- 123: Change right panel option in the UI.
 
 ## :turtle: Animal Traits
 
