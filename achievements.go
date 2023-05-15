@@ -20,12 +20,6 @@ type achievement struct {
 	description string
 }
 
-//// ACHIEVEMENTY:
-//- Looks stable... yet: symulacja miala carnivores i herbivores powyzej 5 przez 2 miesiace~? have above 5 animals of each type for the first 3 months
-//  - ten zrob na samym koncu, i wgl pierwsze achievementy niech dotyczą rzeczy, ktore nie wymagaja przyspieszenia
-//- Long ride: max out all settings
-//- Small values: min out all settings
-
 var achievements = map[string]*achievement{
 	"allAchievements": {
 		false,
@@ -133,7 +127,6 @@ func init() {
 	}
 }
 
-// TODO: check if it works.
 func achievementAllAchievements(g *game) {
 	for i := range g.a {
 		if i == "allAchievements" {

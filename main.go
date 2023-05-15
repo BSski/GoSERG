@@ -12,7 +12,6 @@ import (
 )
 
 func main() {
-	//defer profile.Start().Stop()
 	if err := run(os.Stdout); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)

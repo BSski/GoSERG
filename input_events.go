@@ -8,10 +8,8 @@ import (
 func processEvents(g *game) {
 	switch {
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft):
-		// FIXME: disable this in release
 		spawnHerbivore(g, 30)
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowRight):
-		// FIXME: disable this in release
 		spawnCarnivore(g, 2)
 	case inpututil.IsKeyJustPressed(ebiten.KeyArrowUp):
 		g.chosenAchievement -= 1
@@ -54,7 +52,7 @@ func processEvents(g *game) {
 		ebiten.SetTPS(1000)
 
 	case ebiten.IsKeyPressed(ebiten.KeyBackspace):
-		// FIXME: why doesn't it work?
+		// Needs reimplementation.
 		buttons["slowMode"].state = 1
 		g.timeTravelCounter = 0
 		g.tempo = 0.1
