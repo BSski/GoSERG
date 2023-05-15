@@ -73,7 +73,7 @@ You can access the web preview at [bsski.github.io](bsski.github.io) or download
 - 123: Change right panel option in the UI.
 
 
-## :turtle: Animal Traits
+## :turtle: Animal traits
 
 Each animal in GoSERG is (almost) unique, possessing distinct traits that influence its survival:
 
@@ -92,7 +92,7 @@ Remember, you have to specify which achievement you're aiming for in order to un
 This feature introduces an element of strategy and provides goals that guide your exploration of the ecosystem.
 
 
-## :rocket: Future Improvements
+## :rocket: Future improvements
 
 Although GoSERG is already a fully functional and engaging ecosystem simulation, the journey doesn't stop here.
 There are exciting features on the roadmap:
