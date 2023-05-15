@@ -1,21 +1,26 @@
 <div markdown="1" align="center">    
 
-GoSERG Screenshot
+![GoSERG preview](https://i.imgur.com/rZ3KmWN.gif)
 
 </div>
 
 
 <p align="center"><h2 align="center">GoSERG: The Natural Ecosystem Simulator</h2></p>
 
+[//]: # ()
+[//]: # (<div markdown="1" align="center">)
 
-<div markdown="1" align="center">
+[//]: # ()
+[//]: # (Demo Uptime)
 
-Demo Uptime
-CodeFactor
-Maintainability
-Code style: black
+[//]: # (CodeFactor)
 
-</div>
+[//]: # (Maintainability)
+
+[//]: # (Code style: black)
+
+[//]: # ()
+[//]: # (</div>)
 
 
 ## Table of contents
