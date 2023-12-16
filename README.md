@@ -5,7 +5,7 @@
 </div>
 
 
-<p align="center"><h1 align="center">GoSERG: The Natural Ecosystem Simulator</h1></p>
+<p align="center"><h1 align="center">GoSERG: A Natural Ecosystem Simulator</h1></p>
 
 [//]: # ()
 [//]: # (<div markdown="1" align="center">)
